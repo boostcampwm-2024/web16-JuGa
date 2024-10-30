@@ -1,4 +1,4 @@
-## 🍀 Web16 - Juga
+## 🍀 Web16 - JuGa
 
 <div align="center">
  <img src="https://github.com/user-attachments/assets/08fff536-beb0-4292-b861-8ef0158ff601" alt="Juga 이미지" width="400">
@@ -28,7 +28,7 @@
 ## 🧑🏻 팀원 소개
 | 🖥️ Web FE | ⚙️ Web BE | ⚙️ Web BE | 🖥️ Web FE | ⚙️ Web BE |
 | --- | --- | --- | --- | --- |
-| ![고동우](https://github.com/dongree.png) | ![김진](https://github.com/uuuo3o.png) | ![박진명](https://github.com/jinddings.png) | ![서산](https://github.com/dannysir.png) | ![이시은](https://github.com/sieunie.png) |
+| <img src="https://github.com/dongree.png" width="400"/> | <img src="https://github.com/uuuo3o.png" width="400"/> | <img src="https://github.com/jinddings.png" width="400"/> | <img src="https://github.com/dannysir.png" width="400"/> | <img src="https://github.com/sieunie.png" width="400"/> |
 | [고동우](https://github.com/dongree) | [김진](https://github.com/uuuo3o) | [박진명](https://github.com/jinddings) | [서산](https://github.com/dannysir) | [이시은](https://github.com/sieunie) |
 
 ## 🗂️ 기술 스택
