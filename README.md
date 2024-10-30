@@ -1,8 +1,37 @@
-## 🍀 Web16 - Boost Project
-프로젝트 소개 작성
-#### [위키 바로가기](https://github.com/boostcampwm-2024/web16-boostproject/wiki)
+## 🍀 Web16 - Juga
 
+<div align="center">
+ <img src="https://github.com/user-attachments/assets/08fff536-beb0-4292-b861-8ef0158ff601" alt="Juga 이미지" width="400">
+</div>
+
+<div align="center">
+  <h4>실시간 주식 데이터를 활용해 모의 투자를 경험하고, 친구들과 함께 성장할 수 있는 게임 서비스</h4>
+</div>
+
+---
+
+### ❓ 이런 생각해보신 적 있나요?
+- 주식을 한 번도 해보지 않았어요.
+- 처음이라 시작하기가 두려워요.
+- 자금이 부족해 다양한 시도를 못 해봤어요.
+- 주식의 전반적인 시스템을 공부하고 싶어요.
+- 친구와 함께 투자를 시작하고 싶어요.
+
+### 🎯 Juga를 통해 이런 걸 경험하세요!
+- 실제 주식 투자 전에 게임으로 먼저 경험해보세요.
+- 리스크 없이 투자 감각을 키워보세요.
+- 친구들과 함께 성장하는 재미를 느껴보세요.
+- 경쟁하고 정보도 나누며 더 즐겁게 배워보세요.
+
+---
+  
 ## 🧑🏻 팀원 소개
-| ![고동우](https://github.com/dongree.png) | ![김진](https://github.com/uuuo3o.png) | ![박진명](https://github.com/jinddings.png) | ![서산](https://github.com/dannysir.png) | ![이시은](https://github.com/sieunie.png) |
+| 🖥️ Web FE | ⚙️ Web BE | ⚙️ Web BE | 🖥️ Web FE | ⚙️ Web BE |
 | --- | --- | --- | --- | --- |
+| ![고동우](https://github.com/dongree.png) | ![김진](https://github.com/uuuo3o.png) | ![박진명](https://github.com/jinddings.png) | ![서산](https://github.com/dannysir.png) | ![이시은](https://github.com/sieunie.png) |
 | [고동우](https://github.com/dongree) | [김진](https://github.com/uuuo3o) | [박진명](https://github.com/jinddings) | [서산](https://github.com/dannysir) | [이시은](https://github.com/sieunie) |
+
+## 🗂️ 기술 스택
+<div align="center">
+  <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/3ca54910-ee13-43bb-a1e5-684c3d07fc54">
+</div>
