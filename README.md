@@ -1,4 +1,4 @@
-## 🍀 Web16 - JuGa
+d## 🍀 Web16 - JuGa
 
 <div align="center">
  <img src="https://github.com/user-attachments/assets/08fff536-beb0-4292-b861-8ef0158ff601" alt="Juga 이미지" width="400">
@@ -35,4 +35,6 @@
 <div align="center">
   <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/3ca54910-ee13-43bb-a1e5-684c3d07fc54">
 </div>
+
+
 
