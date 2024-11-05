@@ -1,7 +1,9 @@
 # compiled output
-/dist
-/node_modules
-/build
+*/dist
+*/dist-ssr
+*/node_modules
+*/build
+*.local
 
 # Logs
 logs
@@ -54,3 +56,13 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# pem
+*.pem
+
+# Editor directories and files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
