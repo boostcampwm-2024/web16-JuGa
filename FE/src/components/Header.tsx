@@ -1,4 +1,8 @@
+import useLoginModalStore from 'store/useLoginModalStore';
+
 export default function Header() {
+  const { toggleModal } = useLoginModalStore();
+
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-[88px]'>
@@ -21,12 +25,14 @@ export default function Header() {
             />
           </div>
         </div>
-
         <div className='flex items-center gap-4'>
-          <button className='px-4 py-2 text-sm text-juga-grayscale-500'>
+          <button
+            className='px-4 py-2 text-sm text-juga-grayscale-500'
+            onClick={toggleModal}
+          >
             로그인
           </button>
-          <button className='rounded-lg bg-juga-grayscale-black px-4 py-2 text-sm text-white'>
+          <button className='px-4 py-2 text-sm text-white rounded-lg bg-juga-grayscale-black'>
             회원가입
           </button>
         </div>
