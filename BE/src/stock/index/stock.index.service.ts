@@ -1,9 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import {Cron} from "@nestjs/schedule";
+import {StockGateway} from "../../websocket/stock.gateway";
 
 @Injectable()
 export class StockIndexService {
   private accessToken: string;
   private expireDateTime: number;
+
+  constructor(private readonly stockGateway: StockGateway) {}
+
+  @Cron('*/5 9-16 * * 1-5')
+  async cronStockIndexLists() {
+    const stockLists = await Promise.all([
+      this.getDomesticStockIndexListByCode('0001'), // 코스피
+      this.getDomesticStockIndexListByCode('1001'), // 코스닥
+    ]);
+
+    this.stockGateway.sendStockIndexListToClient(stockLists);
+  }
 
   async getDomesticStockIndexListByCode(code: string) {
     const accessToken = await this.getAccessToken();
