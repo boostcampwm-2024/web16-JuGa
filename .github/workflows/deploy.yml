@@ -7,7 +7,7 @@ on:
     branches: [main, alpha]
 
 env:
-  DOCKER_IMAGE: juga-docker
+  DOCKER_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/juga-docker
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
@@ -68,9 +68,9 @@ jobs:
           key: ${{ secrets.NCP_SERVER_SSH_KEY }}
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-            docker stop my-app || true
-            docker rm my-app || true
+            docker stop juga-docker || true
+            docker rm juga-docker || true
             docker run -d \
-              --name my-app \
+              --name juga-docker \
               -p 8080:8080 \
               ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
