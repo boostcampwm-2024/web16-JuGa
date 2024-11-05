@@ -11,6 +11,15 @@ env:
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
+  login:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
   build-and-deploy:
     runs-on: ubuntu-latest
 
@@ -23,12 +32,6 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: ./BE/package-lock.json
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Install dependencies
         working-directory: ./BE
