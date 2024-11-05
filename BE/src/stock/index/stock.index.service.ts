@@ -33,6 +33,35 @@ export class StockIndexService {
     };
   }
 
+  async getDomesticStockIndexValueByCode(code: string) {
+    const accessToken = await this.getAccessToken();
+
+    const url =
+      'https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-index-price';
+    const queryParams = `?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_ISCD=${code}`;
+
+    const response = await fetch(url + queryParams, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        authorization: `Bearer ${accessToken}`,
+        appkey: process.env.APP_KEY,
+        appsecret: process.env.APP_SECRET,
+        tr_id: 'FHPUP02100000',
+        custtype: 'P',
+      },
+    });
+
+    const result = await response.json();
+    return {
+      code,
+      value: result.output.bstp_nmix_prpr,
+      diff: result.output.bstp_nmix_prdy_vrss,
+      diffRate: result.output.bstp_nmix_prdy_vrss,
+      sign: result.output.prdy_vrss_sign,
+    };
+  }
+
   private async getAccessToken() {
     if (!this.accessToken || this.expireDateTime <= Date.now()) {
       const url = 'https://openapivts.koreainvestment.com:29443/oauth2/tokenP';

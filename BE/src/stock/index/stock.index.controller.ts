@@ -19,4 +19,14 @@ export class StockIndexController {
 
     this.stockGateway.sendStockIndexListToClient(stockLists);
   }
+
+  @Interval(5000)
+  async cronStockIndexValue() {
+    const stockValueList = await Promise.all([
+      this.stockIndexService.getDomesticStockIndexValueByCode('0001'), // 코스피
+      this.stockIndexService.getDomesticStockIndexValueByCode('1001'), // 코스닥
+    ]);
+
+    this.stockGateway.sendStockIndexValueToClient(stockValueList);
+  }
 }
