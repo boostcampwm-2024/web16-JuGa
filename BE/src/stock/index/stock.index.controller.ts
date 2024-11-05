@@ -29,4 +29,19 @@ export class StockIndexController {
 
     this.stockGateway.sendStockIndexValueToClient(stockValueList);
   }
+
+  @Get()
+  async getStockIndex() {
+    const stockLists = await Promise.all([
+      this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피
+      this.stockIndexService.getDomesticStockIndexListByCode('1001'), // 코스닥
+      this.stockIndexService.getDomesticStockIndexValueByCode('0001'), // 코스피
+      this.stockIndexService.getDomesticStockIndexValueByCode('1001'), // 코스닥
+    ]);
+
+    return {
+      indexList: [stockLists[0], stockLists[1]],
+      indexValue: [stockLists[2], stockLists[3]]
+    }
+  }
 }
