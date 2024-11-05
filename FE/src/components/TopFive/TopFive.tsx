@@ -6,8 +6,8 @@ export default function TopFive() {
     <div className="gap-4 flex flex-col">
       <Nav />
       <div className={"flex flex-row gap-[64px]"}>
-        <List />
-        <List />
+        <List listTitle={"급상승 Top 5"} />
+        <List listTitle={"급하락 Top 5"} />
       </div>
     </div>
   );

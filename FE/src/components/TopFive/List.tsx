@@ -7,7 +7,11 @@ interface Stock {
   index: number;
 }
 
-export default function List() {
+interface ListProps {
+  listTitle: string;
+}
+
+export default function List({ listTitle }: ListProps) {
   const topStocks: Stock[] = [
     { name: "삼성전자", price: 76800, change: 2.1, index: 1 },
     { name: "SK하이닉스", price: 156000, change: -1.2, index: 2 },
@@ -18,6 +22,9 @@ export default function List() {
 
   return (
     <div className="w-[520px] rounded-lg bg-white">
+      <div className={"flex text-xl font-bold gap-1 px-6 my-5"}>
+        {listTitle}
+      </div>
       <div className="flex flex-row px-4 py-3 text-sm font-medium text-gray-600">
         <div className="w-[260px] text-start">종목</div>
         <div className="w-[130px] text-right">현재가</div>
