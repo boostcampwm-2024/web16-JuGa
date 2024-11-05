@@ -5,7 +5,10 @@ export default function Home() {
   return (
     <>
       <Header />
-      <TopFive />
+      <div className={"pt-[60px]"}>
+        <div>지수 정보들</div>
+        <TopFive />
+      </div>
     </>
   );
 }

@@ -3,7 +3,7 @@ import Nav from "./Nav";
 
 export default function TopFive() {
   return (
-    <div className="gap-4 flex flex-col pt-[60px]">
+    <div className="gap-4 flex flex-col">
       <Nav />
       <div className={"flex flex-row gap-[64px]"}>
         <List listTitle={"급상승 Top 5"} />
