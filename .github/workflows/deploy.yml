@@ -33,20 +33,25 @@ jobs:
           cache-dependency-path: ./BE/package-lock.json
 
       - name: Install dependencies
+        working-directory: ./BE
         run: npm ci
 
       - name: Run tests
+        working-directory: ./BE
         run: npm test
         env:
           CI: true
 
       - name: Run linter
+        working-directory: ./BE
         run: npm run lint
 
       - name: Build application
+        working-directory: ./BE
         run: npm run build
 
       - name: Build and Push Docker Image
+        working-directory: ./BE
         env:
           NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
           NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
