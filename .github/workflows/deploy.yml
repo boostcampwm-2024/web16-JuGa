@@ -69,7 +69,7 @@ jobs:
           port: 22
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-            docker stop ${{ env.DOCKER_IMAGE }} || true
+            docker stop juga-docker || true
             docker rm juga-docker || true
             docker run -d \
               --name juga-docker \
