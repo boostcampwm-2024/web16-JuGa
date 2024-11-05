@@ -66,9 +66,10 @@ jobs:
           host: ${{ secrets.NCP_SERVER_HOST }}
           username: ${{ secrets.NCP_SERVER_USERNAME }}
           key: ${{ secrets.NCP_SERVER_SSH_KEY }}
+          port: 22
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-            docker stop juga-docker || true
+            docker stop ${{ env.DOCKER_IMAGE }} || true
             docker rm juga-docker || true
             docker run -d \
               --name juga-docker \
