@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { StockIndexController } from './stock/index/stock.index.controller';
+import { StockIndexService } from './stock/index/stock.index.service';
+import { StockGateway } from './websocket/stock.gateway';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql', // 데이터베이스 타입
@@ -18,7 +23,7 @@ import { AppService } from './app.service';
       synchronize: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, StockIndexController],
+  providers: [AppService, StockIndexService, StockGateway],
 })
 export class AppModule {}
