@@ -7,18 +7,10 @@ on:
     branches: [main, alpha]
 
 env:
-  DOCKER_IMAGE: juga-docker
+  DOCKER_IMAGE: BE
+  DOCKER_TAG: ${{ github.sha }}
 
 jobs:
-  login:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
   build-and-deploy:
     runs-on: ubuntu-latest
 
@@ -31,6 +23,12 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: ./BE/package-lock.json
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Install dependencies
         working-directory: ./BE
@@ -56,8 +54,11 @@ jobs:
           NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
           NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
         run: |
-          docker build -t $DOCKER_IMAGE .
-          docker push $DOCKER_IMAGE:latest
+          docker build -t ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} .
+          docker tag ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.DOCKER_IMAGE }}:latest
+
+          docker push ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+          docker push ${{ env.DOCKER_IMAGE }}:latest
 
       - name: Deploy to NCP Server
         uses: appleboy/ssh-action@master
