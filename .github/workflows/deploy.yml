@@ -70,8 +70,8 @@ jobs:
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
             docker stop ${{ env.DOCKER_IMAGE }} || true
-            docker rm juga-docker || true
+            docker rm pjm2476/juga-docker || true
             docker run -d \
-              --name juga-docker \
-              -p 8080:8080 \
+              --name pjm2476/juga-docker \
+              -p 3000:3000 \
               ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
