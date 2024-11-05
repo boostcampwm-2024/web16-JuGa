@@ -7,7 +7,7 @@ on:
     branches: [main, alpha]
 
 env:
-  DOCKER_IMAGE: BE
+  DOCKER_IMAGE: juga-docker
 
 jobs:
   login:
