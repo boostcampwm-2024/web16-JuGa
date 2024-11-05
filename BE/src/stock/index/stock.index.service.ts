@@ -27,7 +27,7 @@ export class StockIndexService {
     const result = await response.json();
     return {
       code,
-      indexList: result.output.map((element) => {
+      chart: result.output.map((element) => {
         return { time: element.bsop_hour, value: element.bstp_nmix_prpr };
       }),
     };
