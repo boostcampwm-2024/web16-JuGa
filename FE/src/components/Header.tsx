@@ -1,3 +1,36 @@
 export default function Header() {
-  return <div>header</div>;
+  return (
+    <header className='fixed left-0 top-0 h-[60px] w-full'>
+      <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-[88px]'>
+        <div className='flex items-center gap-2'>
+          <img src={'../public/Logo.png'} className={'h-[32px]'} />
+          <h1 className='text-xl font-bold text-juga-grayscale-black'>JuGa</h1>
+        </div>
+
+        <div className='flex items-center gap-8'>
+          <nav className='flex items-center gap-6 text-sm font-bold text-juga-grayscale-500'>
+            <button className='px-0.5 py-2'>홈</button>
+            <button className='px-0.5 py-2'>랭킹</button>
+            <button className='px-0.5 py-2'>마이페이지</button>
+          </nav>
+          <div className='relative'>
+            <input
+              type='text'
+              placeholder='Search...'
+              className='h-[36px] w-[280px] rounded-lg bg-juga-grayscale-50 px-4 py-2'
+            />
+          </div>
+        </div>
+
+        <div className='flex items-center gap-4'>
+          <button className='px-4 py-2 text-sm text-juga-grayscale-500'>
+            로그인
+          </button>
+          <button className='rounded-lg bg-juga-grayscale-black px-4 py-2 text-sm text-white'>
+            회원가입
+          </button>
+        </div>
+      </div>
+    </header>
+  );
 }
