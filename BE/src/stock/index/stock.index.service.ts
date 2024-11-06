@@ -42,6 +42,7 @@ export class StockIndexService {
     });
 
     const result: StockIndexChartInterface = await response.json();
+    if (result.rt_cd !== '0') throw new Error('유효하지 않은 토큰');
 
     return new StockIndexListElementDto(
       code,
@@ -102,7 +103,7 @@ export class StockIndexService {
       this.expireDateTime = new Date(
         result.access_token_token_expired,
       ).getTime();
-      return this.accessToken;
+      return result.access_token;
     }
 
     return this.accessToken;
@@ -120,6 +121,9 @@ interface AccessTokenInterface {
 
 interface StockIndexChartInterface {
   output: StockIndexChartElementInterface[];
+  rt_cd: string;
+  msg_cd: string;
+  msg1: string;
 }
 
 interface StockIndexChartElementInterface {

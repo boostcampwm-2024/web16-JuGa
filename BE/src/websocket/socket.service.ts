@@ -26,7 +26,7 @@ export class SocketService implements OnModuleInit {
     this.socket.onmessage = (event) => {
       const data =
         typeof event.data === 'string'
-          ? event.data
+          ? event.data.split('|')
           : JSON.stringify(event.data);
       if (data.length < 2) return;
 
