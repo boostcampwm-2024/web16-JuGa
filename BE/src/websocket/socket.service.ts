@@ -24,10 +24,13 @@ export class SocketService implements OnModuleInit {
     };
 
     this.socket.onmessage = (event) => {
-      const data = event.data.toString().split('|');
+      const data =
+        typeof event.data === 'string'
+          ? event.data
+          : JSON.stringify(event.data);
       if (data.length < 2) return;
 
-      this.tradeHandler[data[1]](data[3]);
+      (this.tradeHandler[data[1]] as (data) => void)(data[3]);
     };
   }
 
@@ -58,7 +61,7 @@ export class SocketService implements OnModuleInit {
         secretkey: process.env.APP_SECRET,
       }),
     });
-    const result = await response.json();
+    const result: SocketConnectTokenInterface = await response.json();
     return result.approval_key;
   }
 
@@ -80,4 +83,10 @@ export class SocketService implements OnModuleInit {
       }),
     );
   }
+}
+
+// interfaces
+
+interface SocketConnectTokenInterface {
+  approval_key: string;
 }
