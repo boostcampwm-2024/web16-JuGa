@@ -4,10 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { StockIndexController } from './stock/index/stock.index.controller';
-import { StockIndexService } from './stock/index/stock.index.service';
-import { StockGateway } from './websocket/gateway/stock.gateway';
+import { StockIndexModule } from './stock/index/stock.index.module';
 import { SocketService } from './websocket/socket.service';
+import { SocketGateway } from './websocket/socket.gateway';
 
 @Module({
   imports: [
@@ -23,8 +22,9 @@ import { SocketService } from './websocket/socket.service';
       entities: [],
       synchronize: true,
     }),
+    StockIndexModule,
   ],
-  controllers: [AppController, StockIndexController],
-  providers: [AppService, StockIndexService, StockGateway, SocketService],
+  controllers: [AppController],
+  providers: [AppService, SocketService, SocketGateway],
 })
 export class AppModule {}

@@ -1,8 +1,8 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
-@WebSocketGateway({ namespace: 'stocks', cors: { origin: '*' } })
-export class StockGateway {
+@WebSocketGateway({ namespace: 'socket', cors: { origin: '*' } })
+export class SocketGateway {
   @WebSocketServer()
   private server: Server;
 

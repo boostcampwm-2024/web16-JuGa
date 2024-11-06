@@ -1,7 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WebSocket } from 'ws';
-import { StockGateway } from './gateway/stock.gateway';
+import { Cron } from '@nestjs/schedule';
+import { SocketGateway } from './socket.gateway';
 import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
+import { StockIndexService } from '../stock/index/stock.index.service';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -10,7 +12,10 @@ export class SocketService implements OnModuleInit {
     H0UPCNT0: this.handleStockIndexValue.bind(this),
   };
 
-  constructor(private readonly stockGateway: StockGateway) {}
+  constructor(
+    private readonly stockIndexGateway: SocketGateway,
+    private readonly stockIndexService: StockIndexService,
+  ) {}
 
   async onModuleInit() {
     const socketConnectionKey = await this.getSocketConnectionKey();
@@ -34,9 +39,19 @@ export class SocketService implements OnModuleInit {
     };
   }
 
+  @Cron('*/5 9-16 * * 1-5')
+  async cronStockIndexLists() {
+    const stockLists = await Promise.all([
+      this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피
+      this.stockIndexService.getDomesticStockIndexListByCode('1001'), // 코스닥
+    ]);
+
+    this.stockIndexGateway.sendStockIndexListToClient(stockLists);
+  }
+
   private handleStockIndexValue(responseData: string) {
     const responseList = responseData.split('^');
-    this.stockGateway.sendStockIndexValueToClient(
+    this.stockIndexGateway.sendStockIndexValueToClient(
       new StockIndexValueElementDto(
         responseList[0],
         responseList[2],
