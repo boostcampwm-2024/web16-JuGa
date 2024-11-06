@@ -26,9 +26,9 @@ export class StockIndexController {
       this.stockIndexService.getDomesticStockIndexValueByCode('1001'), // 코스닥
     ]);
 
-    return {
-      indexList: [stockLists[0], stockLists[1]],
-      indexValue: [stockLists[2], stockLists[3]],
-    };
+    return new StockIndexResponseDto(
+      [stockLists[0], stockLists[1]],
+      [stockLists[2], stockLists[3]],
+    );
   }
 }

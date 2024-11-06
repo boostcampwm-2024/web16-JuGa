@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WebSocket } from 'ws';
 import { StockGateway } from './gateway/stock.gateway';
+import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -32,13 +33,15 @@ export class SocketService implements OnModuleInit {
 
   private handleStockIndexValue(responseData: string) {
     const responseList = responseData.split('^');
-    this.stockGateway.sendStockIndexValueToClient({
-      code: responseList[0],
-      value: responseList[2],
-      diff: responseList[4],
-      diffRate: responseList[9],
-      sign: responseList[3],
-    });
+    this.stockGateway.sendStockIndexValueToClient(
+      new StockIndexValueElementDto(
+        responseList[0],
+        responseList[2],
+        responseList[4],
+        responseList[9],
+        responseList[3],
+      ),
+    );
   }
 
   private async getSocketConnectionKey() {

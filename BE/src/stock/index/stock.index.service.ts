@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { StockGateway } from '../../websocket/gateway/stock.gateway';
+import { StockIndexListChartElementDto } from './dto/stock.index.list.chart.element.dto';
+import { StockIndexListElementDto } from './dto/stock.index.list.element.dto';
+import { StockIndexValueElementDto } from './dto/stock.index.value.element.dto';
 
 @Injectable()
 export class StockIndexService {
@@ -39,12 +42,16 @@ export class StockIndexService {
     });
 
     const result = await response.json();
-    return {
+
+    return new StockIndexListElementDto(
       code,
-      chart: result.output.map((element) => {
-        return { time: element.bsop_hour, value: element.bstp_nmix_prpr };
+      result.output.map((element) => {
+        return new StockIndexListChartElementDto(
+          element.bsop_hour,
+          element.bstp_nmix_prpr,
+        );
       }),
-    };
+    );
   }
 
   async getDomesticStockIndexValueByCode(code: string) {
@@ -67,13 +74,13 @@ export class StockIndexService {
     });
 
     const result = await response.json();
-    return {
+    return new StockIndexValueElementDto(
       code,
-      value: result.output.bstp_nmix_prpr,
-      diff: result.output.bstp_nmix_prdy_vrss,
-      diffRate: result.output.bstp_nmix_prdy_vrss,
-      sign: result.output.prdy_vrss_sign,
-    };
+      result.output.bstp_nmix_prpr,
+      result.output.bstp_nmix_prdy_vrss,
+      result.output.bstp_nmix_prdy_vrss,
+      result.output.prdy_vrss_sign,
+    );
   }
 
   private async getAccessToken() {
