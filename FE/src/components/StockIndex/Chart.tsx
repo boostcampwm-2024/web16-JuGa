@@ -1,58 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
-import { drawChart } from '../drawChart.ts';
+import { drawChart } from 'utils/chart';
+
+const X_LENGTH = 79;
 
 type StockIndexChartProps = {
   name: string;
 };
 
-type ChartData = [string, number][];
-
 export function Chart({ name }: StockIndexChartProps) {
-  const initialData: ChartData = [
-    ['09:00', 50],
-    ['09:05', 54],
-  ];
-
-  const [data, setData] = useState<ChartData>(initialData);
+  const [prices, setPrices] = useState<number[]>([50, 54]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const getNextTime = (currentTime: string): string => {
-    const [hours, minutes] = currentTime.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes + 5;
-    const newHours = Math.floor(totalMinutes / 60);
-    const newMinutes = totalMinutes % 60;
-    return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
-  };
-
   useEffect(() => {
-    let currentTime = data[data.length - 1][0];
-
     const interval = setInterval(() => {
-      if (typeof currentTime === 'string') {
-        currentTime = getNextTime(currentTime);
-      }
-
-      if (currentTime > '15:30') {
+      if (prices.length === X_LENGTH) {
         clearInterval(interval);
         return;
       }
-
-      setData((prev) => [
-        ...prev,
-        [currentTime, Math.floor(Math.random() * 50) + 25],
-      ]);
+      setPrices((prev) => [...prev, Math.floor(Math.random() * 50) + 25]);
     }, 500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [prices.length]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!ctx) return;
 
-    drawChart(ctx, data);
-  }, [data]);
+    drawChart(ctx, prices);
+  }, [prices]);
 
   return (
     <div className='flex h-[200px] w-[500px] items-center rounded-lg bg-juga-grayscale-50 p-5'>
