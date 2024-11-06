@@ -1,15 +1,20 @@
-import { useEffect, useState } from 'react';
-import { drawChart } from './drawChart.ts';
+import { useEffect, useRef, useState } from 'react';
+import { drawChart } from '../drawChart.ts';
+
+type StockIndexChartProps = {
+  name: string;
+};
 
 type ChartData = [string, number][];
 
-export function Chart() {
+export function Chart({ name }: StockIndexChartProps) {
   const initialData: ChartData = [
     ['09:00', 50],
     ['09:05', 54],
   ];
 
   const [data, setData] = useState<ChartData>(initialData);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const getNextTime = (currentTime: string): string => {
     const [hours, minutes] = currentTime.split(':').map(Number);
@@ -42,25 +47,26 @@ export function Chart() {
   }, []);
 
   useEffect(() => {
-    const canvas = document.getElementById('lineChart') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
     if (!ctx) return;
 
     drawChart(ctx, data);
   }, [data]);
 
   return (
-    <div className='flex h-[200px] w-[500px] items-center justify-between rounded-lg bg-juga-grayscale-50 px-5 py-[18px]'>
-      <div className={'w-[50px] text-sm'}>
-        <div>코스피</div>
-        <div>100,000</div>
-        <div>-10.0%</div>
+    <div className='flex h-[200px] w-[500px] items-center rounded-lg bg-juga-grayscale-50 p-5'>
+      <div className='flex flex-col items-start justify-center flex-1 h-full gap-1 text-sm'>
+        <p className='text-lg font-semibold'>{name}</p>
+        <p className='text-2xl font-bold'>2562.4</p>
+        <p className='font-semibold text-juga-blue-40'>-31.55(-1.2%)</p>
       </div>
       <canvas
         id='lineChart'
+        ref={canvasRef}
         width={600}
         height={300}
-        className='h-[150px] w-[300px]'
+        className='flex-1 h-full'
       />
     </div>
   );
