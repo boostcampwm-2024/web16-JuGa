@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserRepository } from './user.repository';
-import { AuthCredentialsDto } from './dto/authCredentials.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UnauthorizedException } from '@nestjs/common';
+import { UserRepository } from './user.repository';
+import { AuthCredentialsDto } from './dto/authCredentials.dto';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -26,9 +26,8 @@ export class AuthService {
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { email };
       const accessToken = this.jwtService.sign(payload);
-      return { accessToken: accessToken };
-    } else {
-      throw new UnauthorizedException('Please check your login credentials');
+      return { accessToken };
     }
+    throw new UnauthorizedException('Please check your login credentials');
   }
 }
