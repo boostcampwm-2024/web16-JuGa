@@ -86,6 +86,7 @@ export class TopFiveService {
   }
 
   private async requestApi(params: StockRankigRequestDto) {
+    // eslint-disable-next-line no-useless-catch
     try {
       const token = await this.getAccessToken();
 
@@ -120,18 +121,19 @@ export class TopFiveService {
       );
       return response.data;
     } catch (error) {
-      console.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
+      // console.error('API Error Details:', {
+      //   status: error.response?.status,
+      //   statusText: error.response?.statusText,
+      //   data: error.response?.data,
+      //   headers: error.response?.config?.headers, // 실제 요청 헤더
+      //   message: error.message,
+      // });
       throw error;
     }
   }
 
   async getMarketRanking(marketType: MarketType) {
+    // eslint-disable-next-line no-useless-catch
     try {
       const params = new StockRankigRequestDto();
       params.fid_cond_mrkt_div_code = 'J';
@@ -169,13 +171,13 @@ export class TopFiveService {
 
       return response;
     } catch (error) {
-      console.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
+      // console.error('API Error Details:', {
+      //   status: error.response?.status,
+      //   statusText: error.response?.statusText,
+      //   data: error.response?.data,
+      //   headers: error.response?.config?.headers, // 실제 요청 헤더
+      //   message: error.message,
+      // });
       throw error;
     }
   }
