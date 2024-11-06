@@ -18,14 +18,4 @@ export class UserRepository extends Repository<User> {
     const user = this.create({ email, password: hashedPassword });
     await this.save(user);
   }
-
-  async loginUser(authCredentialsDto: AuthCredentialsDto) {
-    const { email, password } = authCredentialsDto;
-    const user = await this.findOne({ where: { email } });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return 'Login successful';
-    }
-
-    throw new UnauthorizedException('Login failed');
-  }
 }
