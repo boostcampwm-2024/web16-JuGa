@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^8.0.1",
     "@nestjs/typeorm": "^10.0.2",
+    "@types/passport-jwt": "^4.0.1",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
