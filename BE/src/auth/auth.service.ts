@@ -10,4 +10,8 @@ export class AuthService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
   ) {}
+
+  async signUp(authCredentialsDto: AuthCredentialsDto) {
+    return this.userRepository.registerUser(authCredentialsDto);
+  }
 }
