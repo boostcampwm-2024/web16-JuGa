@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-class StockIndexListChartElementDto {
-  @ApiProperty({ description: 'HHMMSS', example: '130500' })
-  time: string;
-
-  @ApiProperty({ description: '주가 지수' })
-  value: string;
-}
+import { StockIndexListChartElementDto } from './stock.index.list.chart.element.dto';
 
 export class StockIndexListElementDto {
   @ApiProperty({ description: '코스피: 0001, 코스닥: 1001' })
