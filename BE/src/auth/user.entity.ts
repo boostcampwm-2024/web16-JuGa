@@ -1,8 +1,8 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
@@ -11,9 +11,9 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: false })
   tutorial: boolean;
 
-  @Column()
-  kakaoId: bigint;
+  @Column({ default: -1 })
+  kakaoId: number;
 }
