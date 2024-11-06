@@ -6,7 +6,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StockIndexController } from './stock/index/stock.index.controller';
 import { StockIndexService } from './stock/index/stock.index.service';
-import { StockGateway } from './websocket/stock.gateway';
+import { StockGateway } from './websocket/gateway/stock.gateway';
+import { SocketService } from './websocket/socket.service';
 
 @Module({
   imports: [
@@ -24,6 +25,6 @@ import { StockGateway } from './websocket/stock.gateway';
     }),
   ],
   controllers: [AppController, StockIndexController],
-  providers: [AppService, StockIndexService, StockGateway],
+  providers: [AppService, StockIndexService, StockGateway, SocketService],
 })
 export class AppModule {}

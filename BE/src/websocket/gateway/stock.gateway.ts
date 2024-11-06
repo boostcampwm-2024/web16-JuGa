@@ -4,7 +4,7 @@ import { Server } from 'socket.io';
 @WebSocketGateway({ namespace: 'stocks', cors: { origin: '*' } })
 export class StockGateway {
   @WebSocketServer()
-  server: Server;
+  private server: Server;
 
   sendStockIndexListToClient(stockIndex) {
     this.server.emit('index', stockIndex);

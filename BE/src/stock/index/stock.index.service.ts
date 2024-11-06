@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import {Cron} from "@nestjs/schedule";
-import {StockGateway} from "../../websocket/stock.gateway";
+import { Cron } from '@nestjs/schedule';
+import { StockGateway } from '../../websocket/gateway/stock.gateway';
 
 @Injectable()
 export class StockIndexService {

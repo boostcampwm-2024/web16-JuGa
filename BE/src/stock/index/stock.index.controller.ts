@@ -1,24 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
-import { Cron, Interval } from '@nestjs/schedule';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockIndexService } from './stock.index.service';
-import { StockGateway } from '../../websocket/stock.gateway';
 import { StockIndexResponseDto } from './dto/stock.index.response.dto';
 
 @Controller('/api/stock/index')
 @ApiTags('주가 지수 API')
 export class StockIndexController {
   constructor(private readonly stockIndexService: StockIndexService) {}
-
-  @Interval(5000)
-  async cronStockIndexValue() {
-    const stockValueList = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexValueByCode('0001'), // 코스피
-      this.stockIndexService.getDomesticStockIndexValueByCode('1001'), // 코스닥
-    ]);
-
-    this.stockGateway.sendStockIndexValueToClient(stockValueList);
-  }
 
   @Get()
   @ApiOperation({
