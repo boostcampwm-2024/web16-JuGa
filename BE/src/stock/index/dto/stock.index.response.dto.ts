@@ -12,13 +12,13 @@ export class StockIndexResponseDto {
   }
 
   @ApiProperty({
-    description: '주가 지수 차트 정보 (코스피, 코스닥)',
+    description: '주가 지수 차트 정보 (코스피, 코스닥, 코스피200, KSQ150)',
     type: [StockIndexListElementDto],
   })
   indexList: StockIndexListElementDto[];
 
   @ApiProperty({
-    description: '주가 지수 실시간 값 정보 (코스피, 코스닥)',
+    description: '주가 지수 실시간 값 정보 (코스피, 코스닥, 코스피200, KSQ150)',
     type: [StockIndexValueElementDto],
   })
   indexValue: StockIndexValueElementDto[];

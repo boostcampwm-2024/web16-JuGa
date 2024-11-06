@@ -22,11 +22,15 @@ export class StockIndexController {
     const stockLists = await Promise.all([
       this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피
       this.stockIndexService.getDomesticStockIndexListByCode('1001'), // 코스닥
+      this.stockIndexService.getDomesticStockIndexListByCode('2001'), // 코스피200
+      this.stockIndexService.getDomesticStockIndexListByCode('3003'), // KSQ150
     ]);
 
     const stockValues = await Promise.all([
       this.stockIndexService.getDomesticStockIndexValueByCode('0001'), // 코스피
       this.stockIndexService.getDomesticStockIndexValueByCode('1001'), // 코스닥
+      this.stockIndexService.getDomesticStockIndexValueByCode('2001'), // 코스피200
+      this.stockIndexService.getDomesticStockIndexValueByCode('3003'), // KSQ150
     ]);
 
     return new StockIndexResponseDto(stockLists, stockValues);

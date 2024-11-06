@@ -24,8 +24,10 @@ export class SocketService implements OnModuleInit {
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
-      this.registerStockIndexByCode('0001', socketConnectionKey);
-      this.registerStockIndexByCode('1001', socketConnectionKey);
+      this.registerStockIndexByCode('0001', socketConnectionKey); // 코스피
+      this.registerStockIndexByCode('1001', socketConnectionKey); // 코스닥
+      this.registerStockIndexByCode('2001', socketConnectionKey); // 코스피200
+      this.registerStockIndexByCode('3003', socketConnectionKey); // KSQ150
     };
 
     this.socket.onmessage = (event) => {
@@ -44,6 +46,8 @@ export class SocketService implements OnModuleInit {
     const stockLists = await Promise.all([
       this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피
       this.stockIndexService.getDomesticStockIndexListByCode('1001'), // 코스닥
+      this.stockIndexService.getDomesticStockIndexListByCode('2001'), // 코스피200
+      this.stockIndexService.getDomesticStockIndexListByCode('3003'), // KSQ150
     ]);
 
     this.stockIndexGateway.sendStockIndexListToClient(stockLists);

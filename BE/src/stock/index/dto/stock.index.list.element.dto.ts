@@ -7,7 +7,9 @@ export class StockIndexListElementDto {
     this.chart = chart;
   }
 
-  @ApiProperty({ description: '코스피: 0001, 코스닥: 1001' })
+  @ApiProperty({
+    description: '코스피: 0001, 코스닥: 1001, 코스피200: 2001, KSQ150: 3003',
+  })
   code: string;
 
   @ApiProperty({ type: [StockIndexListChartElementDto] })
