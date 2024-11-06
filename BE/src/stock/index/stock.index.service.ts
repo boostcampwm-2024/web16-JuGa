@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { SocketGateway } from '../../websocket/socket.gateway';
 import { StockIndexListChartElementDto } from './dto/stock.index.list.chart.element.dto';
 import { StockIndexListElementDto } from './dto/stock.index.list.element.dto';
 import { StockIndexValueElementDto } from './dto/stock.index.value.element.dto';
