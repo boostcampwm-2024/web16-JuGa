@@ -4,10 +4,10 @@ on:
   push:
     branches: [back/main, front/main]
   pull_request:
-    branches: [main, back/main, front/main, dev]
+    branches: [main, back/main, dev]
 
 jobs:
-  test-and-build:
+  BE test-and-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,15 +20,44 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: ./BE
         run: npm ci
 
       - name: Run tests
         run: npm test
+        working-directory: ./BE
         env:
           CI: true
 
       - name: Run linter
+        working-directory: ./BE
         run: npm run lint
 
       - name: Build application
+        working-directory: ./BE
+        run: npm run build
+
+jobs:
+  FE test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: ./FE
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./FE
+        run: npm run lint
+
+      - name: Build application
+        working-directory: ./FE
         run: npm run build
