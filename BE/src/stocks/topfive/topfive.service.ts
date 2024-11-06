@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { StockRankigRequestDto } from './dto/stock-ranking-request.dto';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
@@ -56,6 +56,8 @@ export class TopFiveService {
     baseUrl: string;
   };
 
+  private readonly logger = new Logger();
+
   constructor(private readonly config: ConfigService) {
     this.koreaInvestmentConfig = {
       appKey: this.config.get<string>('KOREA_INVESTMENT_APP_KEY'),
@@ -86,7 +88,6 @@ export class TopFiveService {
   }
 
   private async requestApi(params: StockRankigRequestDto) {
-    // eslint-disable-next-line no-useless-catch
     try {
       const token = await this.getAccessToken();
 
@@ -121,19 +122,18 @@ export class TopFiveService {
       );
       return response.data;
     } catch (error) {
-      // console.error('API Error Details:', {
-      //   status: error.response?.status,
-      //   statusText: error.response?.statusText,
-      //   data: error.response?.data,
-      //   headers: error.response?.config?.headers, // 실제 요청 헤더
-      //   message: error.message,
-      // });
+      this.logger.error('API Error Details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.config?.headers,
+        message: error.message,
+      });
       throw error;
     }
   }
 
   async getMarketRanking(marketType: MarketType) {
-    // eslint-disable-next-line no-useless-catch
     try {
       const params = new StockRankigRequestDto();
       params.fid_cond_mrkt_div_code = 'J';
@@ -171,13 +171,13 @@ export class TopFiveService {
 
       return response;
     } catch (error) {
-      // console.error('API Error Details:', {
-      //   status: error.response?.status,
-      //   statusText: error.response?.statusText,
-      //   data: error.response?.data,
-      //   headers: error.response?.config?.headers, // 실제 요청 헤더
-      //   message: error.message,
-      // });
+      this.logger.error('API Error Details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.config?.headers, // 실제 요청 헤더
+        message: error.message,
+      });
       throw error;
     }
   }
