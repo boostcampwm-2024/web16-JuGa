@@ -1,5 +1,5 @@
-// 9:00 ~ 15:30 까지 5분 단위의 총 개수
-const X_LENGTH = 79;
+const X_LENGTH = 79; // 9:00 ~ 15:30 까지 5분 단위의 총 개수
+const MIDDLE = 50; // 상한가, 하한가를 나누는 기준
 
 export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
   const canvas = ctx.canvas;
@@ -31,6 +31,8 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
         chartHeight -
         (chartHeight * (point - yMin)) / (yMax - yMin);
 
+      console.log(point);
+
       if (i === 0) {
         ctx.moveTo(x, y);
       } else {
@@ -38,7 +40,12 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
       }
     });
 
-    ctx.strokeStyle = '#2175F3';
+    const currentValue = data[data.length - 1];
+    if (currentValue >= MIDDLE) {
+      ctx.strokeStyle = '#FF3700';
+    } else {
+      ctx.strokeStyle = '#2175F3';
+    }
     ctx.lineWidth = 2;
     ctx.stroke();
   }
