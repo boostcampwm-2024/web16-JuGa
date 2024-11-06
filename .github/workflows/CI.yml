@@ -38,7 +38,6 @@ jobs:
         working-directory: ./BE
         run: npm run build
 
-jobs:
   FE-test-and-build:
     runs-on: ubuntu-latest
 
