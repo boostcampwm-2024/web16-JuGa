@@ -1,8 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Cron } from '@nestjs/schedule';
 import { StockIndexService } from './stock.index.service';
 import { StockIndexResponseDto } from './dto/stock.index.response.dto';
 import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
+import { SocketGateway } from '../../websocket/socket.gateway';
 
 @Controller('/api/stocks/index')
 @ApiTags('주가 지수 API')
@@ -10,6 +12,7 @@ export class StockIndexController {
   constructor(
     private readonly stockIndexService: StockIndexService,
     private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly socketGateway: SocketGateway,
   ) {}
 
   @Get()
@@ -64,5 +67,31 @@ export class StockIndexController {
     ]);
 
     return new StockIndexResponseDto(stockLists, stockValues);
+  }
+
+  @Cron('*/1 9-16 * * 1-5')
+  async cronStockIndexLists() {
+    const accessToken = await this.koreaInvestmentService.getAccessToken();
+
+    const stockLists = await Promise.all([
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '0001',
+        accessToken,
+      ), // 코스피
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '1001',
+        accessToken,
+      ), // 코스닥
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '2001',
+        accessToken,
+      ), // 코스피200
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '3003',
+        accessToken,
+      ), // KSQ150
+    ]);
+
+    this.socketGateway.sendStockIndexListToClient(stockLists);
   }
 }
