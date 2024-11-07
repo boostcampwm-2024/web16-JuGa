@@ -16,7 +16,8 @@ export class StockIndexService {
       accessToken,
     );
 
-    if (result.rt_cd !== '0') throw new Error('유효하지 않은 토큰');
+    if (result.rt_cd !== '0')
+      throw new Error('데이터를 정상적으로 조회하지 못했습니다.');
 
     return new StockIndexListElementDto(
       code,
