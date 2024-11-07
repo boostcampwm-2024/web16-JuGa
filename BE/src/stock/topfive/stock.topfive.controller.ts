@@ -1,7 +1,8 @@
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Controller, Get, Query } from '@nestjs/common';
-import { StockTopfiveService, MarketType } from './stock.topfive.service';
+import { StockTopfiveService } from './stock.topfive.service';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
+import { MarketType } from '../enum/MarketType';
 
 @Controller('/api/stocks')
 export class StockTopfiveController {
