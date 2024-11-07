@@ -24,6 +24,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./BE/package-lock.json
 
+      - name: Create .env file
+        run: |
+          touch ./BE/.env
+          echo "${{ secrets.ENV }}" > ./BE/.env
+
       - name: Install dependencies
         working-directory: ./BE
         run: npm ci
