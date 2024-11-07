@@ -1,13 +1,20 @@
 import useLoginModalStore from 'store/useLoginModalStore';
 import Input from './Input';
 import { ChatBubbleOvalLeftIcon } from '@heroicons/react/16/solid';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { login } from 'service/auth';
+import useAuthStore from 'store/authStore';
 
 export default function Login() {
   const { isOpen, toggleModal } = useLoginModalStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setAccessToken } = useAuthStore();
+
+  useEffect(() => {
+    setEmail('');
+    setPassword('');
+  }, [isOpen]);
 
   if (!isOpen) return;
 
@@ -19,7 +26,8 @@ export default function Login() {
       return;
     }
 
-    console.log(res);
+    setAccessToken(res.accessToken);
+    toggleModal();
   };
 
   return (
