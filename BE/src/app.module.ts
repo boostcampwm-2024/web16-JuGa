@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { StockIndexModule } from './stock/index/stock.index.module';
 import { SocketService } from './websocket/socket.service';
 import { SocketGateway } from './websocket/socket.gateway';
+import { TopfiveModule } from './stocks/topfive/topfive.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SocketGateway } from './websocket/socket.gateway';
       synchronize: true,
     }),
     StockIndexModule,
+    TopfiveModule,
   ],
   controllers: [AppController],
   providers: [AppService, SocketService, SocketGateway],
