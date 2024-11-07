@@ -16,4 +16,10 @@ export class User extends BaseEntity {
 
   @Column({ default: -1 })
   kakaoId: number;
+
+  @Column({ default: '' })
+  currentRefreshToken: string;
+
+  @Column({ type: 'datetime', nullable: true })
+  currentRefreshTokenExpiresAt: Date;
 }

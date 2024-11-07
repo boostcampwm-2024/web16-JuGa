@@ -10,21 +10,13 @@ import { SocketService } from './websocket/socket.service';
 import { SocketGateway } from './websocket/socket.gateway';
 import { StockTopfiveModule } from './stock/topfive/stock.topfive.module';
 import { KoreaInvestmentModule } from './koreaInvestment/korea.investment.module';
+import { typeOrmConfig } from './configs/typeorm.config';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'mysql', // 데이터베이스 타입
-      host: process.env.DB_HOST,
-      port: 3306,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWD,
-      database: process.env.DB_DATABASE,
-      entities: [__dirname + '/../**/*.entity.{js,ts}'],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     KoreaInvestmentModule,
     AuthModule,
     StockIndexModule,

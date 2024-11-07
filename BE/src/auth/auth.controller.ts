@@ -11,6 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/authCredentials.dto';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
