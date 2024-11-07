@@ -1,13 +1,15 @@
 import axios from 'axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { StockRankigRequestDto } from './dto/stock-ranking-request.dto';
+import { StockRankingQueryParameterDto } from './dto/stock-ranking-request.dto';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
 import { StockRankingDataDto } from './dto/stock-ranking-data.dto';
+import { MarketType } from '../enum/MarketType';
 import {
   StockApiOutputData,
   StockApiResponse,
 } from './interface/stock.topfive.interface';
-import { MarketType } from '../enum/MarketType';
+import { getHeader } from '../../util/getHeader';
+import { getFullURL } from '../../util/getFullURL';
 import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
 
 @Injectable()
@@ -18,39 +20,18 @@ export class StockTopfiveService {
     private readonly koreaInvestmentService: KoreaInvestmentService,
   ) {}
 
-  private async requestApi(params: StockRankigRequestDto) {
+  private async requestApi(queryParams: StockRankingQueryParameterDto) {
     try {
-      const token = await this.koreaInvestmentService.getAccessToken();
+      const accessToken = await this.koreaInvestmentService.getAccessToken();
+      const headers = getHeader(accessToken, 'FHPST01700000');
+      const url = getFullURL('/uapi/domestic-stock/v1/ranking/fluctuation');
+      const params = this.getStockRankingParams(queryParams);
 
-      const response = await axios.get<StockApiResponse>(
-        `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/ranking/fluctuation`,
-        {
-          headers: {
-            'content-type': 'application/json; charset=utf-8',
-            authorization: `Bearer ${token}`,
-            appkey: process.env.KOREA_INVESTMENT_APP_KEY,
-            appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
-            tr_id: 'FHPST01700000',
-            custtype: 'P',
-          },
-          params: {
-            fid_rsfl_rate2: '',
-            fid_cond_mrkt_div_code: params.fid_cond_mrkt_div_code,
-            fid_cond_scr_div_code: '20170',
-            fid_input_iscd: params.fid_input_iscd,
-            fid_rank_sort_cls_code: params.fid_rank_sort_cls_code,
-            fid_input_cnt_1: '0',
-            fid_prc_cls_code: '1',
-            fid_input_price_1: '',
-            fid_input_price_2: '',
-            fid_vol_cnt: '',
-            fid_trgt_cls_code: '0',
-            fid_trgt_exls_cls_code: '0',
-            fid_div_cls_code: '0',
-            fid_rsfl_rate1: '',
-          },
-        },
-      );
+      const response = await axios.get<StockApiResponse>(url, {
+        headers,
+        params,
+      });
+
       return response.data;
     } catch (error) {
       this.logger.error('API Error Details:', {
@@ -66,33 +47,33 @@ export class StockTopfiveService {
 
   async getMarketRanking(marketType: MarketType) {
     try {
-      const params = new StockRankigRequestDto();
-      params.fid_cond_mrkt_div_code = 'J';
+      const queryParams = new StockRankingQueryParameterDto();
+      queryParams.fid_cond_mrkt_div_code = 'J';
 
       switch (marketType) {
         case MarketType.ALL:
-          params.fid_input_iscd = '0000';
+          queryParams.fid_input_iscd = '0000';
           break;
         case MarketType.KOSPI:
-          params.fid_input_iscd = '0001';
+          queryParams.fid_input_iscd = '0001';
           break;
         case MarketType.KOSDAQ:
-          params.fid_input_iscd = '1001';
+          queryParams.fid_input_iscd = '1001';
           break;
         case MarketType.KOSPI200:
-          params.fid_input_iscd = '2001';
+          queryParams.fid_input_iscd = '2001';
           break;
         default:
           break;
       }
 
       const highResponse = await this.requestApi({
-        ...params,
+        ...queryParams,
         fid_rank_sort_cls_code: '0',
       });
 
       const lowResponse = await this.requestApi({
-        ...params,
+        ...queryParams,
         fid_rank_sort_cls_code: '1',
       });
 
@@ -124,5 +105,24 @@ export class StockTopfiveService {
 
       return stockData;
     });
+  }
+
+  private getStockRankingParams(params: StockRankingQueryParameterDto) {
+    return {
+      fid_rsfl_rate2: '',
+      fid_cond_mrkt_div_code: params.fid_cond_mrkt_div_code,
+      fid_cond_scr_div_code: '20170',
+      fid_input_iscd: params.fid_input_iscd,
+      fid_rank_sort_cls_code: params.fid_rank_sort_cls_code,
+      fid_input_cnt_1: '0',
+      fid_prc_cls_code: '1',
+      fid_input_price_1: '',
+      fid_input_price_2: '',
+      fid_vol_cnt: '',
+      fid_trgt_cls_code: '0',
+      fid_trgt_exls_cls_code: '0',
+      fid_div_cls_code: '0',
+      fid_rsfl_rate1: '',
+    };
   }
 }
