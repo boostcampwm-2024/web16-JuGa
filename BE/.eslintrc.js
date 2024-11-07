@@ -20,13 +20,19 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js', 'dist'],
   rules: {
-    '@typescript-eslint/lines-between-class-members': ['error', 'always', {
-      exceptAfterSingleLine: true,
-    }],
+    '@typescript-eslint/lines-between-class-members': [
+      'error',
+      'always',
+      {
+        exceptAfterSingleLine: true,
+      },
+    ],
     '@typescript-eslint/no-throw-literal': 'error',
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-unsafe-argument': 'error',
     'import/prefer-default-export': 'off',
-    'class-methods-use-this': 'off'
+    'class-methods-use-this': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
   },
 };
