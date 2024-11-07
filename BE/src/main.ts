@@ -7,6 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   setupSwagger(app);
 
+  app.enableCors({
+    origin: ['http://localhost:5173', 'http://223.130.151.42:3000'],
+    methods: 'GET, HEAD, PUT, PATH, POST, DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 
