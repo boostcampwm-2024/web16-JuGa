@@ -1,16 +1,12 @@
-import { HTMLInputTypeAttribute } from 'react';
+import { ComponentProps } from 'react';
 
-type LoginInputProps = {
-  type: HTMLInputTypeAttribute;
-  placeholder: string;
-};
+type LoginInputProps = ComponentProps<'input'>;
 
-export default function Input({ type, placeholder }: LoginInputProps) {
+export default function Input({ ...props }: LoginInputProps) {
   return (
     <input
       className='px-4 py-2 text-sm border-2 rounded-lg outline-none'
-      type={type}
-      placeholder={placeholder}
+      {...props}
     />
   );
 }

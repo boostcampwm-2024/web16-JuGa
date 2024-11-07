@@ -39,7 +39,6 @@ export function Chart({ name }: StockIndexChartProps) {
         <p className='font-semibold text-juga-blue-40'>-31.55(-1.2%)</p>
       </div>
       <canvas
-        id='lineChart'
         ref={canvasRef}
         width={600}
         height={300}

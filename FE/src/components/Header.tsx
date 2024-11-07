@@ -1,7 +1,9 @@
+import useAuthStore from 'store/authStore';
 import useLoginModalStore from 'store/useLoginModalStore';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
+  const { isLogin, resetToken } = useAuthStore();
 
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full'>
@@ -26,15 +28,26 @@ export default function Header() {
           </div>
         </div>
         <div className='flex items-center gap-4'>
-          <button
-            className='px-4 py-2 text-sm text-juga-grayscale-500'
-            onClick={toggleModal}
-          >
-            로그인
-          </button>
-          <button className='px-4 py-2 text-sm text-white rounded-lg bg-juga-grayscale-black'>
-            회원가입
-          </button>
+          {isLogin ? (
+            <button
+              className='px-4 py-2 text-sm text-juga-grayscale-500'
+              onClick={resetToken}
+            >
+              로그아웃
+            </button>
+          ) : (
+            <>
+              <button
+                className='px-4 py-2 text-sm text-juga-grayscale-500'
+                onClick={toggleModal}
+              >
+                로그인
+              </button>
+              {/* <button className='px-4 py-2 text-sm text-white rounded-lg bg-juga-grayscale-black'>
+                회원가입
+              </button> */}
+            </>
+          )}
         </div>
       </div>
     </header>
