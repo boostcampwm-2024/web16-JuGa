@@ -6,11 +6,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { StockIndexModule } from './stock/index/stock.index.module';
-import { SocketService } from './websocket/socket.service';
-import { SocketGateway } from './websocket/socket.gateway';
 import { StockTopfiveModule } from './stock/topfive/stock.topfive.module';
 import { KoreaInvestmentModule } from './koreaInvestment/korea.investment.module';
 import { typeOrmConfig } from './configs/typeorm.config';
+import { SocketModule } from './websocket/socket.module';
 
 @Module({
   imports: [
@@ -21,8 +20,9 @@ import { typeOrmConfig } from './configs/typeorm.config';
     AuthModule,
     StockIndexModule,
     StockTopfiveModule,
+    SocketModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SocketService, SocketGateway],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -1,10 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WebSocket } from 'ws';
-import { Cron } from '@nestjs/schedule';
 import { SocketGateway } from './socket.gateway';
 import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
-import { StockIndexService } from '../stock/index/stock.index.service';
-import { KoreaInvestmentService } from '../koreaInvestment/korea.investment.service';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -13,11 +10,7 @@ export class SocketService implements OnModuleInit {
     H0UPCNT0: this.handleStockIndexValue.bind(this),
   };
 
-  constructor(
-    private readonly stockIndexGateway: SocketGateway,
-    private readonly stockIndexService: StockIndexService,
-    private readonly koreaInvestmentService: KoreaInvestmentService,
-  ) {}
+  constructor(private readonly socketGateway: SocketGateway) {}
 
   async onModuleInit() {
     const socketConnectionKey = await this.getSocketConnectionKey();
@@ -43,35 +36,9 @@ export class SocketService implements OnModuleInit {
     };
   }
 
-  @Cron('*/5 9-16 * * 1-5')
-  async cronStockIndexLists() {
-    const accessToken = await this.koreaInvestmentService.getAccessToken();
-
-    const stockLists = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '0001',
-        accessToken,
-      ), // 코스피
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '1001',
-        accessToken,
-      ), // 코스닥
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '2001',
-        accessToken,
-      ), // 코스피200
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '3003',
-        accessToken,
-      ), // KSQ150
-    ]);
-
-    this.stockIndexGateway.sendStockIndexListToClient(stockLists);
-  }
-
   private handleStockIndexValue(responseData: string) {
     const responseList = responseData.split('^');
-    this.stockIndexGateway.sendStockIndexValueToClient(
+    this.socketGateway.sendStockIndexValueToClient(
       new StockIndexValueElementDto(
         responseList[0],
         responseList[2],
@@ -83,7 +50,7 @@ export class SocketService implements OnModuleInit {
   }
 
   private async getSocketConnectionKey() {
-    const url = 'https://openapi.koreainvestment.com:9443/oauth2/Approval';
+    const url = `${process.env.KOREA_INVESTMENT_BASE_URL}/oauth2/Approval`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -92,8 +59,8 @@ export class SocketService implements OnModuleInit {
       },
       body: JSON.stringify({
         grant_type: 'client_credentials',
-        appkey: process.env.APP_KEY,
-        secretkey: process.env.APP_SECRET,
+        appkey: process.env.KOREA_INVESTMENT_APP_KEY,
+        secretkey: process.env.KOREA_INVESTMENT_APP_SECRET,
       }),
     });
     const result: SocketConnectTokenInterface = await response.json();

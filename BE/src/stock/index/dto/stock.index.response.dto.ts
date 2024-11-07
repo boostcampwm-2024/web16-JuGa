@@ -1,25 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StockIndexListElementDto } from './stock.index.list.element.dto';
-import { StockIndexValueElementDto } from './stock.index.value.element.dto';
+import { StockIndexResponseElementDto } from './stock.index.response.element.dto';
 
 export class StockIndexResponseDto {
-  constructor(
-    indexList: StockIndexListElementDto[],
-    indexValue: StockIndexValueElementDto[],
-  ) {
-    this.indexList = indexList;
-    this.indexValue = indexValue;
-  }
+  @ApiProperty({
+    description: '코스피 지수',
+    type: StockIndexResponseElementDto,
+  })
+  KOSPI: StockIndexResponseElementDto;
 
   @ApiProperty({
-    description: '주가 지수 차트 정보 (코스피, 코스닥, 코스피200, KSQ150)',
-    type: [StockIndexListElementDto],
+    description: '코스닥 지수',
+    type: StockIndexResponseElementDto,
   })
-  indexList: StockIndexListElementDto[];
+  KOSDAQ: StockIndexResponseElementDto;
 
   @ApiProperty({
-    description: '주가 지수 실시간 값 정보 (코스피, 코스닥, 코스피200, KSQ150)',
-    type: [StockIndexValueElementDto],
+    description: '코스피200 지수',
+    type: StockIndexResponseElementDto,
   })
-  indexValue: StockIndexValueElementDto[];
+  KOSPI200: StockIndexResponseElementDto;
+
+  @ApiProperty({
+    description: 'KSQ150 지수',
+    type: StockIndexResponseElementDto,
+  })
+  KSQ150: StockIndexResponseElementDto;
 }
