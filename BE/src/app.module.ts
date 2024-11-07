@@ -10,6 +10,7 @@ import { StockIndexModule } from './stock/index/stock.index.module';
 import { SocketService } from './websocket/socket.service';
 import { SocketGateway } from './websocket/socket.gateway';
 import { StockTopfiveModule } from './stock/topfive/stock.topfive.module';
+import { KoreaInvestmentModule } from './koreaInvestment/korea.investment.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { StockTopfiveModule } from './stock/topfive/stock.topfive.module';
       entities: [User],
       synchronize: true,
     }),
+    KoreaInvestmentModule,
     AuthModule,
     StockIndexModule,
     StockTopfiveModule,

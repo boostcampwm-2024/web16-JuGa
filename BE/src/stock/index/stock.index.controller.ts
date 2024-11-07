@@ -2,11 +2,15 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockIndexService } from './stock.index.service';
 import { StockIndexResponseDto } from './dto/stock.index.response.dto';
+import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
 
 @Controller('/api/stocks/index')
 @ApiTags('주가 지수 API')
 export class StockIndexController {
-  constructor(private readonly stockIndexService: StockIndexService) {}
+  constructor(
+    private readonly stockIndexService: StockIndexService,
+    private readonly koreaInvestmentService: KoreaInvestmentService,
+  ) {}
 
   @Get()
   @ApiOperation({
@@ -19,7 +23,7 @@ export class StockIndexController {
     type: StockIndexResponseDto,
   })
   async getStockIndex() {
-    const accessToken = await this.stockIndexService.getAccessToken();
+    const accessToken = await this.koreaInvestmentService.getAccessToken();
 
     const stockLists = await Promise.all([
       this.stockIndexService.getDomesticStockIndexListByCode(

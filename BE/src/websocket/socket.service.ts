@@ -4,6 +4,7 @@ import { Cron } from '@nestjs/schedule';
 import { SocketGateway } from './socket.gateway';
 import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
 import { StockIndexService } from '../stock/index/stock.index.service';
+import { KoreaInvestmentService } from '../koreaInvestment/korea.investment.service';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -15,6 +16,7 @@ export class SocketService implements OnModuleInit {
   constructor(
     private readonly stockIndexGateway: SocketGateway,
     private readonly stockIndexService: StockIndexService,
+    private readonly koreaInvestmentService: KoreaInvestmentService,
   ) {}
 
   async onModuleInit() {
@@ -43,7 +45,7 @@ export class SocketService implements OnModuleInit {
 
   @Cron('*/5 9-16 * * 1-5')
   async cronStockIndexLists() {
-    const accessToken = await this.stockIndexService.getAccessToken();
+    const accessToken = await this.koreaInvestmentService.getAccessToken();
 
     const stockLists = await Promise.all([
       this.stockIndexService.getDomesticStockIndexListByCode(

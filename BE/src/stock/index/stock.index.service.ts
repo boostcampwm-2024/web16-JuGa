@@ -3,16 +3,12 @@ import { StockIndexListChartElementDto } from './dto/stock.index.list.chart.elem
 import { StockIndexListElementDto } from './dto/stock.index.list.element.dto';
 import { StockIndexValueElementDto } from './dto/stock.index.value.element.dto';
 import {
-  AccessTokenInterface,
   StockIndexChartInterface,
   StockIndexValueInterface,
 } from './interface/stock.index.interface';
 
 @Injectable()
 export class StockIndexService {
-  private accessToken: string;
-  private expireDateTime: number;
-
   async getDomesticStockIndexListByCode(code: string, accessToken: string) {
     const url = `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-timeprice`;
     const queryParams = `?FID_INPUT_HOUR_1=300&FID_COND_MRKT_DIV_CODE=U&FID_INPUT_ISCD=${code}`;
@@ -67,30 +63,5 @@ export class StockIndexService {
       result.output.bstp_nmix_prdy_vrss,
       result.output.prdy_vrss_sign,
     );
-  }
-
-  async getAccessToken() {
-    if (!this.accessToken || this.expireDateTime <= Date.now()) {
-      const url = 'https://openapivts.koreainvestment.com:29443/oauth2/tokenP';
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: JSON.stringify({
-          grant_type: 'client_credentials',
-          appkey: process.env.KOREA_INVESTMENT_APP_KEY,
-          appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
-        }),
-      });
-      const result: AccessTokenInterface = await response.json();
-      this.accessToken = result.access_token;
-      this.expireDateTime = new Date(
-        result.access_token_token_expired,
-      ).getTime();
-      return result.access_token;
-    }
-
-    return this.accessToken;
   }
 }
