@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { User } from './auth/user.entity';
+import { StockIndexModule } from './stock/index/stock.index.module';
+import { SocketService } from './websocket/socket.service';
+import { SocketGateway } from './websocket/socket.gateway';
+import { TopfiveModule } from './stocks/topfive/topfive.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql', // 데이터베이스 타입
@@ -20,8 +26,10 @@ import { User } from './auth/user.entity';
       synchronize: true,
     }),
     AuthModule,
+    StockIndexModule,
+    TopfiveModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SocketService, SocketGateway],
 })
 export class AppModule {}
