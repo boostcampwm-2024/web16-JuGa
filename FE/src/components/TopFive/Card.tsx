@@ -23,7 +23,7 @@ export default function Card({
   return (
     <div className='flex flex-row items-center justify-between py-3'>
       <div className={'mx-0 font-medium text-juga-blue-50'}>{index + 1}</div>
-      <div className='ml-4 w-[200px] text-start'>
+      <div className='ml-4 w-[180px] text-start'>
         <p className='font-medium text-juga-grayscale-black'>{name}</p>
       </div>
       <div className='w-[120px] text-right'>
@@ -31,7 +31,7 @@ export default function Card({
           {price?.toLocaleString()}
         </p>
       </div>
-      <div className={`w-[130px] text-right ${changeColor}`}>
+      <div className={`w-[150px] text-right ${changeColor}`}>
         <p className='font-normal'>
           {changeValue > 0
             ? `${changePrice}(${changeValue}%)`

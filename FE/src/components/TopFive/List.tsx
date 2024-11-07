@@ -16,8 +16,8 @@ export default function List({ listTitle, data, isLoading }: ListProps) {
       </div>
       <div className='flex flex-row items-center justify-between py-3 text-sm font-medium text-gray-600'>
         <div className='w-[200px] text-start'>종목</div>
-        <div className='w-[160px] p-1 text-right'>현재가</div>
-        <div className='w-[130px] p-1 text-right'>등락</div>
+        <div className='w-[140px] p-1 text-right'>현재가</div>
+        <div className='w-[150px] p-1 text-right'>등락</div>
       </div>
 
       <ul>
