@@ -8,9 +8,7 @@ export class StockIndexService {
   private accessToken: string;
   private expireDateTime: number;
 
-  async getDomesticStockIndexListByCode(code: string) {
-    const accessToken = await this.getAccessToken();
-
+  async getDomesticStockIndexListByCode(code: string, accessToken: string) {
     const url = `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-timeprice`;
     const queryParams = `?FID_INPUT_HOUR_1=300&FID_COND_MRKT_DIV_CODE=U&FID_INPUT_ISCD=${code}`;
 
@@ -40,9 +38,7 @@ export class StockIndexService {
     );
   }
 
-  async getDomesticStockIndexValueByCode(code: string) {
-    const accessToken = await this.getAccessToken();
-
+  async getDomesticStockIndexValueByCode(code: string, accessToken: string) {
     const url = `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-price`;
     const queryParams = `?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_ISCD=${code}`;
 
@@ -68,7 +64,7 @@ export class StockIndexService {
     );
   }
 
-  private async getAccessToken() {
+  async getAccessToken() {
     if (!this.accessToken || this.expireDateTime <= Date.now()) {
       const url = 'https://openapivts.koreainvestment.com:29443/oauth2/tokenP';
       const response = await fetch(url, {

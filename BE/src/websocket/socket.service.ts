@@ -43,11 +43,25 @@ export class SocketService implements OnModuleInit {
 
   @Cron('*/5 9-16 * * 1-5')
   async cronStockIndexLists() {
+    const accessToken = await this.stockIndexService.getAccessToken();
+
     const stockLists = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피
-      this.stockIndexService.getDomesticStockIndexListByCode('1001'), // 코스닥
-      this.stockIndexService.getDomesticStockIndexListByCode('2001'), // 코스피200
-      this.stockIndexService.getDomesticStockIndexListByCode('3003'), // KSQ150
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '0001',
+        accessToken,
+      ), // 코스피
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '1001',
+        accessToken,
+      ), // 코스닥
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '2001',
+        accessToken,
+      ), // 코스피200
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '3003',
+        accessToken,
+      ), // KSQ150
     ]);
 
     this.stockIndexGateway.sendStockIndexListToClient(stockLists);
