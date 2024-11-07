@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { StockRankigRequestDto } from './dto/stock-ranking-request.dto';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
 import { StockRankingDataDto } from './dto/stock-ranking-data.dto';
@@ -13,37 +12,24 @@ import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.s
 
 @Injectable()
 export class StockTopfiveService {
-  private readonly koreaInvestmentConfig: {
-    appKey: string;
-    appSecret: string;
-    baseUrl: string;
-  };
-
   private readonly logger = new Logger();
 
   constructor(
-    private readonly config: ConfigService,
     private readonly koreaInvestmentService: KoreaInvestmentService,
-  ) {
-    this.koreaInvestmentConfig = {
-      appKey: this.config.get<string>('KOREA_INVESTMENT_APP_KEY'),
-      appSecret: this.config.get<string>('KOREA_INVESTMENT_APP_SECRET'),
-      baseUrl: this.config.get<string>('KOREA_INVESTMENT_BASE_URL'),
-    };
-  }
+  ) {}
 
   private async requestApi(params: StockRankigRequestDto) {
     try {
       const token = await this.koreaInvestmentService.getAccessToken();
 
       const response = await axios.get<StockApiResponse>(
-        `${this.koreaInvestmentConfig.baseUrl}/uapi/domestic-stock/v1/ranking/fluctuation`,
+        `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/ranking/fluctuation`,
         {
           headers: {
             'content-type': 'application/json; charset=utf-8',
             authorization: `Bearer ${token}`,
-            appkey: this.koreaInvestmentConfig.appKey,
-            appsecret: this.koreaInvestmentConfig.appSecret,
+            appkey: process.env.KOREA_INVESTMENT_APP_KEY,
+            appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
             tr_id: 'FHPST01700000',
             custtype: 'P',
           },
