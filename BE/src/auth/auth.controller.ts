@@ -23,7 +23,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '로그인 API' })
-  @Get('/login')
+  @Post('/login')
   loginWithCredentials(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
   ) {
