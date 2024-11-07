@@ -38,13 +38,14 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Token 인증 테스트 API' })
   @Get('/test')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   test(@Req() req: Request) {
     return req;
   }
 
   @ApiOperation({ summary: 'Kakao 로그인 API' })
   @Get('/kakao')
+  @UseGuards(AuthGuard('kakao'))
   async kakaoLogin(
     @Body() authCredentialsDto: AuthCredentialsDto,
     @Res() res: Response,
