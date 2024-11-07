@@ -11,8 +11,7 @@ export class StockIndexService {
   async getDomesticStockIndexListByCode(code: string) {
     const accessToken = await this.getAccessToken();
 
-    const url =
-      'https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-index-timeprice';
+    const url = `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-timeprice`;
     const queryParams = `?FID_INPUT_HOUR_1=300&FID_COND_MRKT_DIV_CODE=U&FID_INPUT_ISCD=${code}`;
 
     const response = await fetch(url + queryParams, {
@@ -20,8 +19,8 @@ export class StockIndexService {
       headers: {
         'content-type': 'application/json; charset=utf-8',
         authorization: `Bearer ${accessToken}`,
-        appkey: process.env.APP_KEY,
-        appsecret: process.env.APP_SECRET,
+        appkey: process.env.KOREA_INVESTMENT_APP_KEY,
+        appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
         tr_id: 'FHPUP02110200',
         custtype: 'P',
       },
@@ -44,8 +43,7 @@ export class StockIndexService {
   async getDomesticStockIndexValueByCode(code: string) {
     const accessToken = await this.getAccessToken();
 
-    const url =
-      'https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-index-price';
+    const url = `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-price`;
     const queryParams = `?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_ISCD=${code}`;
 
     const response = await fetch(url + queryParams, {
@@ -53,8 +51,8 @@ export class StockIndexService {
       headers: {
         'content-type': 'application/json; charset=utf-8',
         authorization: `Bearer ${accessToken}`,
-        appkey: process.env.APP_KEY,
-        appsecret: process.env.APP_SECRET,
+        appkey: process.env.KOREA_INVESTMENT_APP_KEY,
+        appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
         tr_id: 'FHPUP02100000',
         custtype: 'P',
       },
@@ -80,8 +78,8 @@ export class StockIndexService {
         },
         body: JSON.stringify({
           grant_type: 'client_credentials',
-          appkey: process.env.APP_KEY,
-          appsecret: process.env.APP_SECRET,
+          appkey: process.env.KOREA_INVESTMENT_APP_KEY,
+          appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
         }),
       });
       const result: AccessTokenInterface = await response.json();

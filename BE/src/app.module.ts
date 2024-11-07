@@ -9,7 +9,7 @@ import { User } from './auth/user.entity';
 import { StockIndexModule } from './stock/index/stock.index.module';
 import { SocketService } from './websocket/socket.service';
 import { SocketGateway } from './websocket/socket.gateway';
-import { TopfiveModule } from './stocks/topfive/topfive.module';
+import { TopfiveModule } from './stock/topfive/topfive.module';
 
 @Module({
   imports: [
