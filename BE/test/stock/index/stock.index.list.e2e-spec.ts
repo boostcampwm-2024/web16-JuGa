@@ -16,7 +16,7 @@ describe('stock index list test', () => {
     stockIndexService = module.get(StockIndexService);
   });
 
-  it('주가 지수 API에서 정상적인 데이터를 조회한 경우, 형식에 맞춰 정상적으로 반환한다.', async () => {
+  it('주가 지수 차트 조회 API에서 정상적인 데이터를 조회한 경우, 형식에 맞춰 정상적으로 반환한다.', async () => {
     (axios.get as jest.Mock).mockResolvedValue(
       STOCK_INDEX_LIST_MOCK.VALID_DATA,
     );
@@ -37,7 +37,7 @@ describe('stock index list test', () => {
     });
   });
 
-  it('주가 지수 API에서 데이터를 조회하지 못한 경우, 에러를 발생시킨다.', async () => {
+  it('주가 지수 차트 조회 API에서 데이터를 조회하지 못한 경우, 에러를 발생시킨다.', async () => {
     (axios.get as jest.Mock).mockResolvedValue(
       STOCK_INDEX_LIST_MOCK.INVALID_DATA,
     );

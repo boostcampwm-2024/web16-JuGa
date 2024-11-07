@@ -36,11 +36,14 @@ export class StockIndexService {
       accessToken,
     );
 
+    if (result.rt_cd !== '0')
+      throw new Error('데이터를 정상적으로 조회하지 못했습니다.');
+
     return new StockIndexValueElementDto(
       code,
       result.output.bstp_nmix_prpr,
       result.output.bstp_nmix_prdy_vrss,
-      result.output.bstp_nmix_prdy_vrss,
+      result.output.bstp_nmix_prdy_ctrt,
       result.output.prdy_vrss_sign,
     );
   }
