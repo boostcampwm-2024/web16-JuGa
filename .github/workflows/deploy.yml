@@ -102,7 +102,7 @@ jobs:
             docker run -d \
               --name juga-docker \
               -p 3000:3000 \
-              --env-file ./BE/.env \
+              --env-file .env \
               ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
 
       - name: Remove Github Action Ip to Security group
