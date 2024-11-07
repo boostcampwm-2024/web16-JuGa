@@ -29,7 +29,12 @@ export default function Header() {
         </div>
         <div className='flex items-center gap-4'>
           {isLogin ? (
-            <button onClick={resetToken}>로그아웃</button>
+            <button
+              className='px-4 py-2 text-sm text-juga-grayscale-500'
+              onClick={resetToken}
+            >
+              로그아웃
+            </button>
           ) : (
             <>
               <button
@@ -38,9 +43,9 @@ export default function Header() {
               >
                 로그인
               </button>
-              <button className='px-4 py-2 text-sm text-white rounded-lg bg-juga-grayscale-black'>
+              {/* <button className='px-4 py-2 text-sm text-white rounded-lg bg-juga-grayscale-black'>
                 회원가입
-              </button>
+              </button> */}
             </>
           )}
         </div>
