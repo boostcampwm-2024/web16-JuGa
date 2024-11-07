@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { User } from './auth/user.entity';
 import { StockIndexModule } from './stock/index/stock.index.module';
 import { SocketService } from './websocket/socket.service';
 import { SocketGateway } from './websocket/socket.gateway';
@@ -20,9 +22,10 @@ import { TopfiveModule } from './stocks/topfive/topfive.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWD,
       database: process.env.DB_DATABASE,
-      entities: [],
+      entities: [User],
       synchronize: true,
     }),
+    AuthModule,
     StockIndexModule,
     TopfiveModule,
   ],
