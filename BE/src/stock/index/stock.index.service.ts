@@ -11,6 +11,43 @@ import {
 @Injectable()
 export class StockIndexService {
   async getDomesticStockIndexListByCode(code: string, accessToken: string) {
+    const result = await this.requestDomesticStockIndexListApi(
+      code,
+      accessToken,
+    );
+
+    if (result.rt_cd !== '0') throw new Error('유효하지 않은 토큰');
+
+    return new StockIndexListElementDto(
+      code,
+      result.output.map((element) => {
+        return new StockIndexListChartElementDto(
+          element.bsop_hour,
+          element.bstp_nmix_prpr,
+        );
+      }),
+    );
+  }
+
+  async getDomesticStockIndexValueByCode(code: string, accessToken: string) {
+    const result = await this.requestDomesticStockIndexValueApi(
+      code,
+      accessToken,
+    );
+
+    return new StockIndexValueElementDto(
+      code,
+      result.output.bstp_nmix_prpr,
+      result.output.bstp_nmix_prdy_vrss,
+      result.output.bstp_nmix_prdy_vrss,
+      result.output.prdy_vrss_sign,
+    );
+  }
+
+  private async requestDomesticStockIndexListApi(
+    code: string,
+    accessToken: string,
+  ) {
     const response = await axios.get<StockIndexChartInterface>(
       `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-timeprice`,
       {
@@ -30,21 +67,13 @@ export class StockIndexService {
       },
     );
 
-    const result = response.data;
-    if (result.rt_cd !== '0') throw new Error('유효하지 않은 토큰');
-
-    return new StockIndexListElementDto(
-      code,
-      result.output.map((element) => {
-        return new StockIndexListChartElementDto(
-          element.bsop_hour,
-          element.bstp_nmix_prpr,
-        );
-      }),
-    );
+    return response.data;
   }
 
-  async getDomesticStockIndexValueByCode(code: string, accessToken: string) {
+  private async requestDomesticStockIndexValueApi(
+    code: string,
+    accessToken: string,
+  ) {
     const response = await axios.get<StockIndexValueInterface>(
       `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-price`,
       {
@@ -63,13 +92,6 @@ export class StockIndexService {
       },
     );
 
-    const result = response.data;
-    return new StockIndexValueElementDto(
-      code,
-      result.output.bstp_nmix_prpr,
-      result.output.bstp_nmix_prdy_vrss,
-      result.output.bstp_nmix_prdy_vrss,
-      result.output.prdy_vrss_sign,
-    );
+    return response.data;
   }
 }
