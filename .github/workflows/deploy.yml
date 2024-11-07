@@ -93,6 +93,9 @@ jobs:
           key: ${{ secrets.NCP_SERVER_SSH_KEY }}
           port: 22
           script: |
+            docker system prune -af
+            echo "${{ secrets.ENV }}" > .env
+            
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
             docker stop juga-docker || true
             docker rm juga-docker || true
