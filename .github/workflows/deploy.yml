@@ -76,6 +76,7 @@ jobs:
           unzip 65
           mkdir ~/.ncloud
           echo -e "[DEFAULT]\nncloud_access_key_id = ${{ secrets.NCP_ACCESS_KEY }}\nncloud_secret_access_key = ${{ secrets.NCP_SECRET_KEY }}\nncloud_api_url = ${{ secrets.NCP_API_URI }}" >> ~/.ncloud/configure
+          ls -la
 
       - name: Add Github Action Ip to Security group
         run: |
