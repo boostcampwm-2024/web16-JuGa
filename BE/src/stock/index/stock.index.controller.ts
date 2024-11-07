@@ -2,11 +2,15 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockIndexService } from './stock.index.service';
 import { StockIndexResponseDto } from './dto/stock.index.response.dto';
+import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
 
 @Controller('/api/stocks/index')
 @ApiTags('주가 지수 API')
 export class StockIndexController {
-  constructor(private readonly stockIndexService: StockIndexService) {}
+  constructor(
+    private readonly stockIndexService: StockIndexService,
+    private readonly koreaInvestmentService: KoreaInvestmentService,
+  ) {}
 
   @Get()
   @ApiOperation({
@@ -19,18 +23,44 @@ export class StockIndexController {
     type: StockIndexResponseDto,
   })
   async getStockIndex() {
+    const accessToken = await this.koreaInvestmentService.getAccessToken();
+
     const stockLists = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피
-      this.stockIndexService.getDomesticStockIndexListByCode('1001'), // 코스닥
-      this.stockIndexService.getDomesticStockIndexListByCode('2001'), // 코스피200
-      this.stockIndexService.getDomesticStockIndexListByCode('3003'), // KSQ150
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '0001',
+        accessToken,
+      ), // 코스피
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '1001',
+        accessToken,
+      ), // 코스닥
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '2001',
+        accessToken,
+      ), // 코스피200
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '3003',
+        accessToken,
+      ), // KSQ150
     ]);
 
     const stockValues = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexValueByCode('0001'), // 코스피
-      this.stockIndexService.getDomesticStockIndexValueByCode('1001'), // 코스닥
-      this.stockIndexService.getDomesticStockIndexValueByCode('2001'), // 코스피200
-      this.stockIndexService.getDomesticStockIndexValueByCode('3003'), // KSQ150
+      this.stockIndexService.getDomesticStockIndexValueByCode(
+        '0001',
+        accessToken,
+      ), // 코스피
+      this.stockIndexService.getDomesticStockIndexValueByCode(
+        '1001',
+        accessToken,
+      ), // 코스닥
+      this.stockIndexService.getDomesticStockIndexValueByCode(
+        '2001',
+        accessToken,
+      ), // 코스피200
+      this.stockIndexService.getDomesticStockIndexValueByCode(
+        '3003',
+        accessToken,
+      ), // KSQ150
     ]);
 
     return new StockIndexResponseDto(stockLists, stockValues);

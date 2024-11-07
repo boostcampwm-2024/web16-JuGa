@@ -4,52 +4,15 @@ import { ConfigService } from '@nestjs/config';
 import { StockRankigRequestDto } from './dto/stock-ranking-request.dto';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
 import { StockRankingDataDto } from './dto/stock-ranking-data.dto';
-
-export enum MarketType {
-  ALL = 'ALL',
-  KOSPI = 'KOSPI',
-  KOSDAQ = 'KOSDAQ',
-  KOSPI200 = 'KOSPI200',
-}
-
-interface StockApiOutputData {
-  stck_shrn_iscd: string;
-  data_rank: string;
-  hts_kor_isnm: string;
-  stck_prpr: string;
-  prdy_vrss: string;
-  prdy_vrss_sign: string;
-  prdy_ctrt: string;
-  acml_vol: string;
-  stck_hgpr: string;
-  hgpr_hour: string;
-  acml_hgpr_data: string;
-  stck_lwpr: string;
-  lwpr_hour: string;
-  acml_lwpr_date: string;
-  lwpr_vrss_prpr_rate: string;
-  dsgt_date_clpr_vrss_prpr_rate: string;
-  cnnt_ascn_dynu: string;
-  hgpr_vrss_prpr_rate: string;
-  cnnt_down_dynu: string;
-  oprc_vrss_prpr_sign: string;
-  oprc_vrss_prpr: string;
-  oprc_vrss_prpr_rate: string;
-  prd_rsfl: string;
-  prd_rsfl_rate: string;
-}
-
-interface StockApiResponse {
-  output: StockApiOutputData[];
-  rt_cd: string;
-  msg_cd: string;
-  msg1: string;
-}
+import {
+  StockApiOutputData,
+  StockApiResponse,
+} from './interface/stock.topfive.interface';
+import { MarketType } from '../enum/MarketType';
+import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
 
 @Injectable()
-export class TopFiveService {
-  private accessToken: string;
-  private tokenExpireTime: Date;
+export class StockTopfiveService {
   private readonly koreaInvestmentConfig: {
     appKey: string;
     appSecret: string;
@@ -58,7 +21,10 @@ export class TopFiveService {
 
   private readonly logger = new Logger();
 
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly koreaInvestmentService: KoreaInvestmentService,
+  ) {
     this.koreaInvestmentConfig = {
       appKey: this.config.get<string>('KOREA_INVESTMENT_APP_KEY'),
       appSecret: this.config.get<string>('KOREA_INVESTMENT_APP_SECRET'),
@@ -66,30 +32,9 @@ export class TopFiveService {
     };
   }
 
-  private async getAccessToken() {
-    // accessToken이 유효한 경우
-    if (this.accessToken && this.tokenExpireTime > new Date()) {
-      return this.accessToken;
-    }
-
-    const response = await axios.post(
-      `${this.koreaInvestmentConfig.baseUrl}/oauth2/tokenP`,
-      {
-        grant_type: 'client_credentials',
-        appkey: this.koreaInvestmentConfig.appKey,
-        appsecret: this.koreaInvestmentConfig.appSecret,
-      },
-    );
-
-    this.accessToken = response.data.access_token;
-    this.tokenExpireTime = new Date(Date.now() + +response.data.expires_in);
-
-    return this.accessToken;
-  }
-
   private async requestApi(params: StockRankigRequestDto) {
     try {
-      const token = await this.getAccessToken();
+      const token = await this.koreaInvestmentService.getAccessToken();
 
       const response = await axios.get<StockApiResponse>(
         `${this.koreaInvestmentConfig.baseUrl}/uapi/domestic-stock/v1/ranking/fluctuation`,

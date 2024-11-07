@@ -4,6 +4,7 @@ import { Cron } from '@nestjs/schedule';
 import { SocketGateway } from './socket.gateway';
 import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
 import { StockIndexService } from '../stock/index/stock.index.service';
+import { KoreaInvestmentService } from '../koreaInvestment/korea.investment.service';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -15,6 +16,7 @@ export class SocketService implements OnModuleInit {
   constructor(
     private readonly stockIndexGateway: SocketGateway,
     private readonly stockIndexService: StockIndexService,
+    private readonly koreaInvestmentService: KoreaInvestmentService,
   ) {}
 
   async onModuleInit() {
@@ -43,11 +45,25 @@ export class SocketService implements OnModuleInit {
 
   @Cron('*/5 9-16 * * 1-5')
   async cronStockIndexLists() {
+    const accessToken = await this.koreaInvestmentService.getAccessToken();
+
     const stockLists = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피
-      this.stockIndexService.getDomesticStockIndexListByCode('1001'), // 코스닥
-      this.stockIndexService.getDomesticStockIndexListByCode('2001'), // 코스피200
-      this.stockIndexService.getDomesticStockIndexListByCode('3003'), // KSQ150
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '0001',
+        accessToken,
+      ), // 코스피
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '1001',
+        accessToken,
+      ), // 코스닥
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '2001',
+        accessToken,
+      ), // 코스피200
+      this.stockIndexService.getDomesticStockIndexListByCode(
+        '3003',
+        accessToken,
+      ), // KSQ150
     ]);
 
     this.stockIndexGateway.sendStockIndexListToClient(stockLists);
