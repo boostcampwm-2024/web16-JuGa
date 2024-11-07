@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockIndexService } from './stock.index.service';
 import { StockIndexResponseDto } from './dto/stock.index.response.dto';
 
-@Controller('/api/stock/index')
+@Controller('/api/stocks/index')
 @ApiTags('주가 지수 API')
 export class StockIndexController {
   constructor(private readonly stockIndexService: StockIndexService) {}
