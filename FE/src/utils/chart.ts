@@ -31,8 +31,6 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
         chartHeight -
         (chartHeight * (point - yMin)) / (yMax - yMin);
 
-      console.log(point);
-
       if (i === 0) {
         ctx.moveTo(x, y);
       } else {
