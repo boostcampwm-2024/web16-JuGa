@@ -69,7 +69,7 @@ export class StockIndexController {
     return new StockIndexResponseDto(stockLists, stockValues);
   }
 
-  @Cron('*/1 9-16 * * 1-5')
+  @Cron('*/5 9-16 * * 1-5')
   async cronStockIndexLists() {
     const accessToken = await this.koreaInvestmentService.getAccessToken();
 
