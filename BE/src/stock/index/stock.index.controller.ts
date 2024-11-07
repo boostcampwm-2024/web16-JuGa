@@ -28,45 +28,68 @@ export class StockIndexController {
   async getStockIndex() {
     const accessToken = await this.koreaInvestmentService.getAccessToken();
 
-    const stockLists = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '0001',
-        accessToken,
-      ), // 코스피
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '1001',
-        accessToken,
-      ), // 코스닥
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '2001',
-        accessToken,
-      ), // 코스피200
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '3003',
-        accessToken,
-      ), // KSQ150
-    ]);
+    const [kospiChart, kosdaqChart, kospi200Chart, ksq150Chart] =
+      await Promise.all([
+        this.stockIndexService.getDomesticStockIndexListByCode(
+          '0001',
+          accessToken,
+        ), // 코스피
+        this.stockIndexService.getDomesticStockIndexListByCode(
+          '1001',
+          accessToken,
+        ), // 코스닥
+        this.stockIndexService.getDomesticStockIndexListByCode(
+          '2001',
+          accessToken,
+        ), // 코스피200
+        this.stockIndexService.getDomesticStockIndexListByCode(
+          '3003',
+          accessToken,
+        ), // KSQ150
+      ]);
 
-    const stockValues = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexValueByCode(
-        '0001',
-        accessToken,
-      ), // 코스피
-      this.stockIndexService.getDomesticStockIndexValueByCode(
-        '1001',
-        accessToken,
-      ), // 코스닥
-      this.stockIndexService.getDomesticStockIndexValueByCode(
-        '2001',
-        accessToken,
-      ), // 코스피200
-      this.stockIndexService.getDomesticStockIndexValueByCode(
-        '3003',
-        accessToken,
-      ), // KSQ150
-    ]);
+    const [kospiValue, kosdaqValue, kospi200Value, ksq150Value] =
+      await Promise.all([
+        this.stockIndexService.getDomesticStockIndexValueByCode(
+          '0001',
+          accessToken,
+        ), // 코스피
+        this.stockIndexService.getDomesticStockIndexValueByCode(
+          '1001',
+          accessToken,
+        ), // 코스닥
+        this.stockIndexService.getDomesticStockIndexValueByCode(
+          '2001',
+          accessToken,
+        ), // 코스피200
+        this.stockIndexService.getDomesticStockIndexValueByCode(
+          '3003',
+          accessToken,
+        ), // KSQ150
+      ]);
 
-    return new StockIndexResponseDto(stockLists, stockValues);
+    const stockIndexResponse = new StockIndexResponseDto();
+    stockIndexResponse.KOSPI = {
+      code: '0001',
+      value: kospiValue,
+      chart: kospiChart,
+    };
+    stockIndexResponse.KOSDAQ = {
+      code: '1001',
+      value: kosdaqValue,
+      chart: kosdaqChart,
+    };
+    stockIndexResponse.KOSPI200 = {
+      code: '2001',
+      value: kospi200Value,
+      chart: kospi200Chart,
+    };
+    stockIndexResponse.KSQ150 = {
+      code: '3003',
+      value: ksq150Value,
+      chart: ksq150Chart,
+    };
+    return stockIndexResponse;
   }
 
   @Cron('*/5 9-16 * * 1-5')
