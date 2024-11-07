@@ -1,7 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WebSocket } from 'ws';
+import axios from 'axios';
 import { SocketGateway } from './socket.gateway';
 import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
+import { SocketConnectTokenInterface } from './interface/socket.interface';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -50,20 +52,16 @@ export class SocketService implements OnModuleInit {
   }
 
   private async getSocketConnectionKey() {
-    const url = `${process.env.KOREA_INVESTMENT_BASE_URL}/oauth2/Approval`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: JSON.stringify({
+    const response = await axios.post<SocketConnectTokenInterface>(
+      `${process.env.KOREA_INVESTMENT_BASE_URL}/oauth2/Approval`,
+      {
         grant_type: 'client_credentials',
         appkey: process.env.KOREA_INVESTMENT_APP_KEY,
         secretkey: process.env.KOREA_INVESTMENT_APP_SECRET,
-      }),
-    });
-    const result: SocketConnectTokenInterface = await response.json();
+      },
+    );
+
+    const result = response.data;
     return result.approval_key;
   }
 
@@ -85,10 +83,4 @@ export class SocketService implements OnModuleInit {
       }),
     );
   }
-}
-
-// interfaces
-
-interface SocketConnectTokenInterface {
-  approval_key: string;
 }
