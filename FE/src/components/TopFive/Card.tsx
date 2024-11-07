@@ -1,26 +1,42 @@
 type CardProps = {
   name: string;
-  price: number;
-  change: number;
+  price: string;
+  changePercentage: string;
+  changePrice: string;
   index: number;
 };
 
-export default function Card({ name, price, change, index }: CardProps) {
-  const changeColor = change > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
+export default function Card({
+  name,
+  price,
+  changePercentage,
+  changePrice,
+  index,
+}: CardProps) {
+  const changeValue =
+    typeof changePercentage === 'string'
+      ? Number(changePercentage)
+      : changePercentage;
+  const changeColor =
+    changeValue > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
 
   return (
-    <div className='flex flex-row items-center px-4 py-3'>
+    <div className='flex flex-row items-center justify-between py-3'>
       <div className={'mx-0 font-medium text-juga-blue-50'}>{index + 1}</div>
-      <div className='ml-4 w-[260px] text-start'>
+      <div className='ml-4 w-[200px] text-start'>
         <p className='font-medium text-juga-grayscale-black'>{name}</p>
       </div>
-      <div className='w-[130px] text-right'>
-        <p className='font-medium text-juga-grayscale-black'>
+      <div className='w-[120px] text-right'>
+        <p className='font-normal text-juga-grayscale-black'>
           {price?.toLocaleString()}
         </p>
       </div>
       <div className={`w-[130px] text-right ${changeColor}`}>
-        <p className='font-medium'>{change > 0 ? `+${change}` : `${change}`}</p>
+        <p className='font-normal'>
+          {changeValue > 0
+            ? `${changePrice}(${changeValue}%)`
+            : `${changePrice}(${Math.abs(changeValue)}%)`}
+        </p>
       </div>
     </div>
   );
