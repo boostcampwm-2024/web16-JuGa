@@ -21,7 +21,7 @@ export class AuthService {
 
   async loginUser(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const { email, password } = authCredentialsDto;
     const user = await this.userRepository.findOne({ where: { email } });
 
@@ -31,11 +31,16 @@ export class AuthService {
 
       this.setCurrentRefreshToken(refreshToken, user.id);
 
-      return { accessToken };
+      return { accessToken, refreshToken };
     }
     throw new UnauthorizedException('Please check your login credentials');
   }
 
+  async kakaoLoginUser(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    return await this.getJWTToken(authCredentialsDto);
+  }
   async getJWTToken(authCredentialsDto: AuthCredentialsDto) {
     const accessToken = await this.generateAccessToken(authCredentialsDto);
     const refreshToken = await this.generateRefreshToken(authCredentialsDto);
@@ -89,5 +94,35 @@ export class AuthService {
       currentRefreshToken,
       currentRefreshTokenExpiresAt,
     });
+  }
+
+  async refreshToken(refreshToken: string): Promise<string> {
+    try {
+      const decodedRefreshToken = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+
+      const user = decodedRefreshToken.email
+        ? await this.userRepository.findOne({
+            where: { email: decodedRefreshToken.email },
+          })
+        : await this.userRepository.findOne({
+            where: { kakaoId: decodedRefreshToken.kakaoId },
+          });
+
+      const isRefreshTokenMatching = await bcrypt.compare(
+        refreshToken,
+        user.currentRefreshToken,
+      );
+
+      if (!isRefreshTokenMatching) {
+        throw new UnauthorizedException('Invalid Token');
+      }
+
+      const accessToken = this.generateAccessToken(user.toAuthCredentialsDto());
+      return accessToken;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid Token');
+    }
   }
 }

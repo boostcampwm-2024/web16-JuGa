@@ -1,4 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AuthCredentialsDto } from './dto/authCredentials.dto';
 
 @Entity()
 export class User extends BaseEntity {
@@ -22,4 +23,13 @@ export class User extends BaseEntity {
 
   @Column({ type: 'datetime', nullable: true })
   currentRefreshTokenExpiresAt: Date;
+
+  toAuthCredentialsDto(): AuthCredentialsDto {
+    if (this.kakaoId === -1) {
+      return {
+        email: this.email,
+        password: this.password,
+      };
+    }
+  }
 }
