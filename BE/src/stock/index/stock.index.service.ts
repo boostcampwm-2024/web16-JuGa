@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import axios from 'axios';
 import { StockIndexListChartElementDto } from './dto/stock.index.list.chart.element.dto';
 import { StockIndexValueElementDto } from './dto/stock.index.value.element.dto';
@@ -17,9 +17,6 @@ export class StockIndexService {
       accessToken,
     );
 
-    if (result.rt_cd !== '0')
-      throw new Error('데이터를 정상적으로 조회하지 못했습니다.');
-
     return result.output.map((element) => {
       return new StockIndexListChartElementDto(
         element.bsop_hour,
@@ -33,9 +30,6 @@ export class StockIndexService {
       code,
       accessToken,
     );
-
-    if (result.rt_cd !== '0')
-      throw new Error('데이터를 정상적으로 조회하지 못했습니다.');
 
     const data = result.output;
 
@@ -51,17 +45,25 @@ export class StockIndexService {
     code: string,
     accessToken: string,
   ) {
-    const response = await axios.get<StockIndexChartInterface>(
-      getFullURL('/uapi/domestic-stock/v1/quotations/inquire-index-timeprice'),
-      {
-        headers: getHeader(accessToken, 'FHPUP02110200'),
-        params: {
-          fid_input_hour_1: 300,
-          fid_cond_mrkt_div_code: 'U',
-          fid_input_iscd: code,
+    const response = await axios
+      .get<StockIndexChartInterface>(
+        getFullURL(
+          '/uapi/domestic-stock/v1/quotations/inquire-index-timeprice',
+        ),
+        {
+          headers: getHeader(accessToken, 'FHPUP02110200'),
+          params: {
+            fid_input_hour_1: 300,
+            fid_cond_mrkt_div_code: 'U',
+            fid_input_iscd: code,
+          },
         },
-      },
-    );
+      )
+      .catch((err) => {
+        throw new InternalServerErrorException(
+          '주가 지수 차트 정보를 조회하지 못했습니다.',
+        );
+      });
 
     return response.data;
   }
@@ -70,16 +72,22 @@ export class StockIndexService {
     code: string,
     accessToken: string,
   ) {
-    const response = await axios.get<StockIndexValueInterface>(
-      getFullURL('/uapi/domestic-stock/v1/quotations/inquire-index-price'),
-      {
-        headers: getHeader(accessToken, 'FHPUP02100000'),
-        params: {
-          fid_cond_mrkt_div_code: 'U',
-          fid_input_iscd: code,
+    const response = await axios
+      .get<StockIndexValueInterface>(
+        getFullURL('/uapi/domestic-stock/v1/quotations/inquire-index-price'),
+        {
+          headers: getHeader(accessToken, 'FHPUP02100000'),
+          params: {
+            fid_cond_mrkt_div_code: 'U',
+            fid_input_iscd: code,
+          },
         },
-      },
-    );
+      )
+      .catch((err) => {
+        throw new InternalServerErrorException(
+          '주가 지수 값 정보를 조회하지 못했습니다.',
+        );
+      });
 
     return response.data;
   }
