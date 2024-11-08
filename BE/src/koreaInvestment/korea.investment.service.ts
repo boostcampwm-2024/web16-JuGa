@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getFullURL } from '../util/getFullURL';
 
 export class KoreaInvestmentService {
   private accessToken: string;
@@ -9,14 +10,11 @@ export class KoreaInvestmentService {
     if (this.accessToken && this.tokenExpireTime > new Date()) {
       return this.accessToken;
     }
-    const response = await axios.post(
-      `${process.env.KOREA_INVESTMENT_BASE_URL}/oauth2/tokenP`,
-      {
-        grant_type: 'client_credentials',
-        appkey: process.env.KOREA_INVESTMENT_APP_KEY,
-        appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
-      },
-    );
+    const response = await axios.post(getFullURL('/oauth2/tokenP'), {
+      grant_type: 'client_credentials',
+      appkey: process.env.KOREA_INVESTMENT_APP_KEY,
+      appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
+    });
 
     const { data } = response;
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { SocketGateway } from './socket.gateway';
 import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
 import { SocketConnectTokenInterface } from './interface/socket.interface';
+import { getFullURL } from '../util/getFullURL';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -17,8 +18,7 @@ export class SocketService implements OnModuleInit {
   async onModuleInit() {
     const socketConnectionKey = await this.getSocketConnectionKey();
 
-    const url = 'ws://ops.koreainvestment.com:21000';
-    this.socket = new WebSocket(url);
+    this.socket = new WebSocket(process.env.KOREA_INVESTMENT_SOCKET_URL);
 
     this.socket.onopen = () => {
       this.registerStockIndexByCode('0001', socketConnectionKey); // 코스피
@@ -53,7 +53,7 @@ export class SocketService implements OnModuleInit {
 
   private async getSocketConnectionKey() {
     const response = await axios.post<SocketConnectTokenInterface>(
-      `${process.env.KOREA_INVESTMENT_BASE_URL}/oauth2/Approval`,
+      getFullURL('/oauth2/Approval'),
       {
         grant_type: 'client_credentials',
         appkey: process.env.KOREA_INVESTMENT_APP_KEY,

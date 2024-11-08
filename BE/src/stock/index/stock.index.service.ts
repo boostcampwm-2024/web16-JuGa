@@ -7,6 +7,8 @@ import {
   StockIndexChartInterface,
   StockIndexValueInterface,
 } from './interface/stock.index.interface';
+import { getFullURL } from '../../util/getFullURL';
+import { getHeader } from '../../util/getHeader';
 
 @Injectable()
 export class StockIndexService {
@@ -39,12 +41,14 @@ export class StockIndexService {
     if (result.rt_cd !== '0')
       throw new Error('데이터를 정상적으로 조회하지 못했습니다.');
 
+    const data = result.output;
+
     return new StockIndexValueElementDto(
       code,
-      result.output.bstp_nmix_prpr,
-      result.output.bstp_nmix_prdy_vrss,
-      result.output.bstp_nmix_prdy_ctrt,
-      result.output.prdy_vrss_sign,
+      data.bstp_nmix_prpr,
+      data.bstp_nmix_prdy_vrss,
+      data.bstp_nmix_prdy_ctrt,
+      data.prdy_vrss_sign,
     );
   }
 
@@ -53,16 +57,9 @@ export class StockIndexService {
     accessToken: string,
   ) {
     const response = await axios.get<StockIndexChartInterface>(
-      `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-timeprice`,
+      getFullURL('/uapi/domestic-stock/v1/quotations/inquire-index-timeprice'),
       {
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          authorization: `Bearer ${accessToken}`,
-          appkey: process.env.KOREA_INVESTMENT_APP_KEY,
-          appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
-          tr_id: 'FHPUP02110200',
-          custtype: 'P',
-        },
+        headers: getHeader(accessToken, 'FHPUP02110200'),
         params: {
           fid_input_hour_1: 300,
           fid_cond_mrkt_div_code: 'U',
@@ -79,16 +76,9 @@ export class StockIndexService {
     accessToken: string,
   ) {
     const response = await axios.get<StockIndexValueInterface>(
-      `${process.env.KOREA_INVESTMENT_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-index-price`,
+      getFullURL('/uapi/domestic-stock/v1/quotations/inquire-index-price'),
       {
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          authorization: `Bearer ${accessToken}`,
-          appkey: process.env.KOREA_INVESTMENT_APP_KEY,
-          appsecret: process.env.KOREA_INVESTMENT_APP_SECRET,
-          tr_id: 'FHPUP02100000',
-          custtype: 'P',
-        },
+        headers: getHeader(accessToken, 'FHPUP02100000'),
         params: {
           fid_cond_mrkt_div_code: 'U',
           fid_input_iscd: code,
