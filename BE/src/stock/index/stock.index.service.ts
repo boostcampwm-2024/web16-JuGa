@@ -59,7 +59,7 @@ export class StockIndexService {
           },
         },
       )
-      .catch((err) => {
+      .catch(() => {
         throw new InternalServerErrorException(
           '주가 지수 차트 정보를 조회하지 못했습니다.',
         );
@@ -83,7 +83,7 @@ export class StockIndexService {
           },
         },
       )
-      .catch((err) => {
+      .catch(() => {
         throw new InternalServerErrorException(
           '주가 지수 값 정보를 조회하지 못했습니다.',
         );
