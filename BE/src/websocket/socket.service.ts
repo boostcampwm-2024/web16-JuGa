@@ -13,6 +13,13 @@ export class SocketService implements OnModuleInit {
     H0UPCNT0: this.handleStockIndexValue.bind(this),
   };
 
+  private STOCK_CODE = {
+    '0001': 'KOSPI',
+    '1001': 'KOSDAQ',
+    '2001': 'KOSPI200',
+    '3003': 'KSQ150',
+  };
+
   constructor(private readonly socketGateway: SocketGateway) {}
 
   async onModuleInit() {
@@ -41,8 +48,8 @@ export class SocketService implements OnModuleInit {
   private handleStockIndexValue(responseData: string) {
     const responseList = responseData.split('^');
     this.socketGateway.sendStockIndexValueToClient(
+      this.STOCK_CODE[responseList[0]],
       new StockIndexValueElementDto(
-        responseList[0],
         responseList[2],
         responseList[4],
         responseList[9],

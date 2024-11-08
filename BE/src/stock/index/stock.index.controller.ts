@@ -70,22 +70,18 @@ export class StockIndexController {
 
     const stockIndexResponse = new StockIndexResponseDto();
     stockIndexResponse.KOSPI = {
-      code: '0001',
       value: kospiValue,
       chart: kospiChart,
     };
     stockIndexResponse.KOSDAQ = {
-      code: '1001',
       value: kosdaqValue,
       chart: kosdaqChart,
     };
     stockIndexResponse.KOSPI200 = {
-      code: '2001',
       value: kospi200Value,
       chart: kospi200Chart,
     };
     stockIndexResponse.KSQ150 = {
-      code: '3003',
       value: ksq150Value,
       chart: ksq150Chart,
     };
@@ -115,6 +111,11 @@ export class StockIndexController {
       ), // KSQ150
     ]);
 
-    this.socketGateway.sendStockIndexListToClient(stockLists);
+    this.socketGateway.sendStockIndexListToClient({
+      KOSPI: stockLists[0],
+      KOSDAQ: stockLists[1],
+      KOSPI200: stockLists[2],
+      KSQ150: stockLists[3],
+    });
   }
 }
