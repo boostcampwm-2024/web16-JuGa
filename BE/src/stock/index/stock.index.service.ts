@@ -21,6 +21,7 @@ export class StockIndexService {
       return new StockIndexListChartElementDto(
         element.bsop_hour,
         element.bstp_nmix_prpr,
+        element.bstp_nmix_prdy_vrss,
       );
     });
   }
