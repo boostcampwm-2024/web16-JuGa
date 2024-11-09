@@ -44,7 +44,7 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
     } else {
       ctx.strokeStyle = '#2175F3';
     }
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 4;
     ctx.stroke();
   }
 };
