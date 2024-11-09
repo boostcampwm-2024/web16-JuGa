@@ -7,7 +7,7 @@ type StockIndexChartProps = {
   name: string;
 };
 
-export function Chart({ name }: StockIndexChartProps) {
+export function Card({ name }: StockIndexChartProps) {
   const [prices, setPrices] = useState<number[]>([50, 54]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -32,17 +32,17 @@ export function Chart({ name }: StockIndexChartProps) {
   }, [prices]);
 
   return (
-    <div className='flex h-[200px] w-[500px] items-center rounded-lg bg-juga-grayscale-50 p-5'>
-      <div className='flex flex-col items-start justify-center flex-1 h-full gap-1 text-sm'>
-        <p className='text-lg font-semibold'>{name}</p>
-        <p className='text-2xl font-bold'>2562.4</p>
+    <div className='flex h-[100px] w-[260px] items-center gap-4 rounded-lg bg-juga-grayscale-50 p-5'>
+      <div className='flex h-full flex-1 flex-col items-start justify-center text-sm'>
+        <p className='font-semibold'>{name}</p>
+        <p className='text-lg font-bold'>2562.4</p>
         <p className='font-semibold text-juga-blue-40'>-31.55(-1.2%)</p>
       </div>
       <canvas
         ref={canvasRef}
-        width={600}
-        height={300}
-        className='flex-1 h-full'
+        width={300}
+        height={150}
+        className='h-[52px] flex-1'
       />
     </div>
   );
