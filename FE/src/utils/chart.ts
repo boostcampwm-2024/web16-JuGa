@@ -21,6 +21,17 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
   const yMax = Math.max(...data.map((d) => d)) * 1.1;
   const yMin = Math.min(...data.map((d) => d)) * 0.9;
 
+  const middleY =
+    padding.top + chartHeight - (chartHeight * (MIDDLE - yMin)) / (yMax - yMin);
+  ctx.beginPath();
+  ctx.setLineDash([10, 10]);
+  ctx.moveTo(padding.left, middleY);
+  ctx.lineTo(width - padding.right, middleY);
+  ctx.strokeStyle = '#6E8091';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
   // 데이터 선 그리기
   if (data.length > 1) {
     ctx.beginPath();
@@ -44,7 +55,7 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
     } else {
       ctx.strokeStyle = '#2175F3';
     }
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3;
     ctx.stroke();
   }
 };

@@ -32,8 +32,8 @@ export function Card({ name }: StockIndexChartProps) {
   }, [prices]);
 
   return (
-    <div className='flex h-[100px] w-[240px] items-center rounded-lg bg-juga-grayscale-50 p-5'>
-      <div className='flex h-full flex-1 flex-col items-start justify-center gap-1 text-sm'>
+    <div className='flex h-[100px] w-[260px] items-center gap-4 rounded-lg bg-juga-grayscale-50 p-5'>
+      <div className='flex h-full flex-1 flex-col items-start justify-center text-sm'>
         <p className='font-semibold'>{name}</p>
         <p className='text-lg font-bold'>2562.4</p>
         <p className='font-semibold text-juga-blue-40'>-31.55(-1.2%)</p>
@@ -42,7 +42,7 @@ export function Card({ name }: StockIndexChartProps) {
         ref={canvasRef}
         width={300}
         height={150}
-        className='h-10 flex-1'
+        className='h-[52px] flex-1'
       />
     </div>
   );
