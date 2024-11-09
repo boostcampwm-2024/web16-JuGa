@@ -9,7 +9,7 @@ export default function Header() {
     <header className='fixed left-0 top-0 h-[60px] w-full'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-[88px]'>
         <div className='flex items-center gap-2'>
-          <img src={'../public/Logo.png'} className={'h-[32px]'} />
+          <img src={'/Logo.png'} className={'h-[32px]'} />
           <h1 className='text-xl font-bold text-juga-grayscale-black'>JuGa</h1>
         </div>
 
