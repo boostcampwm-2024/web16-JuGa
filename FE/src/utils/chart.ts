@@ -1,9 +1,8 @@
 const X_LENGTH = 79; // 9:00 ~ 15:30 까지 5분 단위의 총 개수
-const MIDDLE = 50; // 상한가, 하한가를 나누는 기준
 
 export const drawChart = (
   ctx: CanvasRenderingContext2D,
-  data: { time: string; value: string }[],
+  data: { time: string; value: string; diff: string }[],
 ) => {
   const canvas = ctx.canvas;
   const width = canvas.width;
@@ -21,11 +20,30 @@ export const drawChart = (
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
-  const yMax = Math.max(...data.map((d) => Number(d.value))) * 1.1;
-  const yMin = Math.min(...data.map((d) => Number(d.value))) * 0.9;
+  const yMax = Math.round(
+    Math.max(...data.map((d) => Number(d.value))) * 1.006 * 100,
+  );
+  const yMin = Math.round(
+    Math.min(...data.map((d) => Number(d.value))) * 0.994 * 100,
+  );
+
+  data.sort((a, b) => {
+    if (a.time < b.time) return -1;
+    if (a.time > b.time) return 1;
+    return 0;
+  });
+
+  const MIDDLE =
+    data.length > 0
+      ? Number(
+          (parseFloat(data[0].value) - parseFloat(data[0].diff)).toFixed(2),
+        )
+      : 50;
 
   const middleY =
-    padding.top + chartHeight - (chartHeight * (MIDDLE - yMin)) / (yMax - yMin);
+    padding.top +
+    chartHeight -
+    (chartHeight * (MIDDLE * 100 - yMin)) / (yMax - yMin);
   ctx.beginPath();
   ctx.setLineDash([10, 10]);
   ctx.moveTo(padding.left, middleY);
@@ -39,14 +57,14 @@ export const drawChart = (
   if (data.length > 1) {
     ctx.beginPath();
     data.forEach((point, i) => {
-      const value = Number(point.value);
-
+      const value = Math.round(Number(point.value) * 100);
       const x = padding.left + (chartWidth * i) / (X_LENGTH - 1);
       const y =
         padding.top +
         chartHeight -
         (chartHeight * (value - yMin)) / (yMax - yMin);
 
+      // console.log(((value - yMin) / (yMax - yMin)));
       if (i === 0) {
         ctx.moveTo(x, y);
       } else {

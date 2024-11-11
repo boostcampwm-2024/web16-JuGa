@@ -17,7 +17,6 @@ type StockIndexChartProps = {
 
 export function Card({ name, id, initialData }: StockIndexChartProps) {
   const { chart, value } = initialData;
-
   const [prices, setPrices] = useState<ChartData[]>(chart);
   const [stockIndexValue, setStockIndexValue] =
     useState<StockIndexValue>(value);
@@ -30,17 +29,9 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
     setStockIndexValue(stockIndex);
   });
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (prices.length === X_LENGTH) {
-  //       clearInterval(interval);
-  //       return;
-  //     }
-  //     setPrices((prev) => [...prev, Math.floor(Math.random() * 50) + 25]);
-  //   }, 500);
-
-  //   return () => clearInterval(interval);
-  // }, [prices.length]);
+  socket.on('chart', (chartData) => {
+    setPrices(chartData.id);
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,8 +42,8 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
   }, [prices]);
 
   return (
-    <div className='flex h-[100px] w-[260px] items-center gap-4 rounded-lg bg-juga-grayscale-50 p-5'>
-      <div className='flex flex-col items-start justify-center flex-1 h-full text-sm'>
+    <div className='flex h-[100px] w-[260px] items-center justify-between rounded-lg bg-juga-grayscale-50 p-3'>
+      <div className='flex h-full w-[108px] flex-1 flex-col items-start justify-center text-sm'>
         <p className='font-semibold'>{name}</p>
         <p className='text-lg font-bold'>{stockIndexValue.curr_value}</p>
         <p className={`font-semibold ${changeColor}`}>
