@@ -16,10 +16,10 @@ export default function StockIndex() {
 
   return (
     <div className='flex items-center w-full gap-2'>
-      <Card name='코스피' initialData={KOSPI} />
-      <Card name='코스닥' initialData={KOSDAQ} />
-      <Card name='코스피200' initialData={KOSPI200} />
-      <Card name='KSQ150' initialData={KSQ150} />
+      <Card name='코스피' id='KOSPI' initialData={KOSPI} />
+      <Card name='코스닥' id='KOSDAQ' initialData={KOSDAQ} />
+      <Card name='코스피200' id='KOSPI200' initialData={KOSPI200} />
+      <Card name='KSQ150' id='KSQ150' initialData={KSQ150} />
     </div>
   );
 }
