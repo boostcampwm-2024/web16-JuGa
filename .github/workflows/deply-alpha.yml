@@ -38,6 +38,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
+        continue-on-error: true
         run: npm ci --no-audit
 
       - name: Run tests
