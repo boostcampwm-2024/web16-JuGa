@@ -31,12 +31,30 @@ export class StockOrderController {
   })
   @ApiResponse({
     status: 201,
-    description: '주식 매수 성공',
+    description: '주식 매수 예약 등록 성공',
   })
   async buy(
     @Req() request: RequestInterface,
     @Body(ValidationPipe) stockOrderRequest: StockOrderRequestDto,
   ) {
     await this.stockTradeService.buy(request.user.id, stockOrderRequest);
+  }
+
+  @Post('/sell')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '주식 매도 API',
+    description: '주식 id, 매도 가격, 수량으로 주식을 매도한다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '주식 매도 예약 등록 성공',
+  })
+  async sell(
+    @Req() request: RequestInterface,
+    @Body(ValidationPipe) stockOrderRequest: StockOrderRequestDto,
+  ) {
+    await this.stockTradeService.sell(request.user.id, stockOrderRequest);
   }
 }

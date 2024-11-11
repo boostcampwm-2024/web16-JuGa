@@ -20,4 +20,17 @@ export class StockOrderService {
 
     await this.stockOrderRepository.save(order);
   }
+
+  async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
+    const order = this.stockOrderRepository.create({
+      user_id: userId,
+      stock_id: stockOrderRequest.stock_id,
+      trade_type: TradeType.SELL,
+      amount: stockOrderRequest.amount,
+      price: stockOrderRequest.price,
+      status: StatusType.PENDING,
+    });
+
+    await this.stockOrderRepository.save(order);
+  }
 }
