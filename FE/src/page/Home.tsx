@@ -2,6 +2,7 @@ import Header from 'components/Header';
 import Login from 'components/Login';
 import TopFive from 'components/TopFive/TopFive';
 import StockIndex from 'components/StockIndex/index.tsx';
+import SearchModal from '../components/Search';
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
         <TopFive />
       </div>
       <Login />
+      <SearchModal />
     </>
   );
 }

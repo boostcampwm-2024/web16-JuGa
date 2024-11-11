@@ -1,9 +1,11 @@
 import useAuthStore from 'store/authStore';
 import useLoginModalStore from 'store/useLoginModalStore';
+import useSearchModalStore from '../store/useSearchModalStore.ts';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
   const { isLogin, resetToken } = useAuthStore();
+  const { toggleSearchModal } = useSearchModalStore();
 
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full'>
@@ -24,6 +26,7 @@ export default function Header() {
               type='text'
               placeholder='Search...'
               className='h-[36px] w-[280px] rounded-lg bg-juga-grayscale-50 px-4 py-2'
+              onClick={toggleSearchModal}
             />
           </div>
         </div>
