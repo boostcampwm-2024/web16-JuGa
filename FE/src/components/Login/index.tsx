@@ -11,6 +11,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setAccessToken } = useAuthStore();
+  const [errorCode, setErrorCode] = useState<number>(200);
 
   useEffect(() => {
     setEmail('');
@@ -24,6 +25,7 @@ export default function Login() {
     const res = await login(email, password);
 
     if ('error' in res) {
+      setErrorCode(res.statusCode);
       return;
     }
 
@@ -36,6 +38,14 @@ export default function Login() {
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-20 shadow-lg'>
         <h2 className='text-3xl font-bold'>JuGa</h2>
+        <p className='h-5 my-3 text-sm font-semibold text-juga-red-60'>
+          {
+            {
+              '401': '존재하지 않는 사용자입니다.',
+              '400': '잘못된 입력형식입니다.',
+            }[errorCode]
+          }
+        </p>
         <form className='mb-2 flex flex-col' onSubmit={handleSubmit}>
           <div className='my-10 flex flex-col gap-2'>
             <Input
