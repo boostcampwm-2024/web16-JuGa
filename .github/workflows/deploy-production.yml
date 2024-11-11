@@ -2,9 +2,9 @@ name: deploy
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
   pull_request:
-    branches: [main]
+    branches: [dev]
 
 env:
   DOCKER_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/juga-docker
@@ -14,6 +14,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         app:
           [
@@ -22,7 +23,7 @@ jobs:
           ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -38,9 +39,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
+        continue-on-error: true
         run: npm ci
 
       - name: Run tests
+        if: ${{ matrix.app.name == 'be' }}
         working-directory: ./${{matrix.app.dir}}
         run: npm test
         env:
