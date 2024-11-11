@@ -31,10 +31,4 @@ export class StockDetailQueryParameterDto {
    * D:일봉, W:주봉, M:월봉, Y:년봉
    */
   fid_period_div_code: string;
-
-  /**
-   * 수정주가 원주가 가격 여부
-   * 0:수정주가 1:원주가
-   */
-  fid_org_adj_prc: string;
 }

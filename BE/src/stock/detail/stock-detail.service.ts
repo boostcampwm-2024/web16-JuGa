@@ -53,9 +53,9 @@ export class StockDetailService {
   }
 
   /**
-   * @private 한국투자 Open API - [국내주식] 기본시세 - 주식현재가 시세 호출 함수
+   * @private 한국투자 Open API - [국내주식] 기본시세 - 국내주식기간별시세(일/주/월/년) 호출 함수
    * @param {StockDetailQueryParameterDto} queryParams - API 요청 시 필요한 쿼리 파라미터 DTO
-   * @returns - 주식현재가 시세 데이터
+   * @returns - 국내주식기간별시세(일/주/월/년) 데이터
    *
    * @author uuuo3o
    */
@@ -87,7 +87,7 @@ export class StockDetailService {
   }
 
   /**
-   * @private API에서 받은 주식현재가 시세 데이터를 필요한 정보로 정제하는 함수
+   * @private API에서 받은 국내주식기간별시세(일/주/월/년) 데이터를 필요한 정보로 정제하는 함수
    * @param {InquirePriceApiResponse} response - API 응답에서 받은 원시 데이터
    * @returns - 필요한 정보만 추출한 데이터 배열
    *
@@ -125,7 +125,7 @@ export class StockDetailService {
   }
 
   /**
-   * @private 주식현재가 시세 요청을 위한 쿼리 파라미터 객체 생성 함수
+   * @private 국내주식기간별시세(일/주/월/년) 요청을 위한 쿼리 파라미터 객체 생성 함수
    * @param {StockDetailQueryParameterDto} params - API 요청에 필요한 쿼리 파라미터 DTO
    * @returns - API 요청에 필요한 쿼리 파라미터 객체
    *
