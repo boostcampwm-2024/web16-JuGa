@@ -6,11 +6,11 @@ export class SocketGateway {
   @WebSocketServer()
   private server: Server;
 
-  sendStockIndexListToClient(stockIndex) {
-    this.server.emit('index', stockIndex);
+  sendStockIndexListToClient(stockChart) {
+    this.server.emit('chart', stockChart);
   }
 
-  sendStockIndexValueToClient(stockIndexValue) {
-    this.server.emit('indexValue', stockIndexValue);
+  sendStockIndexValueToClient(event, stockIndexValue) {
+    this.server.emit(event, stockIndexValue);
   }
 }

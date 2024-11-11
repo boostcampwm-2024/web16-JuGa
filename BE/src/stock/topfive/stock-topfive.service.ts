@@ -3,14 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { StockRankingQueryParameterDto } from './dto/stock-ranking-request.dto';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
 import { StockRankingDataDto } from './dto/stock-ranking-data.dto';
-import { MarketType } from '../enum/MarketType';
+import { MarketType } from '../enum/market-type';
 import {
   StockApiOutputData,
   StockApiResponse,
-} from './interface/stock.topfive.interface';
-import { getHeader } from '../../util/getHeader';
-import { getFullURL } from '../../util/getFullURL';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
+} from './interface/stock-topfive.interface';
+import { getHeader } from '../../util/get-header';
+import { getFullURL } from '../../util/get-full-URL';
+import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
 
 @Injectable()
 export class StockTopfiveService {
