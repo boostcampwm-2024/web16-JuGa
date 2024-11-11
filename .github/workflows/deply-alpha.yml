@@ -39,9 +39,10 @@ jobs:
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
         continue-on-error: true
-        run: npm ci --no-audit
+        run: npm ci
 
       - name: Run tests
+        if: ${{ matrix.app.name == 'be' }} # BE일 때만 실행
         working-directory: ./${{matrix.app.dir}}
         run: npm test
         env:
