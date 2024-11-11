@@ -10,7 +10,6 @@ const paramsMap = {
   코스닥: 'KOSDAQ',
   코스피200: 'KOSPI200',
 };
-
 export default function TopFive() {
   const [searchParams] = useSearchParams();
   const currentMarket = (searchParams.get('top') || '전체') as MarketType;
@@ -19,7 +18,7 @@ export default function TopFive() {
     queryKey: ['topfive', currentMarket],
     queryFn: () =>
       fetch(
-        `http://223.130.151.42:3000/api/stocks/topfive?market=${paramsMap[currentMarket]}`,
+        `${import.meta.env.VITE_API_BASE_URL}${paramsMap[currentMarket]}`,
       ).then((res) => res.json()),
     keepPreviousData: true,
   });
