@@ -1,34 +1,18 @@
+import { ChartData, StockIndexData } from 'components/TopFive/type';
 import { useEffect, useRef, useState } from 'react';
 import { drawChart } from 'utils/chart';
 
 // const X_LENGTH = 79;
 
-type initialDataType = {
-  chart: {
-    code: string;
-    chart: { time: string; value: string }[];
-  };
-  code: string;
-  value: {
-    code: string;
-    value: string;
-    diff: string;
-    diffRate: string;
-    sign: string;
-  };
-};
-
 type StockIndexChartProps = {
   name: string;
-  initialData: initialDataType;
+  initialData: StockIndexData;
 };
 
 export function Card({ name, initialData }: StockIndexChartProps) {
   const { chart, value } = initialData;
 
-  const [prices, setPrices] = useState<{ time: string; value: string }[]>(
-    chart.chart,
-  );
+  const [prices, setPrices] = useState<ChartData[]>(chart);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const changeColor =
@@ -58,9 +42,9 @@ export function Card({ name, initialData }: StockIndexChartProps) {
     <div className='flex h-[100px] w-[260px] items-center gap-4 rounded-lg bg-juga-grayscale-50 p-5'>
       <div className='flex flex-col items-start justify-center flex-1 h-full text-sm'>
         <p className='font-semibold'>{name}</p>
-        <p className='text-lg font-bold'>{value.value}</p>
+        <p className='text-lg font-bold'>{value.curr_value}</p>
         <p className={`font-semibold ${changeColor}`}>
-          {value.diff}({value.diffRate}%)
+          {value.diff}({value.diff_rate}%)
         </p>
       </div>
       <canvas
