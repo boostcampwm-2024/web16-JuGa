@@ -4,7 +4,7 @@ import {
   StockIndexValue,
 } from 'components/TopFive/type';
 import { useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
+import { socket } from 'socket';
 import { drawChart } from 'utils/chart';
 
 // const X_LENGTH = 79;
@@ -25,8 +25,6 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
 
   const changeColor =
     Number(value.diff) > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
-
-  const socket = io('http://223.130.151.42:3000/socket');
 
   socket.on(id, (stockIndex) => {
     setStockIndexValue(stockIndex);
