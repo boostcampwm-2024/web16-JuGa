@@ -22,11 +22,7 @@ jobs:
           ]
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: debug matrix
-        run: |
-          echo "Matrix app directory: ${{matrix.app.dir}}"
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -42,9 +38,8 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
-        run: |
-          npm cache clean --force
-          npm install
+        run: npm ci
+
       - name: Run tests
         working-directory: ./${{matrix.app.dir}}
         run: npm test
