@@ -5,6 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { User } from './auth/user.entity';
 import { StockIndexModule } from './stock/index/stock-index.module';
 import { StockTopfiveModule } from './stock/topfive/stock-topfive.module';
 import { KoreaInvestmentModule } from './koreaInvestment/korea-investment.module';
