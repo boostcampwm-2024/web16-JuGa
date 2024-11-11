@@ -4,7 +4,7 @@ export async function login(
   email: string,
   password: string,
 ): Promise<LoginSuccessResponse | LoginFailResponse> {
-  return fetch('http://175.45.204.158:3000/auth/login', {
+  return fetch(import.meta.env.VITE_API_LOGIN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

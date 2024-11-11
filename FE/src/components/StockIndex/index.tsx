@@ -5,9 +5,7 @@ export default function StockIndex() {
   const { data, isLoading } = useQuery({
     queryKey: ['StockIndex'],
     queryFn: () =>
-      fetch('http://175.45.204.158:3000/api/stocks/index').then((res) =>
-        res.json(),
-      ),
+      fetch(import.meta.env.VITE_API_STOCk_INDEX).then((res) => res.json()),
   });
 
   if (isLoading) return;
