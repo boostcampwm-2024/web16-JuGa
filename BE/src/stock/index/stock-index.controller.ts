@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cron } from '@nestjs/schedule';
-import { StockIndexService } from './stock.index.service';
-import { StockIndexResponseDto } from './dto/stock.index.response.dto';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
+import { StockIndexService } from './stock-index.service';
+import { StockIndexResponseDto } from './dto/stock-index-response.dto';
+import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
 import { SocketGateway } from '../../websocket/socket.gateway';
 
 @Controller('/api/stocks/index')
@@ -70,22 +70,18 @@ export class StockIndexController {
 
     const stockIndexResponse = new StockIndexResponseDto();
     stockIndexResponse.KOSPI = {
-      code: '0001',
       value: kospiValue,
       chart: kospiChart,
     };
     stockIndexResponse.KOSDAQ = {
-      code: '1001',
       value: kosdaqValue,
       chart: kosdaqChart,
     };
     stockIndexResponse.KOSPI200 = {
-      code: '2001',
       value: kospi200Value,
       chart: kospi200Chart,
     };
     stockIndexResponse.KSQ150 = {
-      code: '3003',
       value: ksq150Value,
       chart: ksq150Chart,
     };
@@ -115,6 +111,11 @@ export class StockIndexController {
       ), // KSQ150
     ]);
 
-    this.socketGateway.sendStockIndexListToClient(stockLists);
+    this.socketGateway.sendStockIndexListToClient({
+      KOSPI: stockLists[0],
+      KOSDAQ: stockLists[1],
+      KOSPI200: stockLists[2],
+      KSQ150: stockLists[3],
+    });
   }
 }
