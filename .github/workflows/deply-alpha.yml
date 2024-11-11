@@ -2,9 +2,9 @@ name: deploy
 
 on:
   push:
-    branches: [main, alpha]
+    branches: [alpha]
   pull_request:
-    branches: [main, alpha]
+    branches: [alpha]
 
 env:
   DOCKER_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/juga-docker
@@ -13,38 +13,47 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app:
+          [
+            { name: 'be', dir: 'BE', port: 3000, container: 'juga-docker-be' },
+            { name: 'fe', dir: 'FE', port: 5173, container: 'juga-docker-fe' },
+          ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: ./BE/package-lock.json
+          cache-dependency-path: ./${{matrix.app.dir}}/package-lock.json
 
       - name: Create .env file
         run: |
-          touch ./BE/.env
-          echo "${{ secrets.ENV }}" > ./BE/.env
+          touch ./${{ matrix.app.dir }}/.env
+          echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
 
       - name: Install dependencies
-        working-directory: ./BE
+        working-directory: ./${{matrix.app.dir}}
+        continue-on-error: true
         run: npm ci
 
       - name: Run tests
-        working-directory: ./BE
+        if: ${{ matrix.app.name == 'be' }} # BE일 때만 실행
+        working-directory: ./${{matrix.app.dir}}
         run: npm test
         env:
           CI: true
 
       - name: Run linter
-        working-directory: ./BE
+        working-directory: ./${{matrix.app.dir}}
         run: npm run lint
 
       - name: Build application
-        working-directory: ./BE
+        working-directory: ./${{matrix.app.dir}}
         run: npm run build
 
       - name: Login to Docker Hub
@@ -54,16 +63,16 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        working-directory: ./BE
+        working-directory: ./${{ matrix.app.dir }}
         env:
           NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
           NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} .
-          docker tag ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.DOCKER_IMAGE }}:latest
+          docker build -t ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} .
+          docker tag ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:latest
 
-          docker push ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-          docker push ${{ env.DOCKER_IMAGE }}:latest
+          docker push ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
+          docker push ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:latest
 
       - name: Get Github Actions IP
         id: ip
@@ -88,22 +97,22 @@ jobs:
       - name: Deploy to NCP Server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.NCP_SERVER_HOST }}
-          username: ${{ secrets.NCP_SERVER_USERNAME }}
-          key: ${{ secrets.NCP_SERVER_SSH_KEY }}
+          host: ${{ secrets.NCP_ALPHA_SERVER_HOST }}
+          username: ${{ secrets.NCP_ALPHA_SERVER_USERNAME }}
+          key: ${{ secrets.NCP_ALPHA_SERVER_SSH_KEY }}
           port: 22
           script: |
             docker system prune -af
             echo "${{ secrets.ENV }}" > .env
-            
-            docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-            docker stop juga-docker || true
-            docker rm juga-docker || true
+
+            docker pull ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
+            docker stop ${{ matrix.app.container }} || true
+            docker rm ${{ matrix.app.container }} || true
             docker run -d \
-              --name juga-docker \
-              -p 3000:3000 \
+              --name ${{ matrix.app.container }} \
+              -p ${{ matrix.app.port }}:${{ matrix.app.port }} \
               --env-file .env \
-              ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+              ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
 
       - name: Remove Github Action Ip to Security group
         run: |
