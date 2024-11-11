@@ -10,6 +10,7 @@ import { StockIndexModule } from './stock/index/stock-index.module';
 import { StockTopfiveModule } from './stock/topfive/stock-topfive.module';
 import { KoreaInvestmentModule } from './koreaInvestment/korea-investment.module';
 import { SocketModule } from './websocket/socket.module';
+import { StockDetailModule } from './stock/detail/stock-detail.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SocketModule } from './websocket/socket.module';
     StockIndexModule,
     StockTopfiveModule,
     SocketModule,
+    StockDetailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
