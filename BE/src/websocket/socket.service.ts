@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WebSocket } from 'ws';
-import { Cron } from '@nestjs/schedule';
+import axios from 'axios';
 import { SocketGateway } from './socket.gateway';
-import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
-import { StockIndexService } from '../stock/index/stock.index.service';
-import { KoreaInvestmentService } from '../koreaInvestment/korea.investment.service';
+import { StockIndexValueElementDto } from '../stock/index/dto/stock-index-value-element.dto';
+import { SocketConnectTokenInterface } from './interface/socket.interface';
+import { getFullURL } from '../util/get-full-URL';
 
 @Injectable()
 export class SocketService implements OnModuleInit {
@@ -13,17 +13,19 @@ export class SocketService implements OnModuleInit {
     H0UPCNT0: this.handleStockIndexValue.bind(this),
   };
 
-  constructor(
-    private readonly stockIndexGateway: SocketGateway,
-    private readonly stockIndexService: StockIndexService,
-    private readonly koreaInvestmentService: KoreaInvestmentService,
-  ) {}
+  private STOCK_CODE = {
+    '0001': 'KOSPI',
+    '1001': 'KOSDAQ',
+    '2001': 'KOSPI200',
+    '3003': 'KSQ150',
+  };
+
+  constructor(private readonly socketGateway: SocketGateway) {}
 
   async onModuleInit() {
     const socketConnectionKey = await this.getSocketConnectionKey();
 
-    const url = 'ws://ops.koreainvestment.com:21000';
-    this.socket = new WebSocket(url);
+    this.socket = new WebSocket(process.env.KOREA_INVESTMENT_SOCKET_URL);
 
     this.socket.onopen = () => {
       this.registerStockIndexByCode('0001', socketConnectionKey); // 코스피
@@ -43,37 +45,11 @@ export class SocketService implements OnModuleInit {
     };
   }
 
-  @Cron('*/5 9-16 * * 1-5')
-  async cronStockIndexLists() {
-    const accessToken = await this.koreaInvestmentService.getAccessToken();
-
-    const stockLists = await Promise.all([
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '0001',
-        accessToken,
-      ), // 코스피
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '1001',
-        accessToken,
-      ), // 코스닥
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '2001',
-        accessToken,
-      ), // 코스피200
-      this.stockIndexService.getDomesticStockIndexListByCode(
-        '3003',
-        accessToken,
-      ), // KSQ150
-    ]);
-
-    this.stockIndexGateway.sendStockIndexListToClient(stockLists);
-  }
-
   private handleStockIndexValue(responseData: string) {
     const responseList = responseData.split('^');
-    this.stockIndexGateway.sendStockIndexValueToClient(
+    this.socketGateway.sendStockIndexValueToClient(
+      this.STOCK_CODE[responseList[0]],
       new StockIndexValueElementDto(
-        responseList[0],
         responseList[2],
         responseList[4],
         responseList[9],
@@ -83,20 +59,16 @@ export class SocketService implements OnModuleInit {
   }
 
   private async getSocketConnectionKey() {
-    const url = 'https://openapi.koreainvestment.com:9443/oauth2/Approval';
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: JSON.stringify({
+    const response = await axios.post<SocketConnectTokenInterface>(
+      getFullURL('/oauth2/Approval'),
+      {
         grant_type: 'client_credentials',
-        appkey: process.env.APP_KEY,
-        secretkey: process.env.APP_SECRET,
-      }),
-    });
-    const result: SocketConnectTokenInterface = await response.json();
+        appkey: process.env.KOREA_INVESTMENT_APP_KEY,
+        secretkey: process.env.KOREA_INVESTMENT_APP_SECRET,
+      },
+    );
+
+    const result = response.data;
     return result.approval_key;
   }
 
@@ -118,10 +90,4 @@ export class SocketService implements OnModuleInit {
       }),
     );
   }
-}
-
-// interfaces
-
-interface SocketConnectTokenInterface {
-  approval_key: string;
 }

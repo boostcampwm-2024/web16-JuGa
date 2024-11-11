@@ -1,7 +1,7 @@
 /**
  * 등락률 API를 사용할 때 쿼리 파라미터로 사용할 요청값 DTO
  */
-export class StockRankigRequestDto {
+export class StockRankingQueryParameterDto {
   /**
    * 조건 시장 분류 코드
    * 'J' 주식
