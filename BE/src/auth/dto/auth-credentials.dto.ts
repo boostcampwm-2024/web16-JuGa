@@ -3,8 +3,6 @@ import {
   Matches,
   MaxLength,
   MinLength,
-  IsEmail,
-  ValidateNested,
   IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';

@@ -2,9 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 import { UserRepository } from './user.repository';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +29,7 @@ export class AuthService {
       const { accessToken, refreshToken } =
         await this.getJWTToken(authCredentialsDto);
 
-      this.setCurrentRefreshToken(refreshToken, user.id);
+      await this.setCurrentRefreshToken(refreshToken, user.id);
 
       return { accessToken, refreshToken };
     }
@@ -39,8 +39,9 @@ export class AuthService {
   async kakaoLoginUser(
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    return await this.getJWTToken(authCredentialsDto);
+    return this.getJWTToken(authCredentialsDto);
   }
+
   async getJWTToken(authCredentialsDto: AuthCredentialsDto) {
     const accessToken = await this.generateAccessToken(authCredentialsDto);
     const refreshToken = await this.generateRefreshToken(authCredentialsDto);
@@ -51,15 +52,15 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<string> {
     return authCredentialsDto.email
-      ? this.jwtService.sign({ email: authCredentialsDto.email })
-      : this.jwtService.sign({ kakaoId: authCredentialsDto.kakaoId });
+      ? this.jwtService.signAsync({ email: authCredentialsDto.email })
+      : this.jwtService.signAsync({ kakaoId: authCredentialsDto.kakaoId });
   }
 
   async generateRefreshToken(
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<string> {
     if (authCredentialsDto.email) {
-      return this.jwtService.sign(
+      return this.jwtService.signAsync(
         { email: authCredentialsDto.email },
         {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
@@ -68,17 +69,16 @@ export class AuthService {
           ),
         },
       );
-    } else {
-      return this.jwtService.sign(
-        { kakaoId: authCredentialsDto.kakaoId },
-        {
-          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-          expiresIn: this.configService.get<string>(
-            'JWT_REFRESH_EXPIRATION_TIME',
-          ),
-        },
-      );
     }
+    return this.jwtService.signAsync(
+      { kakaoId: authCredentialsDto.kakaoId },
+      {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: this.configService.get<string>(
+          'JWT_REFRESH_EXPIRATION_TIME',
+        ),
+      },
+    );
   }
 
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
@@ -87,10 +87,13 @@ export class AuthService {
     const currentRefreshToken = await bcrypt.hash(refreshToken, salt);
     const currentRefreshTokenExpiresAt = new Date(
       currentDate.getTime() +
-        parseInt(this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME')),
+        parseInt(
+          this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME'),
+          10,
+        ),
     );
 
-    this.userRepository.update(userId, {
+    await this.userRepository.update(userId, {
       currentRefreshToken,
       currentRefreshTokenExpiresAt,
     });
@@ -120,7 +123,7 @@ export class AuthService {
       }
 
       const accessToken = this.generateAccessToken(user.toAuthCredentialsDto());
-      return accessToken;
+      return await accessToken;
     } catch (error) {
       throw new UnauthorizedException('Invalid Token');
     }

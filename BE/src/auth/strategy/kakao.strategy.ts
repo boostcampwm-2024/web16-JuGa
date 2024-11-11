@@ -3,30 +3,53 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-kakao';
 
+interface KakaoStrategyOptions {
+  clientID: string;
+  clientSecret: string;
+  callbackURL: string;
+}
+
+interface KakaoProfile extends Profile {
+  id: number;
+  _json: {
+    id: number;
+  };
+}
+
+interface KakaoUser {
+  kakaoId: number;
+}
+
 @Injectable()
-export class KakaoStrategy extends PassportStrategy(Strategy) {
+export class KakaoStrategy extends PassportStrategy<Strategy>(
+  Strategy,
+  'kakao',
+) {
   constructor(private readonly configService: ConfigService) {
-    super({
-      clientID: configService.get('KAKAO_CLIENT_ID'),
+    const options: KakaoStrategyOptions = {
+      clientID: configService.get<string>('KAKAO_CLIENT_ID') || '',
       clientSecret: '',
-      callbackURL: `${configService.get('BACKEND_URL')}/auth/kakao`,
-    });
+      callbackURL: `${configService.get<string>('BACKEND_URL') || ''}/auth/kakao`,
+    };
+
+    super(options);
   }
 
-  async validate(
+  validate(
     accessToken: string,
     refreshToken: string,
-    profile: Profile,
-    done: (error: any, user?: any, info?: any) => void,
+    profile: KakaoProfile,
+    done: (error: Error, user?: KakaoUser) => void,
   ) {
     try {
-      const { _json } = profile;
+      // eslint-disable-next-line no-underscore-dangle
+      const kakaoId = profile._json.id;
       const user = {
-        kakaoId: _json.id,
+        kakaoId,
       };
       done(null, user);
     } catch (error) {
-      done(error);
+      done(error instanceof Error ? error : new Error(String(error)));
     }
   }
 }

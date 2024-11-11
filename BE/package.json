@@ -41,6 +41,7 @@
     "cross-env": "^7.0.3",
     "docker": "^1.0.0",
     "dotenv": "^16.4.5",
+    "express": "^4.21.1",
     "fastify-swagger": "^5.1.1",
     "mysql2": "^3.11.3",
     "passport": "^0.7.0",

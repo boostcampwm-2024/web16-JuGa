@@ -31,5 +31,7 @@ export class User extends BaseEntity {
         password: this.password,
       };
     }
+
+    throw new Error('Cannot convert Kakao user to auth credentials');
   }
 }

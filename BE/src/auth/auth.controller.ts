@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { AuthService } from './auth.service';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -62,12 +62,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Refresh Token 요청 API' })
   @Get('/refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies['refreshToken'];
-    const accessToken = req.cookies['accessToken'];
-
-    if (!refreshToken || !accessToken) {
-      return res.status(401).send();
+    if (
+      typeof req.cookies.refreshToken !== 'string' ||
+      typeof req.cookies.accessToken !== 'string'
+    ) {
+      return res.status(400).send();
     }
+
+    const { refreshToken } = req.cookies;
 
     const newAccessToken = await this.authService.refreshToken(refreshToken);
 
