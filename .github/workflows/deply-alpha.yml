@@ -42,8 +42,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
-        run: npm ci
-
+        run: |
+          npm cache clean --force
+          npm install
       - name: Run tests
         working-directory: ./${{matrix.app.dir}}
         run: npm test
