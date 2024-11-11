@@ -78,7 +78,7 @@ export interface InquirePriceOutputData {
 }
 
 export interface InquirePriceApiResponse {
-  output: InquirePriceOutputData[];
+  output: InquirePriceOutputData;
   rt_cd: string;
   msg_cd: string;
   msg1: string;
