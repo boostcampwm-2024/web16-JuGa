@@ -13,4 +13,9 @@ export class StockDetailQueryParameterDto {
    * (ex) 005930
    */
   fid_input_iscd: string;
+
+  constructor(fid_cond_mrkt_div_code: string, fid_input_iscd: string) {
+    this.fid_cond_mrkt_div_code = fid_cond_mrkt_div_code;
+    this.fid_input_iscd = fid_input_iscd;
+  }
 }
