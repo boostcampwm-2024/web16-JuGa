@@ -10,6 +10,8 @@ import { StockIndexModule } from './stock/index/stock-index.module';
 import { StockTopfiveModule } from './stock/topfive/stock-topfive.module';
 import { KoreaInvestmentModule } from './koreaInvestment/korea-investment.module';
 import { SocketModule } from './websocket/socket.module';
+import { StockOrderModule } from './stock/order/stock-order.module';
+import { Order } from './stock/order/stock-order.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { SocketModule } from './websocket/socket.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWD,
       database: process.env.DB_DATABASE,
-      entities: [User],
+      entities: [User, Order],
       synchronize: true,
     }),
     KoreaInvestmentModule,
@@ -30,6 +32,7 @@ import { SocketModule } from './websocket/socket.module';
     StockIndexModule,
     StockTopfiveModule,
     SocketModule,
+    StockOrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
