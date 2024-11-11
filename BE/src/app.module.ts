@@ -10,7 +10,6 @@ import { StockTopfiveModule } from './stock/topfive/stock-topfive.module';
 import { KoreaInvestmentModule } from './koreaInvestment/korea-investment.module';
 import { SocketModule } from './websocket/socket.module';
 import { StockOrderModule } from './stock/order/stock-order.module';
-import { Order } from './stock/order/stock-order.entity';
 import { typeOrmConfig } from './configs/typeorm.config';
 
 @Module({
