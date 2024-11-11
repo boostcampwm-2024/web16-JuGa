@@ -1,7 +1,10 @@
 const X_LENGTH = 79; // 9:00 ~ 15:30 까지 5분 단위의 총 개수
 const MIDDLE = 50; // 상한가, 하한가를 나누는 기준
 
-export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
+export const drawChart = (
+  ctx: CanvasRenderingContext2D,
+  data: { time: string; value: string }[],
+) => {
   const canvas = ctx.canvas;
   const width = canvas.width;
   const height = canvas.height;
@@ -18,8 +21,8 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
-  const yMax = Math.max(...data.map((d) => d)) * 1.1;
-  const yMin = Math.min(...data.map((d) => d)) * 0.9;
+  const yMax = Math.max(...data.map((d) => Number(d.value))) * 1.1;
+  const yMin = Math.min(...data.map((d) => Number(d.value))) * 0.9;
 
   const middleY =
     padding.top + chartHeight - (chartHeight * (MIDDLE - yMin)) / (yMax - yMin);
@@ -36,11 +39,13 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
   if (data.length > 1) {
     ctx.beginPath();
     data.forEach((point, i) => {
+      const value = Number(point.value);
+
       const x = padding.left + (chartWidth * i) / (X_LENGTH - 1);
       const y =
         padding.top +
         chartHeight -
-        (chartHeight * (point - yMin)) / (yMax - yMin);
+        (chartHeight * (value - yMin)) / (yMax - yMin);
 
       if (i === 0) {
         ctx.moveTo(x, y);
@@ -49,7 +54,7 @@ export const drawChart = (ctx: CanvasRenderingContext2D, data: number[]) => {
       }
     });
 
-    const currentValue = data[data.length - 1];
+    const currentValue = Number(data[data.length - 1].value);
     if (currentValue >= MIDDLE) {
       ctx.strokeStyle = '#FF3700';
     } else {
