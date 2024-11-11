@@ -14,6 +14,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         app:
           [
@@ -42,7 +43,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        if: ${{ matrix.app.name == 'be' }} # BE일 때만 실행
+        if: ${{ matrix.app.name == 'be' }}
         working-directory: ./${{matrix.app.dir}}
         run: npm test
         env:
@@ -99,7 +100,7 @@ jobs:
         with:
           host: ${{ secrets.NCP_ALPHA_SERVER_HOST }}
           username: ${{ secrets.NCP_ALPHA_SERVER_USERNAME }}
-          key: ${{ secrets.NCP_ALPHA_SERVER_SSH_KEY }}
+          key: ${{ secrets.NCP_SERVER_SSH_KEY }}
           port: 22
           script: |
             docker system prune -af
