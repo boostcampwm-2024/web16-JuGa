@@ -17,16 +17,6 @@ import { typeOrmConfig } from './configs/typeorm.config';
   imports: [
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'mysql', // 데이터베이스 타입
-      host: process.env.DB_HOST,
-      port: 3306,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWD,
-      database: process.env.DB_DATABASE,
-      entities: [User, Order],
-      synchronize: true,
-    }),
     TypeOrmModule.forRoot(typeOrmConfig),
     KoreaInvestmentModule,
     AuthModule,
