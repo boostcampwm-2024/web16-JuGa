@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import axios from 'axios';
-import { StockIndexService } from '../../../src/stock/index/stock.index.service';
+import { StockIndexService } from '../../../src/stock/index/stock-index.service';
 import { STOCK_INDEX_LIST_MOCK } from './mockdata/stock.index.list.mockdata';
 
 jest.mock('axios');

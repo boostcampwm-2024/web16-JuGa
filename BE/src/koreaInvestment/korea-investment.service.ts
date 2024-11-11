@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { UnauthorizedException } from '@nestjs/common';
-import { getFullURL } from '../util/getFullURL';
-import { AccessTokenInterface } from './interface/korea.investment.interface';
+import { getFullURL } from '../util/get-full-URL';
+import { AccessTokenInterface } from './interface/korea-investment.interface';
 
 export class KoreaInvestmentService {
   private accessToken: string;

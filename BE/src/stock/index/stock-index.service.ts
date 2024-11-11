@@ -1,13 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import axios from 'axios';
-import { StockIndexListChartElementDto } from './dto/stock.index.list.chart.element.dto';
-import { StockIndexValueElementDto } from './dto/stock.index.value.element.dto';
+import { StockIndexListChartElementDto } from './dto/stock-index-list-chart.element.dto';
+import { StockIndexValueElementDto } from './dto/stock-index-value-element.dto';
 import {
   StockIndexChartInterface,
   StockIndexValueInterface,
-} from './interface/stock.index.interface';
-import { getFullURL } from '../../util/getFullURL';
-import { getHeader } from '../../util/getHeader';
+} from './interface/stock-index.interface';
+import { getFullURL } from '../../util/get-full-URL';
+import { getHeader } from '../../util/get-header';
 
 @Injectable()
 export class StockIndexService {

@@ -2,9 +2,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WebSocket } from 'ws';
 import axios from 'axios';
 import { SocketGateway } from './socket.gateway';
-import { StockIndexValueElementDto } from '../stock/index/dto/stock.index.value.element.dto';
+import { StockIndexValueElementDto } from '../stock/index/dto/stock-index-value-element.dto';
 import { SocketConnectTokenInterface } from './interface/socket.interface';
-import { getFullURL } from '../util/getFullURL';
+import { getFullURL } from '../util/get-full-URL';
 
 @Injectable()
 export class SocketService implements OnModuleInit {

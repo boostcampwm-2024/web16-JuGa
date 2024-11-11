@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cron } from '@nestjs/schedule';
-import { StockIndexService } from './stock.index.service';
-import { StockIndexResponseDto } from './dto/stock.index.response.dto';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea.investment.service';
+import { StockIndexService } from './stock-index.service';
+import { StockIndexResponseDto } from './dto/stock-index-response.dto';
+import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
 import { SocketGateway } from '../../websocket/socket.gateway';
 
 @Controller('/api/stocks/index')

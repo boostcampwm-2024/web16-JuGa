@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { KoreaInvestmentService } from './korea.investment.service';
+import { KoreaInvestmentService } from './korea-investment.service';
 
 @Module({
   imports: [],

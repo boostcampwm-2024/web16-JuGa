@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
-import { AuthCredentialsDto } from './dto/authCredentials.dto';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
 @Injectable()
 export class UserRepository extends Repository<User> {

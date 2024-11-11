@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StockIndexResponseElementDto } from './stock.index.response.element.dto';
+import { StockIndexResponseElementDto } from './stock-index-response-element.dto';
 
 export class StockIndexResponseDto {
   @ApiProperty({
