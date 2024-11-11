@@ -19,7 +19,7 @@ export default function TopFive() {
     queryKey: ['topfive', currentMarket],
     queryFn: () =>
       fetch(
-        `http://223.130.151.42:3000/api/stocks/topfive?market=${paramsMap[currentMarket]}`,
+        `http://175.45.204.158:3000/api/stocks/topfive?market=${paramsMap[currentMarket]}`,
       ).then((res) => res.json()),
     keepPreviousData: true,
   });
