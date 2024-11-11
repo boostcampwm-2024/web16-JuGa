@@ -18,4 +18,17 @@ export class UserRepository extends Repository<User> {
     const user = this.create({ email, password: hashedPassword });
     await this.save(user);
   }
+
+  async updateUserWithRefreshToken(
+    id: number,
+    {
+      refreshToken,
+      refreshTokenExpiresAt,
+    }: { refreshToken: string; refreshTokenExpiresAt: Date },
+  ) {
+    const user = await this.findOne({ where: { id } });
+    user.currentRefreshToken = refreshToken;
+    user.currentRefreshTokenExpiresAt = refreshTokenExpiresAt;
+    await this.save(user);
+  }
 }
