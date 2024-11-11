@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -56,5 +58,23 @@ export class StockOrderController {
     @Body(ValidationPipe) stockOrderRequest: StockOrderRequestDto,
   ) {
     await this.stockTradeService.sell(request.user.id, stockOrderRequest);
+  }
+
+  @Delete('/:order_id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '주식 매도/매수 취소 API',
+    description: '주문 id로 미체결된 주문을 취소한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '주식 매도/매수 취소 성공',
+  })
+  async cancel(
+    @Req() request: RequestInterface,
+    @Param('order_id') orderId: number,
+  ) {
+    await this.stockTradeService.cancel(request.user.id, orderId);
   }
 }
