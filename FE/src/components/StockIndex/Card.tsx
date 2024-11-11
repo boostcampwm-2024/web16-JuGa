@@ -1,38 +1,36 @@
+import {
+  ChartData,
+  StockIndexData,
+  StockIndexValue,
+} from 'components/TopFive/type';
 import { useEffect, useRef, useState } from 'react';
+import { io } from 'socket.io-client';
 import { drawChart } from 'utils/chart';
 
 // const X_LENGTH = 79;
 
-type initialDataType = {
-  chart: {
-    code: string;
-    chart: { time: string; value: string }[];
-  };
-  code: string;
-  value: {
-    code: string;
-    value: string;
-    diff: string;
-    diffRate: string;
-    sign: string;
-  };
-};
-
 type StockIndexChartProps = {
   name: string;
-  initialData: initialDataType;
+  id: 'KOSPI' | 'KOSDAQ' | 'KOSPI200' | 'KSQ150';
+  initialData: StockIndexData;
 };
 
-export function Card({ name, initialData }: StockIndexChartProps) {
+export function Card({ name, id, initialData }: StockIndexChartProps) {
   const { chart, value } = initialData;
 
-  const [prices, setPrices] = useState<{ time: string; value: string }[]>(
-    chart.chart,
-  );
+  const [prices, setPrices] = useState<ChartData[]>(chart);
+  const [stockIndexValue, setStockIndexValue] =
+    useState<StockIndexValue>(value);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const changeColor =
     Number(value.diff) > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
+
+  const socket = io('http://223.130.151.42:3000/socket');
+
+  socket.on(id, (stockIndex) => {
+    setStockIndexValue(stockIndex);
+  });
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -58,9 +56,9 @@ export function Card({ name, initialData }: StockIndexChartProps) {
     <div className='flex h-[100px] w-[260px] items-center gap-4 rounded-lg bg-juga-grayscale-50 p-5'>
       <div className='flex flex-col items-start justify-center flex-1 h-full text-sm'>
         <p className='font-semibold'>{name}</p>
-        <p className='text-lg font-bold'>{value.value}</p>
+        <p className='text-lg font-bold'>{stockIndexValue.curr_value}</p>
         <p className={`font-semibold ${changeColor}`}>
-          {value.diff}({value.diffRate}%)
+          {stockIndexValue.diff}({stockIndexValue.diff_rate}%)
         </p>
       </div>
       <canvas
