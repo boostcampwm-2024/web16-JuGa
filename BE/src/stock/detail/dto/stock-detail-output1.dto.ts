@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class StockDetailDataDto {
+export class InquirePriceOutput1Dto {
   @ApiProperty({ description: 'HTS 한글 종목명' })
   hts_kor_isnm: string;
 
@@ -22,6 +22,6 @@ export class StockDetailDataDto {
   @ApiProperty({ description: 'HTS 시가총액' })
   hts_avls: string;
 
-  @ApiProperty({ description: 'per' })
+  @ApiProperty({ description: 'PER' })
   per: string;
 }

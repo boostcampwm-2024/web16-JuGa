@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { StockDetailService } from './stock-detail.service';
-import { StockDetailDataDto } from './dto/stock-detail-data.dto';
+import { InquirePriceResponseDto } from './dto/stock-detail-response.dto';
 
 @Controller('/api/stocks')
 export class StockDetailController {
@@ -19,7 +19,7 @@ export class StockDetailController {
   @ApiResponse({
     status: 200,
     description: '단일 주식 종목 기본값 조회 성공',
-    type: StockDetailDataDto,
+    type: InquirePriceResponseDto,
   })
   getStockDetail(@Param('stockCode') stockCode: string) {
     return this.stockDetailService.getInquirePrice(stockCode);

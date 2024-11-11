@@ -14,8 +14,27 @@ export class StockDetailQueryParameterDto {
    */
   fid_input_iscd: string;
 
-  constructor(fid_cond_mrkt_div_code: string, fid_input_iscd: string) {
-    this.fid_cond_mrkt_div_code = fid_cond_mrkt_div_code;
-    this.fid_input_iscd = fid_input_iscd;
-  }
+  /**
+   * 조회 시작일자
+   * (ex) 20220501
+   */
+  fid_input_date_1: string;
+
+  /**
+   * 조회 종료일자
+   * (ex) 20220530
+   */
+  fid_input_date_2: string;
+
+  /**
+   * 기간 분류 코드
+   * D:일봉, W:주봉, M:월봉, Y:년봉
+   */
+  fid_period_div_code: string;
+
+  /**
+   * 수정주가 원주가 가격 여부
+   * 0:수정주가 1:원주가
+   */
+  fid_org_adj_prc: string;
 }
