@@ -7,6 +7,7 @@ import {
   UseGuards,
   Req,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
@@ -39,8 +40,7 @@ export class AuthController {
 
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
-    res.json(accessToken);
-    return res.redirect(this.configService.get<string>('CLIENT_URL'));
+    return res.status(200).json({ accessToken });
   }
 
   @ApiOperation({ summary: 'Token 인증 테스트 API' })
@@ -72,15 +72,15 @@ export class AuthController {
       typeof req.cookies.refreshToken !== 'string' ||
       typeof req.cookies.accessToken !== 'string'
     ) {
-      return res.status(400).send();
+      throw new UnauthorizedException('Invalid refresh token');
     }
 
     const { refreshToken } = req.cookies;
 
     const newAccessToken = await this.authService.refreshToken(refreshToken);
 
-    res.cookie('accessToken', newAccessToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
-    return res.status(200).send();
+    return res.status(200).json({ accessToken: newAccessToken });
   }
 }
