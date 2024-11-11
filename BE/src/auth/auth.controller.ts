@@ -3,18 +3,24 @@ import {
   Post,
   Get,
   Body,
-  Req,
   ValidationPipe,
   UseGuards,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { Request, Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @ApiOperation({ summary: '회원 가입 API' })
   @Post('/signup')
@@ -32,8 +38,41 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Token 인증 테스트 API' })
   @Get('/test')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   test(@Req() req: Request) {
     return req;
+  }
+
+  @ApiOperation({ summary: 'Kakao 로그인 API' })
+  @Get('/kakao')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoLogin(
+    @Body() authCredentialsDto: AuthCredentialsDto,
+    @Res() res: Response,
+  ) {
+    const { accessToken, refreshToken } =
+      await this.authService.kakaoLoginUser(authCredentialsDto);
+
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('isRefreshToken', true, { httpOnly: true });
+    return res.redirect(this.configService.get<string>('CLIENT_URL'));
+  }
+
+  @ApiOperation({ summary: 'Refresh Token 요청 API' })
+  @Get('/refresh')
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+    const accessToken = req.cookies['accessToken'];
+
+    if (!refreshToken || !accessToken) {
+      return res.status(401).send();
+    }
+
+    const newAccessToken = await this.authService.refreshToken(refreshToken);
+
+    res.cookie('accessToken', newAccessToken, { httpOnly: true });
+    res.cookie('isRefreshToken', true, { httpOnly: true });
+    return res.status(200).send();
   }
 }
