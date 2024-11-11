@@ -26,7 +26,7 @@ export class StockDetailController {
     type: StockDetailRequestDto,
   })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: '단일 주식 종목 기본값 조회 성공',
     type: InquirePriceResponseDto,
   })
