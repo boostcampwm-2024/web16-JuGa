@@ -30,10 +30,17 @@ export class AuthController {
 
   @ApiOperation({ summary: '로그인 API' })
   @Post('/login')
-  loginWithCredentials(
+  async loginWithCredentials(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
+    @Res() res: Response,
   ) {
-    return this.authService.loginUser(authCredentialsDto);
+    const { accessToken, refreshToken } =
+      await this.authService.loginUser(authCredentialsDto);
+
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    res.cookie('isRefreshToken', true, { httpOnly: true });
+    res.json(accessToken);
+    return res.redirect(this.configService.get<string>('CLIENT_URL'));
   }
 
   @ApiOperation({ summary: 'Token 인증 테스트 API' })
@@ -54,9 +61,8 @@ export class AuthController {
       await this.authService.kakaoLoginUser(authCredentialsDto);
 
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
-    res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
-    return res.redirect(this.configService.get<string>('CLIENT_URL'));
+    return res.status(200).json({ accessToken });
   }
 
   @ApiOperation({ summary: 'Refresh Token 요청 API' })
