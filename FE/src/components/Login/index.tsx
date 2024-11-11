@@ -4,6 +4,7 @@ import { ChatBubbleOvalLeftIcon } from '@heroicons/react/16/solid';
 import { FormEvent, useEffect, useState } from 'react';
 import { login } from 'service/auth';
 import useAuthStore from 'store/authStore';
+import Overay from '../../utils/ModalOveray.tsx';
 
 export default function Login() {
   const { isOpen, toggleModal } = useLoginModalStore();
@@ -35,8 +36,8 @@ export default function Login() {
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-20 shadow-lg'>
         <h2 className='text-3xl font-bold'>JuGa</h2>
-        <form className='flex flex-col mb-2' onSubmit={handleSubmit}>
-          <div className='flex flex-col gap-2 my-10'>
+        <form className='mb-2 flex flex-col' onSubmit={handleSubmit}>
+          <div className='my-10 flex flex-col gap-2'>
             <Input
               type='text'
               placeholder='아이디'
@@ -52,7 +53,7 @@ export default function Login() {
               autoComplete='current-password'
             />
           </div>
-          <button className='py-2 text-white transition rounded-3xl bg-juga-blue-40 hover:bg-juga-blue-50'>
+          <button className='rounded-3xl bg-juga-blue-40 py-2 text-white transition hover:bg-juga-blue-50'>
             로그인
           </button>
         </form>
@@ -62,11 +63,5 @@ export default function Login() {
         </button>
       </section>
     </>
-  );
-}
-
-function Overay({ onClick }: { onClick: () => void }) {
-  return (
-    <div className='fixed inset-0 bg-black opacity-30' onClick={onClick}></div>
   );
 }
