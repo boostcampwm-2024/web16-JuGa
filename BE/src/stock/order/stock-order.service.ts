@@ -17,7 +17,7 @@ export class StockOrderService {
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const order = this.stockOrderRepository.create({
       user_id: userId,
-      stock_id: stockOrderRequest.stock_id,
+      stock_code: stockOrderRequest.stock_code,
       trade_type: TradeType.BUY,
       amount: stockOrderRequest.amount,
       price: stockOrderRequest.price,
@@ -30,7 +30,7 @@ export class StockOrderService {
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const order = this.stockOrderRepository.create({
       user_id: userId,
-      stock_id: stockOrderRequest.stock_id,
+      stock_code: stockOrderRequest.stock_code,
       trade_type: TradeType.SELL,
       amount: stockOrderRequest.amount,
       price: stockOrderRequest.price,
