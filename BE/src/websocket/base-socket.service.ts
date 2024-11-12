@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
   OnModuleInit,
 } from '@nestjs/common';
-import { SocketGateway } from './socket.gateway';
 import { SocketTokenService } from './socket-token.service';
 
 @Injectable()
