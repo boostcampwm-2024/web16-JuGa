@@ -29,7 +29,12 @@ export class StockIndexSocketService {
       (data: string[]) => {
         this.socketGateway.sendStockIndexValueToClient(
           this.STOCK_CODE[data[0]],
-          new StockIndexValueElementDto(data[2], data[4], data[9], data[3]),
+          new StockIndexValueElementDto(
+            data[2], // 주가 지수
+            data[4], // 전일 대비 등락
+            data[9], // 전일 대비 등락률
+            data[3], // 부호
+          ),
         );
       },
     );
