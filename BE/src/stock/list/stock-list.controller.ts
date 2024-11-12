@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockListService } from './stock-list.service';
-import { StockResponseDto } from './dto/stock-response.dto';
+import { StockListResponseDto } from './dto/stock-list-response.dto';
 
 @ApiTags('주식 리스트 API')
 @Controller('/api/stocks/list')
@@ -13,7 +13,7 @@ export class StockListController {
     description: '모든 주식 종목 리스트를 조회한다.',
   })
   @Get()
-  async findAll(): Promise<StockResponseDto[]> {
+  async findAll(): Promise<StockListResponseDto[]> {
     return this.stockListService.findAll();
   }
 
@@ -25,7 +25,7 @@ export class StockListController {
   @ApiResponse({
     status: 200,
     description: '주식 검색 성공',
-    type: StockResponseDto,
+    type: StockListResponseDto,
     isArray: true,
   })
   @Get('/search')
@@ -33,7 +33,7 @@ export class StockListController {
     @Query('name') name?: string,
     @Query('market') market?: string,
     @Query('code') code?: string,
-  ): Promise<StockResponseDto[]> {
+  ): Promise<StockListResponseDto[]> {
     return this.stockListService.search({ name, market, code });
   }
 
@@ -44,10 +44,10 @@ export class StockListController {
   @ApiResponse({
     status: 200,
     description: 'code를 이용한 주식 조회 성공',
-    type: StockResponseDto,
+    type: StockListResponseDto,
   })
   @Get('/:code')
-  async findOne(@Query('code') code: string): Promise<StockResponseDto> {
+  async findOne(@Query('code') code: string): Promise<StockListResponseDto> {
     return this.stockListService.findOne(code);
   }
 }
