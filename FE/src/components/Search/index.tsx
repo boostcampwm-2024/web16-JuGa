@@ -3,10 +3,12 @@ import useSearchModalStore from 'store/useSearchModalStore';
 import Overlay from '../ModalOveray.tsx';
 import { SearchInput } from './SearchInput';
 import { SearchHistoryList } from './SearchHistoryList';
+import SearchList from './SearchList.tsx';
+import useSearchInputStore from '../../store/useSearchInputStore.ts';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
-  const [searchTerm, setSearchTerm] = useState('');
+  const { searchInput, setSearchInput } = useSearchInputStore();
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   useEffect(() => {
@@ -22,13 +24,26 @@ export default function SearchModal() {
   return (
     <>
       <Overlay onClick={() => toggleSearchModal()} />
-      <section className='fixed left-1/2 top-3 flex w-[640px] -translate-x-1/2 flex-col rounded-2xl bg-white shadow-lg'>
-        <div className={'flex flex-col gap-5 p-3'}>
-          <SearchInput value={searchTerm} onChange={setSearchTerm} />
-          <SearchHistoryList
-            searchHistory={searchHistory}
-            onDeleteItem={handleDeleteHistoryItem}
-          />
+      <section
+        className={`${searchInput === '' ? '' : 'h-[520px]'} fixed left-1/2 top-3 flex w-[640px] -translate-x-1/2 flex-col rounded-2xl bg-white shadow-lg`}
+      >
+        <div className='flex h-full flex-col p-3'>
+          <div className='mb-5'>
+            <SearchInput value={searchInput} onChange={setSearchInput} />
+          </div>
+          <div className='flex-1 overflow-hidden'>
+            <SearchHistoryList
+              searchHistory={searchHistory}
+              onDeleteItem={handleDeleteHistoryItem}
+            />
+            {searchInput === '' ? (
+              <></>
+            ) : (
+              <div className='h-full overflow-y-auto'>
+                <SearchList />
+              </div>
+            )}
+          </div>
         </div>
       </section>
     </>

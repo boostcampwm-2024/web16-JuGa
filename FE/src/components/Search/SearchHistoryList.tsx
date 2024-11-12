@@ -10,7 +10,7 @@ export function SearchHistoryList({
   onDeleteItem,
 }: SearchHistoryListProps) {
   return (
-    <div className={'flex w-full flex-col'}>
+    <div className={'flex w-full flex-col pb-2'}>
       <div className={'mb-2 flex items-center justify-between'}>
         <div className={'text-start text-sm font-bold'}>최근 검색</div>
       </div>
