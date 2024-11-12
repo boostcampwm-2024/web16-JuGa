@@ -4,10 +4,6 @@ import { BaseSocketService } from './base-socket.service';
 
 @Injectable()
 export class StockIndexSocketService extends BaseSocketService {
-  protected tradeHandler = {
-    H0UPCNT0: this.handleStockIndexValue.bind(this),
-  };
-
   private STOCK_CODE = {
     '0001': 'KOSPI',
     '1001': 'KOSDAQ',
@@ -22,15 +18,14 @@ export class StockIndexSocketService extends BaseSocketService {
     this.registerCode('H0UPCNT0', '3003'); // KSQ150
   }
 
-  private handleStockIndexValue(responseData: string) {
-    const responseList = responseData.split('^');
+  protected handleSocketData(dataList: string[]) {
     this.socketGateway.sendStockIndexValueToClient(
-      this.STOCK_CODE[responseList[0]],
+      this.STOCK_CODE[dataList[0]],
       new StockIndexValueElementDto(
-        responseList[2],
-        responseList[4],
-        responseList[9],
-        responseList[3],
+        dataList[2],
+        dataList[4],
+        dataList[9],
+        dataList[3],
       ),
     );
   }
