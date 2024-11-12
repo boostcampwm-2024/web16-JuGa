@@ -4,7 +4,7 @@ import { ChatBubbleOvalLeftIcon } from '@heroicons/react/16/solid';
 import { FormEvent, useEffect, useState } from 'react';
 import { login } from 'service/auth';
 import useAuthStore from 'store/authStore';
-import Overay from '../../utils/ModalOveray.tsx';
+import Overay from '../ModalOveray.tsx';
 
 export default function Login() {
   const { isOpen, toggleModal } = useLoginModalStore();
@@ -38,7 +38,7 @@ export default function Login() {
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-20 shadow-lg'>
         <h2 className='text-3xl font-bold'>JuGa</h2>
-        <p className='h-5 my-3 text-sm font-semibold text-juga-red-60'>
+        <p className='my-3 h-5 text-sm font-semibold text-juga-red-60'>
           {
             {
               '401': '존재하지 않는 사용자입니다.',

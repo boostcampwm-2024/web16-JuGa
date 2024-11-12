@@ -1,9 +1,9 @@
 import { SearchHistoryItem } from './SearchHistoryItem.tsx';
 
-interface SearchHistoryListProps {
+type SearchHistoryListProps = {
   searchHistory: string[];
   onDeleteItem?: (item: string) => void;
-}
+};
 
 export function SearchHistoryList({
   searchHistory,
