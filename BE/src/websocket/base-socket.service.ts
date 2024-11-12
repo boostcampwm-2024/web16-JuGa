@@ -6,7 +6,6 @@ import { SocketTokenService } from './socket-token.service';
 @Injectable()
 export abstract class BaseSocketService implements OnModuleInit {
   protected socket: WebSocket;
-  protected abstract tradeHandler: Record<string, (data: string) => void>;
   protected socketConnectionKey: string;
 
   constructor(
@@ -30,11 +29,13 @@ export abstract class BaseSocketService implements OnModuleInit {
           : JSON.stringify(event.data);
       if (data.length < 2) return;
 
-      (this.tradeHandler[data[1]] as (data) => void)(data[3]);
+      const dataList = data[3].split('^');
+      this.handleSocketData(dataList);
     };
   }
 
   protected abstract handleSocketOpen(): void;
+  protected abstract handleSocketData(dataList): void;
 
   protected registerCode(trId: string, trKey: string) {
     this.socket.send(
