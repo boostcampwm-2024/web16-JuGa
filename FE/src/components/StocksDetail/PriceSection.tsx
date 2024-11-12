@@ -1,7 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import PriceTableColumn from './PriceTableColumn.tsx';
+import PriceTableLiveCard from './PriceTableLiveCard.tsx';
+import PriceTableDayCard from './PriceTableDayCard.tsx';
 
 export default function PriceSection() {
   const [buttonFlag, setButtonFlag] = useState(true);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    const tmpIndex = buttonFlag ? 0 : 1;
+    const currentButton = buttonRefs.current[tmpIndex];
+    const indicator = indicatorRef.current;
+
+    if (currentButton && indicator) {
+      indicator.style.left = `${currentButton.offsetLeft}px`;
+      indicator.style.width = `${currentButton.offsetWidth}px`;
+    }
+  }, [buttonFlag]);
 
   return (
     <div className={'flex flex-1 flex-col rounded-2xl bg-white p-2 shadow-sm'}>
@@ -13,16 +29,33 @@ export default function PriceSection() {
           'flex flex-1 flex-col overflow-hidden rounded-xl text-sm font-medium'
         }
       >
-        <div className={'flex w-full'}>
+        <div
+          className={'relative flex w-full rounded-xl bg-juga-grayscale-50 p-1'}
+        >
+          <div
+            ref={indicatorRef}
+            className='absolute bottom-1 rounded-xl bg-white transition-all duration-300'
+            style={{ height: '36px' }}
+          />
           <button
-            className={`${buttonFlag ? 'bg-juga-grayscale-50 text-juga-grayscale-black' : 'bg-white text-juga-grayscale-400'} w-full rounded-lg px-4 py-2 shadow-sm focus:outline-none`}
+            className={`${
+              buttonFlag
+                ? 'text-juga-grayscale-black'
+                : 'text-juga-grayscale-400'
+            } relative z-10 w-full rounded-lg px-4 py-2`}
             onClick={() => setButtonFlag(true)}
+            ref={(el) => (buttonRefs.current[0] = el)}
           >
             실시간
           </button>
           <button
-            className={`w-full rounded-lg ${!buttonFlag ? 'bg-juga-grayscale-50 text-juga-grayscale-black' : 'bg-white text-juga-grayscale-400'} px-4 py-2 shadow-sm focus:outline-none`}
+            className={`relative z-10 w-full rounded-lg ${
+              !buttonFlag
+                ? 'text-juga-grayscale-black'
+                : 'text-juga-grayscale-400'
+            } px-4 py-2`}
             onClick={() => setButtonFlag(false)}
+            ref={(el) => (buttonRefs.current[1] = el)}
           >
             일별
           </button>
@@ -30,38 +63,17 @@ export default function PriceSection() {
 
         <div className={'max-h-[400px] flex-1 overflow-y-auto'}>
           <table className={'w-full table-fixed text-xs font-normal'}>
-            <thead className={'sticky top-0 z-10 bg-white'}>
-              <tr className={'h-10 border-b text-gray-500'}>
-                <th className={'px-4 py-2 text-left font-medium'}>채결가</th>
-                <th className={'px-4 py-2 text-right font-medium'}>
-                  채결량(주)
-                </th>
-                <th className={'px-4 py-2 text-right font-medium'}>등락률</th>
-                <th className={'px-4 py-2 text-right font-medium'}>
-                  거래량(주)
-                </th>
-                <th className={'px-4 py-2 text-right font-medium'}>시간</th>
-              </tr>
-            </thead>
+            <PriceTableColumn viewMode={buttonFlag} />
             <tbody>
               {Array(30)
                 .fill(null)
-                .map((_, index) => (
-                  <tr
-                    key={index}
-                    className={'h-[30px] hover:bg-juga-grayscale-50'}
-                  >
-                    <td className={'px-4 py-1 text-start'}>채결가</td>
-                    <td className={'px-4 py-1 text-right'}>채결량 갯수</td>
-                    <td
-                      className={`px-4 py-1 text-right ${index % 2 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
-                    >
-                      등략률 퍼센트
-                    </td>
-                    <td className={'px-4 py-1 text-right'}>거래량 갯수</td>
-                    <td className={'px-4 py-1 text-right'}>시간</td>
-                  </tr>
-                ))}
+                .map((_, index) =>
+                  buttonFlag ? (
+                    <PriceTableLiveCard key={index} />
+                  ) : (
+                    <PriceTableDayCard key={index} />
+                  ),
+                )}
             </tbody>
           </table>
         </div>
