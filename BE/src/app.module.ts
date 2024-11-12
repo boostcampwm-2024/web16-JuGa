@@ -12,6 +12,7 @@ import { SocketModule } from './websocket/socket.module';
 import { StockOrderModule } from './stock/order/stock-order.module';
 import { StockDetailModule } from './stock/detail/stock-detail.module';
 import { typeOrmConfig } from './configs/typeorm.config';
+import { StockTradeHistoryModule } from './stock/trade/history/stock-trade-history.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { typeOrmConfig } from './configs/typeorm.config';
     SocketModule,
     StockDetailModule,
     StockOrderModule,
+    StockTradeHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
