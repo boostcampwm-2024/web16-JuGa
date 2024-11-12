@@ -18,8 +18,15 @@ export default function Chart() {
 
     if (!canvas || !parent) return;
 
-    canvas.width = parent.clientWidth;
-    canvas.height = parent.clientHeight;
+    const displayWidth = parent.clientWidth;
+    const displayHeight = parent.clientHeight;
+
+    // 해상도 높이기
+    canvas.width = displayWidth * 4;
+    canvas.height = displayHeight * 4;
+
+    canvas.style.width = `${displayWidth}px`;
+    canvas.style.height = `${displayHeight}px`;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -51,6 +58,8 @@ export default function Chart() {
       0,
       chartHeight * 0.8,
     );
+
+    drawCandleChart(ctx, dummy, chartWidth, mainHeight, padding, 0, 0);
   }, []);
 
   return (
@@ -112,10 +121,53 @@ function drawBarChart(
   data.forEach((e, i) => {
     const value = Math.round(e.volume * 100);
     const cx = x + padding.left + (width * i) / (dummy.length - 1);
-    const cy = ((height - y) * (value - yMin)) / (yMax - yMin);
+    const cy = padding.top + ((height - y) * (value - yMin)) / (yMax - yMin);
 
     ctx.fillStyle = e.open < e.close ? 'red' : 'blue';
     ctx.fillRect(cx, height, gap, -cy);
+  });
+
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function drawCandleChart(
+  ctx: CanvasRenderingContext2D,
+  data: DummyStock[],
+  width: number,
+  height: number,
+  padding: Padding,
+  x: number,
+  y: number,
+) {
+  ctx.beginPath();
+
+  const yMax = Math.round(
+    Math.max(...data.map((d) => Math.max(d.close, d.open))) * 1.006 * 100,
+  );
+  const yMin = Math.round(
+    Math.min(...data.map((d) => Math.max(d.close, d.open))) * 0.994 * 100,
+  );
+
+  data.forEach((e, i) => {
+    const { open, close } = e;
+    const gap = Math.floor((width / dummy.length) * 0.8);
+    const cx = x + padding.left + (width * i) / (dummy.length - 1);
+
+    const value1 = Math.round(e.open * 100);
+    const value2 = Math.round(e.close * 100);
+    const cy1 =
+      y + padding.top + height - (height * (value1 - yMin)) / (yMax - yMin);
+    const cy2 =
+      y + padding.top + height - (height * (value2 - yMin)) / (yMax - yMin);
+
+    if (open > close) {
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(cx, cy2, gap, cy1 - cy2);
+    } else {
+      ctx.fillStyle = 'red';
+      ctx.fillRect(cx, cy1, gap, cy2 - cy1);
+    }
   });
 
   ctx.lineWidth = 2;
