@@ -1,9 +1,9 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
 
-interface SearchInputProps {
+type SearchInputProps = {
   value: string;
   onChange: (value: string) => void;
-}
+};
 
 export function SearchInput({ value, onChange }: SearchInputProps) {
   return (

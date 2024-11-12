@@ -4,7 +4,7 @@ import {
   StockIndexValue,
 } from 'components/TopFive/type';
 import { useEffect, useRef, useState } from 'react';
-import { socket } from 'socket';
+import { socket } from 'utils/socket.ts';
 import { drawChart } from 'utils/chart';
 
 // const X_LENGTH = 79;
@@ -30,7 +30,7 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
   });
 
   socket.on('chart', (chartData) => {
-    setPrices(chartData.id);
+    setPrices(chartData[id]);
   });
 
   useEffect(() => {

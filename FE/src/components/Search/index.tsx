@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import useSearchModalStore from '../../store/useSearchModalStore';
-import Overlay from '../../utils/ModalOveray';
+import useSearchModalStore from 'store/useSearchModalStore';
+import Overlay from '../ModalOveray.tsx';
 import { SearchInput } from './SearchInput';
 import { SearchHistoryList } from './SearchHistoryList';
 

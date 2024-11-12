@@ -1,9 +1,9 @@
 import { XMarkIcon } from '@heroicons/react/16/solid';
 
-interface SearchHistoryItemProps {
+type SearchHistoryItemProps = {
   item: string;
   onDelete?: (item: string) => void;
-}
+};
 
 export function SearchHistoryItem({ item, onDelete }: SearchHistoryItemProps) {
   return (
