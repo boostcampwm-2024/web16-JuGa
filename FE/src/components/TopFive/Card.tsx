@@ -21,8 +21,8 @@ export default function Card({
     changeValue > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
 
   return (
-    <div className='flex flex-row items-center justify-between py-3'>
-      <div className={'mx-0 font-medium text-juga-blue-50'}>{index + 1}</div>
+    <div className='flex flex-row items-center justify-between py-3 hover:cursor-pointer'>
+      <div className={'ml-2 font-medium text-juga-blue-50'}>{index + 1}</div>
       <div className='ml-4 w-[180px] text-start'>
         <p className='font-medium text-juga-grayscale-black'>{name}</p>
       </div>

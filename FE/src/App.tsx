@@ -9,6 +9,7 @@ import Home from 'page/Home';
 import StocksDetail from 'page/StocksDetail';
 import Header from 'components/Header';
 import Login from 'components/Login';
+import SearchModal from './components/Search';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function Layout() {
         <Outlet />
       </main>
       <Login />
+      <SearchModal />
     </>
   );
 }
