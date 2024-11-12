@@ -1,8 +1,8 @@
-import { BaseEntity, Column, Entity } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class Stock extends BaseEntity {
-  @Column({ primary: true })
+export class Stocks extends BaseEntity {
+  @PrimaryColumn()
   code: string;
 
   @Column()
