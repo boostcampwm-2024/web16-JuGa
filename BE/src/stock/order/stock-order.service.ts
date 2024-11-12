@@ -4,6 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { NotFoundError } from 'rxjs';
+import { LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
@@ -51,5 +52,40 @@ export class StockOrderService {
       throw new ConflictException('이미 체결된 주문은 취소할 수 없습니다.');
 
     await this.stockOrderRepository.remove(order);
+  }
+
+  async checkExecutableOrder(stockCode, value) {
+    const buyOrders = await this.stockOrderRepository.find({
+      where: {
+        stock_code: stockCode,
+        trade_type: TradeType.BUY,
+        status: StatusType.PENDING,
+        price: MoreThanOrEqual(value),
+      },
+    });
+
+    const sellOrders = await this.stockOrderRepository.find({
+      where: {
+        stock_code: stockCode,
+        trade_type: TradeType.SELL,
+        status: StatusType.PENDING,
+        price: LessThanOrEqual(value),
+      },
+    });
+
+    await Promise.all(buyOrders.map((buyOrder) => this.executeBuy(buyOrder)));
+    await Promise.all(
+      sellOrders.map((sellOrder) => this.executeSell(sellOrder)),
+    );
+  }
+
+  private executeBuy(order) {
+    // TODO: 매수 체결 로직 필요...
+    console.log(`${order.id}번 매수 예약이 체결되었습니다.`);
+  }
+
+  private executeSell(order) {
+    // TODO: 매도 체결 로직 필요...
+    console.log(`${order.id}번 매도 예약이 체결되었습니다.`);
   }
 }
