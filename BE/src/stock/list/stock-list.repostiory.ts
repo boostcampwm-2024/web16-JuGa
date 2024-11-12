@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Stocks } from './stock-list.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { Stocks } from './stock-list.entity';
 import { SearchParams } from './interface/search-params.interface';
 
 @Injectable()
@@ -11,11 +11,11 @@ export class StockListRepository extends Repository<Stocks> {
   }
 
   async findAllStocks() {
-    return await this.find();
+    return this.find();
   }
 
   async findOneStock(code: string): Promise<Stocks> {
-    return await this.findOne({ where: { code } });
+    return this.findOne({ where: { code } });
   }
 
   async search(params: SearchParams): Promise<Stocks[]> {
@@ -31,6 +31,6 @@ export class StockListRepository extends Repository<Stocks> {
     if (params.code) {
       queryBuilder.andWhere('code LIKE :code', { code: `%${params.code}%` });
     }
-    return await queryBuilder.getMany();
+    return queryBuilder.getMany();
   }
 }

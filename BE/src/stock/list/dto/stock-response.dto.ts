@@ -1,4 +1,3 @@
-import { Stocks } from '../stock-list.entity';
 export class StockResponseDto {
   code: string;
   name: string;

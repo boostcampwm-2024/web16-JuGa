@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockListService } from './stock-list.service';
 import { StockResponseDto } from './dto/stock-response.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('주식 리스트 API')
 @Controller('/api/stocks/list')
@@ -14,7 +14,7 @@ export class StockListController {
   })
   @Get()
   async findAll(): Promise<StockResponseDto[]> {
-    return await this.stockListService.findAll();
+    return this.stockListService.findAll();
   }
 
   @ApiOperation({
@@ -34,7 +34,7 @@ export class StockListController {
     @Query('market') market?: string,
     @Query('code') code?: string,
   ): Promise<StockResponseDto[]> {
-    return await this.stockListService.search({ name, market, code });
+    return this.stockListService.search({ name, market, code });
   }
 
   @ApiOperation({
@@ -48,6 +48,6 @@ export class StockListController {
   })
   @Get('/:code')
   async findOne(@Query('code') code: string): Promise<StockResponseDto> {
-    return await this.stockListService.findOne(code);
+    return this.stockListService.findOne(code);
   }
 }
