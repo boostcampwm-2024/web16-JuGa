@@ -16,7 +16,7 @@ export class Order {
   user_id: number;
 
   @Column({ nullable: false })
-  stock_id: number;
+  stock_code: string;
 
   @Column({
     type: 'enum',
