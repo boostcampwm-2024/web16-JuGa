@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { StockIndexValueElementDto } from '../stock/index/dto/stock-index-value-element.dto';
-import { SocketConnectTokenInterface } from './interface/socket.interface';
-import { getFullURL } from '../util/get-full-URL';
 import { BaseSocketService } from './base-socket.service';
 
 @Injectable()
