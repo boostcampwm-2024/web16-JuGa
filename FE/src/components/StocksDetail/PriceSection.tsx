@@ -20,8 +20,12 @@ export default function PriceSection() {
   }, [buttonFlag]);
 
   return (
-    <div className={'flex flex-1 flex-col rounded-2xl bg-white p-2 shadow-sm'}>
-      <div className={'px-4 py-[6px] text-left text-sm font-semibold'}>
+    <div
+      className={
+        'flex max-h-[240px] flex-1 flex-col rounded-2xl bg-white p-2 shadow-sm'
+      }
+    >
+      <div className={'px-4 pb-0.5 pt-[6px] text-left text-sm font-semibold'}>
         일별 · 실시간 시세
       </div>
       <div
@@ -30,19 +34,21 @@ export default function PriceSection() {
         }
       >
         <div
-          className={'relative flex w-full rounded-xl bg-juga-grayscale-50 p-1'}
+          className={
+            'relative flex w-full rounded-xl bg-juga-grayscale-50 p-0.5'
+          }
         >
           <div
             ref={indicatorRef}
-            className='absolute bottom-1 rounded-xl bg-white shadow transition-all duration-300'
-            style={{ height: '36px' }}
+            className='absolute bottom-0.5 rounded-xl bg-white shadow transition-all duration-300'
+            style={{ height: '28px' }}
           />
           <button
             className={`${
               buttonFlag
                 ? 'text-juga-grayscale-black'
                 : 'text-juga-grayscale-400'
-            } relative z-10 w-full rounded-lg px-4 py-2`}
+            } relative z-10 w-full rounded-lg px-4 py-1`}
             onClick={() => setButtonFlag(true)}
             ref={(el) => (buttonRefs.current[0] = el)}
           >
@@ -53,7 +59,7 @@ export default function PriceSection() {
               !buttonFlag
                 ? 'text-juga-grayscale-black'
                 : 'text-juga-grayscale-400'
-            } px-4 py-2`}
+            } relative z-10 w-full rounded-lg px-4 py-1`}
             onClick={() => setButtonFlag(false)}
             ref={(el) => (buttonRefs.current[1] = el)}
           >
@@ -61,7 +67,7 @@ export default function PriceSection() {
           </button>
         </div>
 
-        <div className={'max-h-[400px] flex-1 overflow-y-auto'}>
+        <div className={'flex-1 overflow-y-auto'}>
           <table className={'w-full table-fixed text-xs font-normal'}>
             <PriceTableColumn viewMode={buttonFlag} />
             <tbody>
