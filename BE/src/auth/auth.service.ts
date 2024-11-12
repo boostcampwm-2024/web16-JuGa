@@ -39,6 +39,13 @@ export class AuthService {
   async kakaoLoginUser(
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
+    const user = await this.userRepository.findOne({
+      where: { kakaoId: authCredentialsDto.kakaoId },
+    });
+
+    if (!user) {
+      await this.userRepository.registerKakaoUser(authCredentialsDto);
+    }
     return this.getJWTToken(authCredentialsDto);
   }
 
