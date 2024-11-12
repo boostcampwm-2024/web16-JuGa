@@ -9,5 +9,6 @@ import { StockOrderRepository } from './stock-order.repository';
   imports: [TypeOrmModule.forFeature([Order])],
   controllers: [StockOrderController],
   providers: [StockOrderService, StockOrderRepository],
+  exports: [StockOrderService],
 })
 export class StockOrderModule {}
