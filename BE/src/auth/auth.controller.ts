@@ -8,6 +8,7 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  Redirect,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
@@ -59,10 +60,10 @@ export class AuthController {
   ) {
     const { accessToken, refreshToken } =
       await this.authService.kakaoLoginUser(authCredentialsDto);
-
+    res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
-    return res.status(200).json({ accessToken });
+    return res.redirect(this.configService.get<string>('FRONTEND_URL'));
   }
 
   @ApiOperation({ summary: 'Refresh Token 요청 API' })
@@ -79,8 +80,9 @@ export class AuthController {
 
     const newAccessToken = await this.authService.refreshToken(refreshToken);
 
+    res.cookie('accessToken', newAccessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
-    return res.status(200).json({ accessToken: newAccessToken });
+    return res.redirect(this.configService.get<string>('FRONTEND_URL'));
   }
 }
