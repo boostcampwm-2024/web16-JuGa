@@ -5,7 +5,7 @@ import TradeSection from 'components/StocksDetail/TradeSection';
 
 export default function StocksDetail() {
   return (
-    <div className='flex flex-col bg-red-50'>
+    <div className='flex flex-col'>
       <Header />
       <div className='flex h-[500px] bg-yellow-600'>
         <div className='flex min-w-[850px] flex-col'>
