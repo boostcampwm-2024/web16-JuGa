@@ -143,33 +143,51 @@ function drawCandleChart(
   ctx.beginPath();
 
   const yMax = Math.round(
-    Math.max(...data.map((d) => Math.max(d.close, d.open))) * 1.006 * 100,
+    Math.max(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
+      1.006 *
+      100,
   );
   const yMin = Math.round(
-    Math.min(...data.map((d) => Math.max(d.close, d.open))) * 0.994 * 100,
+    Math.min(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
+      0.994 *
+      100,
   );
 
   data.forEach((e, i) => {
-    const { open, close } = e;
+    ctx.beginPath();
+
+    const { open, close, high, low } = e;
     const gap = Math.floor((width / dummy.length) * 0.8);
     const cx = x + padding.left + (width * i) / (dummy.length - 1);
 
-    const value1 = Math.round(e.open * 100);
-    const value2 = Math.round(e.close * 100);
-    const cy1 =
-      y + padding.top + height - (height * (value1 - yMin)) / (yMax - yMin);
-    const cy2 =
-      y + padding.top + height - (height * (value2 - yMin)) / (yMax - yMin);
+    const openValue = Math.round(open * 100);
+    const closeValue = Math.round(close * 100);
+    const highValue = Math.round(high * 100);
+    const lowValue = Math.round(low * 100);
+
+    const openY =
+      y + padding.top + height - (height * (openValue - yMin)) / (yMax - yMin);
+    const closeY =
+      y + padding.top + height - (height * (closeValue - yMin)) / (yMax - yMin);
+    const highY =
+      y + padding.top + height - (height * (highValue - yMin)) / (yMax - yMin);
+    const lowY =
+      y + padding.top + height - (height * (lowValue - yMin)) / (yMax - yMin);
 
     if (open > close) {
       ctx.fillStyle = 'blue';
-      ctx.fillRect(cx, cy2, gap, cy1 - cy2);
+      ctx.strokeStyle = 'blue';
+      ctx.fillRect(cx, closeY, gap, openY - closeY);
     } else {
       ctx.fillStyle = 'red';
-      ctx.fillRect(cx, cy1, gap, cy2 - cy1);
+      ctx.strokeStyle = 'red';
+      ctx.fillRect(cx, openY, gap, closeY - openY);
     }
-  });
 
-  ctx.lineWidth = 2;
-  ctx.stroke();
+    const middle = cx + Math.floor(gap / 2);
+
+    ctx.moveTo(middle, highY);
+    ctx.lineTo(middle, lowY);
+    ctx.stroke();
+  });
 }
