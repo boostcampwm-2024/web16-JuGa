@@ -8,7 +8,6 @@ import {
   Req,
   Res,
   UnauthorizedException,
-  Redirect,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
