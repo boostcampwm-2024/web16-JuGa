@@ -34,7 +34,7 @@ export default function PriceSection() {
         >
           <div
             ref={indicatorRef}
-            className='absolute bottom-1 rounded-xl bg-white transition-all duration-300'
+            className='absolute bottom-1 rounded-xl bg-white shadow transition-all duration-300'
             style={{ height: '36px' }}
           />
           <button
