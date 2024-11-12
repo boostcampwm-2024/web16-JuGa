@@ -9,7 +9,11 @@ async function bootstrap() {
   setupSwagger(app);
 
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://223.130.151.42:3000'],
+    origin: [
+      'http://localhost:5173',
+      'http://223.130.151.42:5173',
+      'http://223.130.151.42:3000',
+    ],
     methods: 'GET, HEAD, PUT, PATH, POST, DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,

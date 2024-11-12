@@ -9,6 +9,8 @@ import { StockIndexModule } from './stock/index/stock-index.module';
 import { StockTopfiveModule } from './stock/topfive/stock-topfive.module';
 import { KoreaInvestmentModule } from './koreaInvestment/korea-investment.module';
 import { SocketModule } from './websocket/socket.module';
+import { StockOrderModule } from './stock/order/stock-order.module';
+import { StockDetailModule } from './stock/detail/stock-detail.module';
 import { typeOrmConfig } from './configs/typeorm.config';
 
 @Module({
@@ -21,6 +23,8 @@ import { typeOrmConfig } from './configs/typeorm.config';
     StockIndexModule,
     StockTopfiveModule,
     SocketModule,
+    StockDetailModule,
+    StockOrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
