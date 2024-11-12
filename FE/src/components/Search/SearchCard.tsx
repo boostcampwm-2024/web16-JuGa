@@ -1,26 +1,7 @@
-type SearchCardProps = {
-  companyName: string;
-  previousClose: number;
-  priceChange: number;
-};
-
-export default function SearchCard({
-  companyName = '회사명',
-  previousClose = 50000,
-  priceChange = 2.5,
-}: SearchCardProps) {
-  const isPositive = priceChange > 0;
-  const isNegative = priceChange < 0;
-
-  const getPriceChangeColor = () => {
-    if (isPositive) return 'text-red-500';
-    if (isNegative) return 'text-blue-500';
-    return 'text-gray-500';
-  };
-
-  const formattedPreviousClose = previousClose.toLocaleString();
-  const formattedPriceChange = Math.abs(priceChange).toFixed(2);
-  const priceChangeSymbol = isPositive ? '+' : isNegative ? '-' : '';
+export default function SearchCard() {
+  const companyName = '회사명';
+  const previousClose = 50000;
+  const priceChange = 2.5;
 
   return (
     <li className='h-[52px] w-full rounded-xl hover:cursor-pointer hover:bg-gray-50'>
@@ -33,14 +14,11 @@ export default function SearchCard({
 
         <div className='flex flex-col items-end justify-center gap-0.5'>
           <p className='text-right text-sm font-medium text-gray-900'>
-            {formattedPreviousClose}
+            {previousClose.toLocaleString()}
           </p>
 
-          <p
-            className={`text-right text-xs font-medium ${getPriceChangeColor()}`}
-          >
-            {priceChangeSymbol}
-            {formattedPriceChange}%
+          <p className={'text-right text-xs font-medium text-red-500'}>
+            +{Math.abs(priceChange).toFixed(2)}%
           </p>
         </div>
       </div>

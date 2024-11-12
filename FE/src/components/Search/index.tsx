@@ -4,10 +4,11 @@ import Overlay from '../../utils/ModalOveray';
 import { SearchInput } from './SearchInput';
 import { SearchHistoryList } from './SearchHistoryList';
 import SearchList from './SearchList.tsx';
+import useSearchInputStore from '../../store/useSearchInputStore.ts';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
-  const [searchTerm, setSearchTerm] = useState('');
+  const { searchInput, setSearchInput } = useSearchInputStore();
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   useEffect(() => {
@@ -24,18 +25,18 @@ export default function SearchModal() {
     <>
       <Overlay onClick={() => toggleSearchModal()} />
       <section
-        className={`${searchTerm === '' ? '' : 'h-[520px]'} fixed left-1/2 top-3 flex w-[640px] -translate-x-1/2 flex-col rounded-2xl bg-white shadow-lg`}
+        className={`${searchInput === '' ? '' : 'h-[520px]'} fixed left-1/2 top-3 flex w-[640px] -translate-x-1/2 flex-col rounded-2xl bg-white shadow-lg`}
       >
         <div className='flex h-full flex-col p-3'>
           <div className='mb-5'>
-            <SearchInput value={searchTerm} onChange={setSearchTerm} />
+            <SearchInput value={searchInput} onChange={setSearchInput} />
           </div>
           <div className='flex-1 overflow-hidden'>
             <SearchHistoryList
               searchHistory={searchHistory}
               onDeleteItem={handleDeleteHistoryItem}
             />
-            {searchTerm === '' ? (
+            {searchInput === '' ? (
               <></>
             ) : (
               <div className='h-full overflow-y-auto'>
