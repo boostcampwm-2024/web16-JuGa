@@ -4,7 +4,7 @@ on:
   push:
     branches: [back/main, front/main]
   pull_request:
-    branches: [main, back/main, dev]
+    branches: [back/main, front/main]
 
 jobs:
   BE-test-and-build:
