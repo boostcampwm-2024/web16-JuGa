@@ -1,17 +1,21 @@
 import { WebSocket } from 'ws';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { SocketGateway } from './socket.gateway';
+import {
+  Injectable,
+  InternalServerErrorException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { SocketTokenService } from './socket-token.service';
 
 @Injectable()
-export abstract class BaseSocketService implements OnModuleInit {
-  protected socket: WebSocket;
-  protected socketConnectionKey: string;
+export class BaseSocketService implements OnModuleInit {
+  private socket: WebSocket;
+  private socketConnectionKey: string;
+  private socketOpenHandlers: (() => void | Promise<void>)[] = [];
+  private socketDataHandlers: {
+    [key: string]: (data) => void;
+  } = {};
 
-  constructor(
-    protected readonly socketTokenService: SocketTokenService,
-    protected readonly socketGateway: SocketGateway,
-  ) {}
+  constructor(private readonly socketTokenService: SocketTokenService) {}
 
   async onModuleInit() {
     this.socketConnectionKey =
@@ -19,7 +23,13 @@ export abstract class BaseSocketService implements OnModuleInit {
     this.socket = new WebSocket(process.env.KOREA_INVESTMENT_SOCKET_URL);
 
     this.socket.onopen = () => {
-      this.handleSocketOpen();
+      Promise.all(
+        this.socketOpenHandlers.map(async (socketOpenHandler) => {
+          await socketOpenHandler();
+        }),
+      ).catch(() => {
+        throw new InternalServerErrorException();
+      });
     };
 
     this.socket.onmessage = (event) => {
@@ -30,14 +40,11 @@ export abstract class BaseSocketService implements OnModuleInit {
       if (data.length < 2) return;
 
       const dataList = data[3].split('^');
-      this.handleSocketData(dataList);
+      this.socketDataHandlers[data[1]](dataList);
     };
   }
 
-  protected abstract handleSocketOpen(): void;
-  protected abstract handleSocketData(dataList): void;
-
-  protected registerCode(trId: string, trKey: string) {
+  registerCode(trId: string, trKey: string) {
     this.socket.send(
       JSON.stringify({
         header: {
@@ -54,5 +61,13 @@ export abstract class BaseSocketService implements OnModuleInit {
         },
       }),
     );
+  }
+
+  registerSocketOpenHandler(handler: () => void | Promise<void>) {
+    this.socketOpenHandlers.push(handler);
+  }
+
+  registerSocketDataHandler(tradeCode: string, handler: (data) => void) {
+    this.socketDataHandlers[tradeCode] = handler;
   }
 }

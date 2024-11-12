@@ -22,7 +22,7 @@ import { RequestInterface } from './interface/request.interface';
 @Controller('/api/stocks/trade')
 @ApiTags('주식 매수/매도 API')
 export class StockOrderController {
-  constructor(private readonly stockTradeService: StockOrderService) {}
+  constructor(private readonly stockOrderService: StockOrderService) {}
 
   @Post('/buy')
   @ApiBearerAuth()
@@ -39,7 +39,7 @@ export class StockOrderController {
     @Req() request: RequestInterface,
     @Body(ValidationPipe) stockOrderRequest: StockOrderRequestDto,
   ) {
-    await this.stockTradeService.buy(request.user.id, stockOrderRequest);
+    await this.stockOrderService.buy(request.user.id, stockOrderRequest);
   }
 
   @Post('/sell')
@@ -57,7 +57,7 @@ export class StockOrderController {
     @Req() request: RequestInterface,
     @Body(ValidationPipe) stockOrderRequest: StockOrderRequestDto,
   ) {
-    await this.stockTradeService.sell(request.user.id, stockOrderRequest);
+    await this.stockOrderService.sell(request.user.id, stockOrderRequest);
   }
 
   @Delete('/:order_id')
@@ -75,6 +75,6 @@ export class StockOrderController {
     @Req() request: RequestInterface,
     @Param('order_id') orderId: number,
   ) {
-    await this.stockTradeService.cancel(request.user.id, orderId);
+    await this.stockOrderService.cancel(request.user.id, orderId);
   }
 }
