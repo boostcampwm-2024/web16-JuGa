@@ -18,6 +18,13 @@ export class StockPriceSocketService {
     @Inject(forwardRef(() => StockOrderService))
     private readonly stockOrderService: StockOrderService,
   ) {
+    baseSocketService.registerSocketOpenHandler(async () => {
+      const orders = await stockOrderService.findAllPendingOrder();
+      orders.forEach((order) => {
+        baseSocketService.registerCode(this.TR_ID, order.stock_code);
+      });
+    });
+
     baseSocketService.registerSocketDataHandler(
       this.TR_ID,
       (data: string[]) => {

@@ -21,6 +21,12 @@ export class StockOrderService {
     private readonly stockPriceSocketService: StockPriceSocketService,
   ) {}
 
+  async findAllPendingOrder() {
+    return this.stockOrderRepository.findBy({
+      status: StatusType.PENDING,
+    });
+  }
+
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const order = this.stockOrderRepository.create({
       user_id: userId,
