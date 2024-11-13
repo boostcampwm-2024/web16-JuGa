@@ -13,6 +13,7 @@ import { StockOrderModule } from './stock/order/stock-order.module';
 import { StockDetailModule } from './stock/detail/stock-detail.module';
 import { typeOrmConfig } from './configs/typeorm.config';
 import { StockListModule } from './stock/list/stock-list.module';
+import { StockTradeHistoryModule } from './stock/trade/history/stock-trade-history.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { StockListModule } from './stock/list/stock-list.module';
     StockDetailModule,
     StockOrderModule,
     StockListModule,
+    StockTradeHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

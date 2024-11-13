@@ -15,8 +15,8 @@ export class User extends BaseEntity {
   @Column({ default: false })
   tutorial: boolean;
 
-  @Column({ default: -1 })
-  kakaoId: number;
+  @Column({ default: '' })
+  kakaoId: string;
 
   @Column({ default: '' })
   currentRefreshToken: string;
@@ -25,7 +25,7 @@ export class User extends BaseEntity {
   currentRefreshTokenExpiresAt: Date;
 
   toAuthCredentialsDto(): AuthCredentialsDto {
-    if (this.kakaoId === -1) {
+    if (this.kakaoId === '') {
       return {
         email: this.email,
         password: this.password,

@@ -8,6 +8,5 @@ import { SocketModule } from '../../websocket/socket.module';
   imports: [KoreaInvestmentModule, SocketModule],
   controllers: [StockIndexController],
   providers: [StockIndexService],
-  exports: [StockIndexService],
 })
 export class StockIndexModule {}

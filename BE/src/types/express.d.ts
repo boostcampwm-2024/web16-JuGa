@@ -4,8 +4,9 @@ import { UUID } from 'crypto';
 declare module 'express' {
   interface Request extends Req {
     user: {
-      kakaoId?: number;
+      kakaoId?: string;
       userId?: UUID;
+      email?: string;
     };
   }
 }
