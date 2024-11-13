@@ -58,6 +58,38 @@ export class StockDetailService {
   }
 
   /**
+   * @private API에서 받은 국내주식기간별시세(일/주/월/년) 데이터를 필요한 정보로 정제하는 함수
+   * @param {InquirePriceApiResponse} response - API 응답에서 받은 원시 데이터
+   * @returns - 필요한 정보만 추출한 데이터 배열
+   *
+   * @author uuuo3o
+   */
+  private formatStockInquirePriceData(response: InquirePriceApiResponse) {
+    const { output2 } = response;
+
+    return output2.map((info) => {
+      const stockData = new InquirePriceChartDataDto();
+      const {
+        stck_bsop_date,
+        stck_clpr,
+        stck_oprc,
+        stck_hgpr,
+        stck_lwpr,
+        acml_vol,
+      } = info;
+
+      stockData.stck_bsop_date = stck_bsop_date;
+      stockData.stck_clpr = stck_clpr;
+      stockData.stck_oprc = stck_oprc;
+      stockData.stck_hgpr = stck_hgpr;
+      stockData.stck_lwpr = stck_lwpr;
+      stockData.acml_vol = acml_vol;
+
+      return stockData;
+    });
+  }
+
+  /**
    * @private 한국투자 Open API - API 호출용 공통 함수
    * @param {string} trId - API 호출에 사용할 tr_id
    * @param {string} apiURL - API 호출에 사용할 URL
@@ -92,37 +124,5 @@ export class StockDetailService {
       });
       throw error;
     }
-  }
-
-  /**
-   * @private API에서 받은 국내주식기간별시세(일/주/월/년) 데이터를 필요한 정보로 정제하는 함수
-   * @param {InquirePriceApiResponse} response - API 응답에서 받은 원시 데이터
-   * @returns - 필요한 정보만 추출한 데이터 배열
-   *
-   * @author uuuo3o
-   */
-  private formatStockInquirePriceData(response: InquirePriceApiResponse) {
-    const { output2 } = response;
-
-    return output2.map((info) => {
-      const stockData = new InquirePriceChartDataDto();
-      const {
-        stck_bsop_date,
-        stck_clpr,
-        stck_oprc,
-        stck_hgpr,
-        stck_lwpr,
-        acml_vol,
-      } = info;
-
-      stockData.stck_bsop_date = stck_bsop_date;
-      stockData.stck_clpr = stck_clpr;
-      stockData.stck_oprc = stck_oprc;
-      stockData.stck_hgpr = stck_hgpr;
-      stockData.stck_lwpr = stck_lwpr;
-      stockData.acml_vol = acml_vol;
-
-      return stockData;
-    });
   }
 }
