@@ -8,4 +8,11 @@ export type LoginFailResponse = {
   statusCode: number;
 };
 
-export type TiemCategoty = 'D' | 'W' | 'M' | 'Y';
+export type TiemCategory = 'D' | 'W' | 'M' | 'Y';
+
+export type Padding = {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+};
