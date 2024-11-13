@@ -5,21 +5,34 @@ import { SearchInput } from './SearchInput';
 import { SearchHistoryList } from './SearchHistoryList';
 import SearchList from './SearchList.tsx';
 import useSearchInputStore from '../../store/useSearchInputStore.ts';
+import { useDebounce } from '../../utils/useDebounce.ts';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
   const { searchInput, setSearchInput } = useSearchInputStore();
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
+  const debouncedSearch = useDebounce({ value: searchInput, delay: 500 });
+
   useEffect(() => {
     setSearchHistory(['서산증권', '삼성화재', '삼성전기']);
   }, []);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      fetchSearchResults(debouncedSearch);
+    }
+  }, [debouncedSearch]);
 
   const handleDeleteHistoryItem = (item: string) => {
     setSearchHistory((prev) => prev.filter((history) => history !== item));
   };
 
-  if (!isOpen) return;
+  const fetchSearchResults = async (searchInput: string) => {
+    console.log(searchInput);
+  };
+
+  if (!isOpen) return null;
 
   return (
     <>
