@@ -1,5 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { StockIndexSocketService } from './stock-index-socket.service';
+import { StockIndexSocketService } from './stock/index/stock-index-socket.service';
 import { SocketGateway } from './socket.gateway';
 import { SocketTokenService } from './socket-token.service';
 import { StockPriceSocketService } from './stock/price/stock-price-socket.service';
