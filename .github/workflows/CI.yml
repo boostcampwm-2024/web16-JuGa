@@ -1,64 +1,64 @@
 name: CI
 
 on:
-    push:
-        branches: [back/main, front/main]
-    pull_request:
-        branches: [back/main, front/main]
+  push:
+    branches: [back/main, front/main]
+  pull_request:
+    branches: [back/main, front/main]
 
 jobs:
-    BE-test-and-build:
-        runs-on: ubuntu-latest
+  BE-test-and-build:
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-                  cache: "npm"
-                  cache-dependency-path: ./BE/package-lock.json
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ./BE/package-lock.json
 
-            - name: Install dependencies
-              working-directory: ./BE
-              run: npm ci
+      - name: Install dependencies
+        working-directory: ./BE
+        run: npm ci
 
-            - name: Run tests
-              run: npm test
-              working-directory: ./BE
-              env:
-                  CI: true
+      - name: Run tests
+        run: npm test
+        working-directory: ./BE
+        env:
+          CI: true
 
-            - name: Run linter
-              working-directory: ./BE
-              run: npm run lint
+      - name: Run linter
+        working-directory: ./BE
+        run: npm run lint
 
-            - name: Build application
-              working-directory: ./BE
-              run: npm run build
+      - name: Build application
+        working-directory: ./BE
+        run: npm run build
 
-    FE-test-and-build:
-        runs-on: ubuntu-latest
+  FE-test-and-build:
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-                  cache: "npm"
-                  cache-dependency-path: ./FE/package-lock.json
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ./FE/package-lock.json
 
-            - name: Install dependencies
-              working-directory: ./FE
-              run: npm ci
+      - name: Install dependencies
+        working-directory: ./FE
+        run: npm ci
 
-            - name: Run linter
-              working-directory: ./FE
-              run: npm run lint
+      - name: Run linter
+        working-directory: ./FE
+        run: npm run lint
 
-            - name: Build application
-              working-directory: ./FE
-              run: npm run build
+      - name: Build application
+        working-directory: ./FE
+        run: npm run build
