@@ -48,18 +48,18 @@ export default function PriceSection() {
               buttonFlag
                 ? 'text-juga-grayscale-black'
                 : 'text-juga-grayscale-400'
-            } relative z-10 w-full rounded-lg px-4 py-1`}
+            } z-7 relative w-full rounded-lg px-4 py-1`}
             onClick={() => setButtonFlag(true)}
             ref={(el) => (buttonRefs.current[0] = el)}
           >
             실시간
           </button>
           <button
-            className={`relative z-10 w-full rounded-lg ${
+            className={`z-7 relative w-full rounded-lg ${
               !buttonFlag
                 ? 'text-juga-grayscale-black'
                 : 'text-juga-grayscale-400'
-            } relative z-10 w-full rounded-lg px-4 py-1`}
+            } z-7 relative w-full rounded-lg px-4 py-1`}
             onClick={() => setButtonFlag(false)}
             ref={(el) => (buttonRefs.current[1] = el)}
           >

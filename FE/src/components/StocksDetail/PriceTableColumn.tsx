@@ -4,7 +4,7 @@ type Props = {
 export default function PriceTableColumn({ viewMode }: Props) {
   if (!viewMode) {
     return (
-      <thead className={'sticky top-0 z-10 bg-white'}>
+      <thead className={'z-1 sticky top-0 bg-white'}>
         <tr className={'h-10 border-b text-gray-500'}>
           <th className={'px-4 py-1 text-left font-medium'}>일자</th>
           <th className={'px-4 py-1 text-right font-medium'}>종가</th>
@@ -19,7 +19,7 @@ export default function PriceTableColumn({ viewMode }: Props) {
     );
   }
   return (
-    <thead className={'sticky top-0 z-10 bg-white'}>
+    <thead className={'z-1 sticky top-0 bg-white'}>
       <tr className={'h-10 border-b text-gray-500'}>
         <th className={'px-4 py-1 text-left font-medium'}>채결가</th>
         <th className={'px-4 py-1 text-right font-medium'}>채결량(주)</th>
