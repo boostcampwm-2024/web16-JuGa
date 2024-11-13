@@ -1,12 +1,31 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { StockDetailService } from './stock-detail.service';
+import { InquirePriceResponseDto } from './dto/stock-detail-response.dto';
 import { StockDetailChartRequestDto } from './dto/stock-detail-chart-request.dto';
 import { InquirePriceChartResponseDto } from './dto/stock-detail-chart-response.dto';
 
 @Controller('/api/stocks')
 export class StockDetailController {
   constructor(private readonly stockDetailService: StockDetailService) {}
+
+  @Get(':stockCode')
+  @ApiOperation({ summary: '단일 주식 종목 detail 페이지 상단부 조회 API' })
+  @ApiParam({
+    name: 'stockCode',
+    required: true,
+    description:
+      '종목 코드\n' +
+      '(ex) 005930 삼성전자 / 005380 현대차 / 001500 현대차증권',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '단일 주식 종목 기본값 조회 성공',
+    type: InquirePriceResponseDto,
+  })
+  getStockDetail(@Param('stockCode') stockCode: string) {
+    return this.stockDetailService.getInquirePrice(stockCode);
+  }
 
   @Post(':stockCode')
   @ApiOperation({ summary: '국내주식기간별시세(일/주/월/년) 조회 API' })
@@ -30,7 +49,7 @@ export class StockDetailController {
     description: '국내주식기간별시세(일/주/월/년) 조회 성공',
     type: InquirePriceChartResponseDto,
   })
-  getStockDetail(
+  getStockDetailChart(
     @Param('stockCode') stockCode: string,
     @Body() body: StockDetailChartRequestDto,
   ) {
