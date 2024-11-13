@@ -4,8 +4,7 @@ import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.s
 import { getHeader } from '../../util/get-header';
 import { getFullURL } from '../../util/get-full-URL';
 import { InquirePriceApiResponse } from './interface/stock-detail.interface';
-import { StockDetailQueryParameterDto } from './dto/stock-detail-query-parameter.dto';
-import { InquirePriceResponseDto } from './dto/stock-detail-response.dto';
+import { InquirePriceChartResponseDto } from './dto/stock-detail-chart-response.dto';
 
 @Injectable()
 export class StockDetailService {
@@ -23,23 +22,29 @@ export class StockDetailService {
    *
    * @author uuuo3o
    */
-  async getInquirePrice(
+  async getInquirePriceChart(
     stockCode: string,
     date1: string,
     date2: string,
     periodDivCode: string,
   ) {
     try {
-      const queryParams = new StockDetailQueryParameterDto();
-      queryParams.fid_cond_mrkt_div_code = 'J';
-      queryParams.fid_input_iscd = stockCode;
-      queryParams.fid_input_date_1 = date1;
-      queryParams.fid_input_date_2 = date2;
-      queryParams.fid_period_div_code = periodDivCode;
+      const queryParams = {
+        fid_cond_mrkt_div_code: 'J',
+        fid_input_iscd: stockCode,
+        fid_input_date_1: date1,
+        fid_input_date_2: date2,
+        fid_period_div_code: periodDivCode,
+        fid_org_adj_prc: '0',
+      };
 
-      const response = await this.requestApi(queryParams);
+      const response = await this.requestApi<InquirePriceApiResponse>(
+        'FHKST03010100',
+        '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
+        queryParams,
+      );
 
-      return this.formatStockData(response);
+      return this.formatStockInquirePriceData(response);
     } catch (error) {
       this.logger.error('API Error Details:', {
         status: error.response?.status,
@@ -53,22 +58,25 @@ export class StockDetailService {
   }
 
   /**
-   * @private 한국투자 Open API - [국내주식] 기본시세 - 국내주식기간별시세(일/주/월/년) 호출 함수
-   * @param {StockDetailQueryParameterDto} queryParams - API 요청 시 필요한 쿼리 파라미터 DTO
-   * @returns - 국내주식기간별시세(일/주/월/년) 데이터
+   * @private 한국투자 Open API - API 호출용 공통 함수
+   * @param {string} trId - API 호출에 사용할 tr_id
+   * @param {string} apiURL - API 호출에 사용할 URL
+   * @param {Record<string, string>} params - API 요청 시 필요한 쿼리 파라미터 DTO
+   * @returns - API 호출에 대한 응답 데이터
    *
    * @author uuuo3o
    */
-  private async requestApi(queryParams: StockDetailQueryParameterDto) {
+  private async requestApi<T>(
+    trId: string,
+    apiURL: string,
+    params: Record<string, string>,
+  ): Promise<T> {
     try {
       const accessToken = await this.koreaInvetmentService.getAccessToken();
-      const headers = getHeader(accessToken, 'FHKST03010100');
-      const url = getFullURL(
-        '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
-      );
-      const params = this.getInquirePriceParams(queryParams);
+      const headers = getHeader(accessToken, trId);
+      const url = getFullURL(apiURL);
 
-      const response = await axios.get<InquirePriceApiResponse>(url, {
+      const response = await axios.get<T>(url, {
         headers,
         params,
       });
@@ -93,52 +101,12 @@ export class StockDetailService {
    *
    * @author uuuo3o
    */
-  private formatStockData(response: InquirePriceApiResponse) {
-    const stockData = new InquirePriceResponseDto();
-    const { output1, output2 } = response;
+  private formatStockInquirePriceData(response: InquirePriceApiResponse) {
+    const stockData = new InquirePriceChartResponseDto();
+    const { output2 } = response;
 
-    const {
-      hts_kor_isnm,
-      stck_shrn_iscd,
-      stck_prpr,
-      prdy_vrss,
-      prdy_vrss_sign,
-      prdy_ctrt,
-      hts_avls,
-      per,
-    } = output1;
-
-    stockData.output1 = {
-      hts_kor_isnm,
-      stck_shrn_iscd,
-      stck_prpr,
-      prdy_vrss,
-      prdy_vrss_sign,
-      prdy_ctrt,
-      hts_avls,
-      per,
-    };
-
-    stockData.output2 = output2;
+    stockData.output = output2;
 
     return stockData;
-  }
-
-  /**
-   * @private 국내주식기간별시세(일/주/월/년) 요청을 위한 쿼리 파라미터 객체 생성 함수
-   * @param {StockDetailQueryParameterDto} params - API 요청에 필요한 쿼리 파라미터 DTO
-   * @returns - API 요청에 필요한 쿼리 파라미터 객체
-   *
-   * @author uuuo3o
-   */
-  private getInquirePriceParams(params: StockDetailQueryParameterDto) {
-    return {
-      fid_cond_mrkt_div_code: params.fid_cond_mrkt_div_code,
-      fid_input_iscd: params.fid_input_iscd,
-      fid_input_date_1: params.fid_input_date_1,
-      fid_input_date_2: params.fid_input_date_2,
-      fid_period_div_code: params.fid_period_div_code,
-      fid_org_adj_prc: 0,
-    };
   }
 }
