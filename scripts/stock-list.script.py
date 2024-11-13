@@ -1,9 +1,9 @@
 import FinanceDataReader as fdr
-import json
 import os
-import mysql.connector
+import pymysql
 from dotenv import load_dotenv
 from pathlib import Path
+from sshtunnel import SSHTunnelForwarder
 
 root_dir = Path(__file__).parent
 env_path = os.path.join(root_dir, '.env')
@@ -17,30 +17,40 @@ db_config = {
     'database' : os.getenv('DB_DATABASE'),
 }
 
-def insert_stocks(stockData) : 
-    try : 
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        insert_query = """INSERT INTO stocks (code, name, market) VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE name = VALUES(name), market = VALUES(market)"""
+if __name__ == '__main__':
+    
+    with SSHTunnelForwarder(
+        (os.getenv('SSH_HOST'), 22),
+        ssh_username=os.getenv('SSH_USERNAME'),
+        ssh_password=os.getenv('SSH_PASSWD'),
+        remote_bind_address=(os.getenv('DB_HOST'), 3306)
+    ) as tunnel:
         
-        records = stockData.to_dict('records')
-        for record in records:
-            values = (record['Code'], record['Name'], record['Market'])
-            cursor.execute(insert_query, values)
-        conn.commit()
+        with pymysql.connect(
+            host='127.0.0.1',
+            user=os.getenv('DB_USERNAME'),
+            password=os.getenv('DB_PASSWD'),
+            db=os.getenv('DB_DATABASE'),
+            charset='utf8',
+            port=tunnel.local_bind_port,
+            cursorclass=pymysql.cursors.DictCursor) as conn:
 
-    except Exception as e :
-        print(e)
-        conn.rollback()
-    
-    finally :
-        if conn.is_connected() :
-            cursor.close()
-            conn.close()
-    
-df_krx = fdr.StockListing('KRX')
-df_selected = df_krx[['Code','Name','Market']]
+            with conn.cursor() as cursor:
+                try : 
+                    df_krx = fdr.StockListing('KRX')
+                    df_selected = df_krx[['Code','Name','Market']]
+                    stockData = df_selected
+                    insert_query = """INSERT INTO stocks (code, name, market) VALUES (%s, %s, %s)
+                    ON DUPLICATE KEY UPDATE name = VALUES(name), market = VALUES(market)"""
+                    
+                    records = stockData.to_dict('records')
+                    for record in records:
+                        values = (record['Code'], record['Name'], record['Market'])
+                        cursor.execute(insert_query, values)
+                    conn.commit()
 
-insert_stocks(df_selected)
+                except Exception as e :
+                    print(e)
+                    conn.rollback()
+
+            
