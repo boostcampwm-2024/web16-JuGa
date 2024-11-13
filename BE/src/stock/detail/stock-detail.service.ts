@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
 import { getHeader } from '../../util/get-header';
 import { getFullURL } from '../../util/get-full-URL';
-import { InquirePriceApiResponse } from './interface/stock-detail.interface';
+import { InquirePriceApiResponse } from './interface/stock-detail-chart.interface';
 import { InquirePriceChartDataDto } from './dto/stock-detail-chart-data.dto';
 
 @Injectable()
@@ -76,6 +76,7 @@ export class StockDetailService {
         stck_hgpr,
         stck_lwpr,
         acml_vol,
+        prdy_vrss_sign,
       } = info;
 
       stockData.stck_bsop_date = stck_bsop_date;
@@ -84,6 +85,7 @@ export class StockDetailService {
       stockData.stck_hgpr = stck_hgpr;
       stockData.stck_lwpr = stck_lwpr;
       stockData.acml_vol = acml_vol;
+      stockData.prdy_vrss_sign = prdy_vrss_sign;
 
       return stockData;
     });
