@@ -47,7 +47,7 @@ export interface InquirePriceOutput2Data {
   revl_issu_reas: string;
 }
 
-export interface InquirePriceApiResponse {
+export interface InquirePriceChartApiResponse {
   output1: InquirePriceOutput1Data;
   output2: InquirePriceOutput2Data[];
   rt_cd: string;
