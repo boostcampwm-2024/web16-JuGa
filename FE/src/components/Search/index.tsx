@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import useSearchModalStore from 'store/useSearchModalStore';
 import Overlay from '../ModalOveray.tsx';
 import { SearchInput } from './SearchInput';
@@ -44,32 +44,40 @@ export default function SearchModal() {
     <>
       <Overlay onClick={() => toggleSearchModal()} />
       <section
-        className={`${
-          searchInput ? 'h-[520px]' : ''
-        } fixed left-1/2 top-3 flex w-[640px] -translate-x-1/2 flex-col rounded-2xl bg-white shadow-lg`}
+        className={`${searchInput.length ? 'h-[520px]' : 'h-[160px]'} fixed left-1/2 top-3 w-[640px] -translate-x-1/2 rounded-2xl bg-white shadow-xl`}
       >
-        <div className='flex h-full flex-col p-3'>
-          <div className='mb-5'>
-            <SearchInput value={searchInput} onChange={setSearchInput} />
-          </div>
-          <div className='flex-1 overflow-hidden'>
-            {!searchInput && (
-              <SearchHistoryList
-                searchHistory={searchHistory}
-                onDeleteItem={handleDeleteHistoryItem}
-              />
-            )}
-            {isSearching && (
-              <div className='flex items-center justify-center'>
-                <span>검색 중...</span>
+        <div
+          className={
+            'absolute left-0 right-0 top-0 z-10 rounded-t-2xl bg-white p-3'
+          }
+        >
+          <SearchInput value={searchInput} onChange={setSearchInput} />
+        </div>
+
+        <div className={'h-full px-3 pb-3 pt-[68px]'}>
+          {' '}
+          {!searchInput ? (
+            <SearchHistoryList
+              searchHistory={searchHistory}
+              onDeleteItem={handleDeleteHistoryItem}
+            />
+          ) : (
+            <div className={'h-full'}>
+              <div className={'mb-4 text-start text-sm font-bold'}>
+                검색 결과
               </div>
-            )}
-            {showSearchResults && (
-              <div className='h-full overflow-y-auto'>
-                <SearchList />
+
+              <div className={'h-[400px] overflow-y-auto'}>
+                {isSearching ? (
+                  <div className={'flex h-full items-center justify-center'}>
+                    <span className={'text-gray-500'}>검색 중...</span>
+                  </div>
+                ) : (
+                  showSearchResults && <SearchList searchData={data} />
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </>
