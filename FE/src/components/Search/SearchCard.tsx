@@ -1,4 +1,6 @@
 import { searchDataType } from './searchDataType.ts';
+import { useNavigate } from 'react-router-dom';
+import useSearchModalStore from '../../store/useSearchModalStore.ts';
 
 type SearchCardProps = {
   data: searchDataType;
@@ -6,12 +8,21 @@ type SearchCardProps = {
 
 export default function SearchCard({ data }: SearchCardProps) {
   const { code, name, market } = data;
+  const { isOpen, toggleSearchModal } = useSearchModalStore();
+
+  const navigation = useNavigate();
+
+  const handleClick = () => {
+    navigation(`/stocks/${code}`);
+    if (isOpen) toggleSearchModal();
+  };
 
   return (
     <li
       className={
         'h-[52px] w-full rounded-xl hover:cursor-pointer hover:bg-gray-100'
       }
+      onClick={handleClick}
     >
       <div className={'my-2 flex w-full items-center justify-between px-4'}>
         <div className={'flex-1 flex-col'}>
