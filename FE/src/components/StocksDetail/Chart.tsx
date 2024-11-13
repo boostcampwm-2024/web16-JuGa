@@ -45,10 +45,10 @@ export default function Chart() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const padding = {
-      top: 10,
-      right: 10,
+      top: 20,
+      right: 80,
       bottom: 10,
-      left: 10,
+      left: 20,
     };
 
     const chartWidth = canvas.width - padding.left - padding.right;
@@ -108,8 +108,8 @@ function drawLineChart(
 
   const n = data.length;
 
-  const yMax = Math.round(Math.max(...data.map((d) => d.low)) * 1.006 * 100);
-  const yMin = Math.round(Math.min(...data.map((d) => d.low)) * 0.994 * 100);
+  const yMax = Math.round(Math.max(...data.map((d) => d.low)) * 1.1 * 100);
+  const yMin = Math.round(Math.min(...data.map((d) => d.low)) * 0.9 * 100);
 
   data.forEach((v, i) => {
     const value = Math.round(v.low * 100);
@@ -173,14 +173,36 @@ function drawCandleChart(
 
   const yMax = Math.round(
     Math.max(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
-      1.006 *
+      1.1 *
       100,
   );
   const yMin = Math.round(
     Math.min(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
-      0.994 *
+      0.9 *
       100,
   );
+
+  const yymax = yMax / 100;
+  const yymin = yMin / 100;
+
+  const labels = getYAxisLabels(yymin, yymax);
+  labels.forEach((label) => {
+    const yPos =
+      padding.top + height - ((label - yymin) / (yymax - yymin)) * height;
+
+    // 라벨 텍스트 그리기
+    ctx.font = '20px Arial';
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'start';
+    ctx.fillText(label.toLocaleString(), padding.left + width + 10, yPos + 5);
+
+    // Y축 눈금선 그리기
+    ctx.strokeStyle = '#ddd';
+    ctx.beginPath();
+    ctx.moveTo(0, yPos);
+    ctx.lineTo(padding.left + width, yPos);
+    ctx.stroke();
+  });
 
   data.forEach((e, i) => {
     ctx.beginPath();
@@ -222,4 +244,19 @@ function drawCandleChart(
     ctx.lineTo(middle, lowY);
     ctx.stroke();
   });
+}
+
+function getYAxisLabels(min: number, max: number) {
+  let a = min.toString().length - 1;
+  let k = 1;
+  while (a--) k *= 10;
+  console.log(k);
+
+  const start = Math.ceil(min / k) * k;
+  const end = Math.floor(max / k) * k;
+  const labels = [];
+  for (let value = start; value <= end; value += k) {
+    labels.push(value);
+  }
+  return labels;
 }
