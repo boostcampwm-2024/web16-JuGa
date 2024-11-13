@@ -8,6 +8,8 @@ import useSearchInputStore from '../../store/useSearchInputStore.ts';
 import { useDebounce } from '../../utils/useDebounce.ts';
 import { useQuery } from '@tanstack/react-query';
 import { searchApi } from '../../service/searchApi.ts';
+import Lottie from 'lottie-react';
+import searchAnimation from '../../../public/searchAnimation.json';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
@@ -70,7 +72,7 @@ export default function SearchModal() {
               <div className={'h-[400px] overflow-y-auto'}>
                 {isSearching ? (
                   <div className={'flex h-full items-center justify-center'}>
-                    <span className={'text-gray-500'}>검색 중...</span>
+                    <Lottie animationData={searchAnimation} />
                   </div>
                 ) : (
                   showSearchResults && <SearchList searchData={data} />
