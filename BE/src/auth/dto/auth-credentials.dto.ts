@@ -27,6 +27,7 @@ export class AuthCredentialsDto {
 
   @ApiProperty({
     description: '카카오 ID',
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -34,6 +35,7 @@ export class AuthCredentialsDto {
 
   @ApiProperty({
     description: '카카오 액세스 토큰',
+    required: false,
   })
   @IsString()
   @IsOptional()

@@ -12,6 +12,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'http://223.130.151.42:5173',
+      'http://juga.kro.kr:5173',
+      'http://juga.kro.kr:3000',
       'http://223.130.151.42:3000',
     ],
     methods: 'GET, HEAD, PUT, PATH, POST, DELETE',

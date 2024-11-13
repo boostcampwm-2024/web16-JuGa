@@ -19,6 +19,14 @@ export class UserRepository extends Repository<User> {
     await this.save(user);
   }
 
+  async registerKakaoUser(authCredentialsDto: AuthCredentialsDto) {
+    const { kakaoId, email } = authCredentialsDto;
+    const salt: string = await bcrypt.genSalt();
+    const hashedPassword: string = await bcrypt.hash(String(kakaoId), salt);
+    const user = this.create({ email, kakaoId, password: hashedPassword });
+    await this.save(user);
+  }
+
   async updateUserWithRefreshToken(
     id: number,
     {
