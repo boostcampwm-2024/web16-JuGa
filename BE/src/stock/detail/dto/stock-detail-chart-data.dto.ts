@@ -18,4 +18,7 @@ export class InquirePriceChartDataDto {
 
   @ApiProperty({ description: '누적 거래량' })
   acml_vol: string;
+
+  @ApiProperty({ description: '전일 대비 부호' })
+  prdy_vrss_sign: string;
 }
