@@ -22,11 +22,11 @@ export default function Chart() {
     const displayHeight = parent.clientHeight;
 
     // 해상도 높이기
-    canvas.width = displayWidth * 4;
-    canvas.height = displayHeight * 4;
+    canvas.width = displayWidth * 2;
+    canvas.height = displayHeight * 2;
 
     canvas.style.width = `${displayWidth}px`;
-    canvas.style.height = `${displayHeight}px`;
+    canvas.style.height = `${displayHeight * 0.83}px`;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -63,8 +63,20 @@ export default function Chart() {
   }, []);
 
   return (
-    <div className='flex-1' ref={containerRef}>
-      <canvas ref={canvasRef} />
+    <div
+      className='flex flex-col items-center flex-1 p-3 rounded-lg bg-juga-grayscale-50'
+      ref={containerRef}
+    >
+      <div className='flex justify-between w-full'>
+        <p className='font-semibold'>차트</p>
+        <nav className='flex gap-4'>
+          <button>일</button>
+          <button>주</button>
+          <button>월</button>
+          <button>년</button>
+        </nav>
+      </div>
+      <canvas ref={canvasRef} className='p-3' />
     </div>
   );
 }

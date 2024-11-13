@@ -7,7 +7,7 @@ export default function StocksDetail() {
   return (
     <div className='flex flex-col'>
       <Header />
-      <div className='flex h-[500px] bg-yellow-600'>
+      <div className='flex h-[500px]'>
         <div className='flex min-w-[850px] flex-col'>
           <Chart />
           <PriceSection />
