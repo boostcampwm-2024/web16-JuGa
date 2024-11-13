@@ -114,20 +114,35 @@ export class StockOrderService {
   }
 
   private async executeBuy(order) {
-    // TODO: 매수 체결 로직 필요...
     this.logger.log(`${order.id}번 매수 예약이 체결되었습니다.`, 'BUY');
-    await this.stockOrderRepository.update(
-      { id: order.id },
-      { status: StatusType.COMPLETE, completed_at: new Date() },
+
+    const totalPrice = order.price * order.amount;
+    const fee = this.calculateFee(totalPrice);
+    await this.stockOrderRepository.updateOrderAndAssetWhenBuy(
+      order,
+      totalPrice + fee,
     );
   }
 
   private async executeSell(order) {
-    // TODO: 매도 체결 로직 필요...
     this.logger.log(`${order.id}번 매도 예약이 체결되었습니다.`, 'SELL');
-    await this.stockOrderRepository.update(
-      { id: order.id },
-      { status: StatusType.COMPLETE, completed_at: new Date() },
+
+    const totalPrice = order.price * order.amount;
+    const fee = this.calculateFee(totalPrice);
+    await this.stockOrderRepository.updateOrderAndAssetWhenSell(
+      order,
+      totalPrice - fee,
     );
+  }
+
+  private calculateFee(totalPrice: number) {
+    if (totalPrice <= 10000000) return totalPrice * 0.16;
+    if (totalPrice > 10000000 && totalPrice <= 50000000)
+      return totalPrice * 0.14;
+    if (totalPrice > 50000000 && totalPrice <= 100000000)
+      return totalPrice * 0.12;
+    if (totalPrice > 100000000 && totalPrice <= 300000000)
+      return totalPrice * 0.1;
+    return totalPrice * 0.08;
   }
 }
