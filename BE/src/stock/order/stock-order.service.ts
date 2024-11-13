@@ -4,6 +4,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { NotFoundError } from 'rxjs';
 import { LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
@@ -20,6 +21,8 @@ export class StockOrderService {
     @Inject(forwardRef(() => StockPriceSocketService))
     private readonly stockPriceSocketService: StockPriceSocketService,
   ) {}
+
+  private readonly logger = new Logger();
 
   async findAllPendingOrder() {
     return this.stockOrderRepository.findBy({
@@ -112,7 +115,7 @@ export class StockOrderService {
 
   private async executeBuy(order) {
     // TODO: 매수 체결 로직 필요...
-    console.log(`${order.id}번 매수 예약이 체결되었습니다.`);
+    this.logger.log(`${order.id}번 매수 예약이 체결되었습니다.`, 'BUY');
     await this.stockOrderRepository.update(
       { id: order.id },
       { status: StatusType.COMPLETE, completed_at: new Date() },
@@ -121,7 +124,7 @@ export class StockOrderService {
 
   private async executeSell(order) {
     // TODO: 매도 체결 로직 필요...
-    console.log(`${order.id}번 매도 예약이 체결되었습니다.`);
+    this.logger.log(`${order.id}번 매도 예약이 체결되었습니다.`, 'SELL');
     await this.stockOrderRepository.update(
       { id: order.id },
       { status: StatusType.COMPLETE, completed_at: new Date() },
