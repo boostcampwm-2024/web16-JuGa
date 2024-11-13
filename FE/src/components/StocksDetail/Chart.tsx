@@ -118,12 +118,15 @@ function drawBarChart(
 
   const gap = Math.floor((width / dummy.length) * 0.8);
 
+  const blue = '#2175F3';
+  const red = '#FF3700';
+
   data.forEach((e, i) => {
     const value = Math.round(e.volume * 100);
     const cx = x + padding.left + (width * i) / (dummy.length - 1);
     const cy = padding.top + ((height - y) * (value - yMin)) / (yMax - yMin);
 
-    ctx.fillStyle = e.open < e.close ? 'red' : 'blue';
+    ctx.fillStyle = e.open < e.close ? red : blue;
     ctx.fillRect(cx, height, gap, -cy);
   });
 
@@ -174,13 +177,16 @@ function drawCandleChart(
     const lowY =
       y + padding.top + height - (height * (lowValue - yMin)) / (yMax - yMin);
 
+    const blue = '#2175F3';
+    const red = '#FF3700';
+
     if (open > close) {
-      ctx.fillStyle = 'blue';
-      ctx.strokeStyle = 'blue';
+      ctx.fillStyle = blue;
+      ctx.strokeStyle = blue;
       ctx.fillRect(cx, closeY, gap, openY - closeY);
     } else {
-      ctx.fillStyle = 'red';
-      ctx.strokeStyle = 'red';
+      ctx.fillStyle = red;
+      ctx.strokeStyle = red;
       ctx.fillRect(cx, openY, gap, closeY - openY);
     }
 
