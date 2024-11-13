@@ -67,9 +67,17 @@ export class StockOrderService {
       throw new ConflictException('이미 체결된 주문은 취소할 수 없습니다.');
 
     await this.stockOrderRepository.remove(order);
+
+    if (
+      !(await this.stockOrderRepository.existsBy({
+        stock_code: order.stock_code,
+        status: StatusType.PENDING,
+      }))
+    )
+      this.stockPriceSocketService.unsubscribeByCode(order.stock_code);
   }
 
-  async checkExecutableOrder(stockCode, value) {
+  async checkExecutableOrder(stockCode: string, value) {
     const buyOrders = await this.stockOrderRepository.find({
       where: {
         stock_code: stockCode,
@@ -92,15 +100,31 @@ export class StockOrderService {
     await Promise.all(
       sellOrders.map((sellOrder) => this.executeSell(sellOrder)),
     );
+
+    if (
+      !(await this.stockOrderRepository.existsBy({
+        stock_code: stockCode,
+        status: StatusType.PENDING,
+      }))
+    )
+      this.stockPriceSocketService.unsubscribeByCode(stockCode);
   }
 
-  private executeBuy(order) {
+  private async executeBuy(order) {
     // TODO: 매수 체결 로직 필요...
     console.log(`${order.id}번 매수 예약이 체결되었습니다.`);
+    await this.stockOrderRepository.update(
+      { id: order.id },
+      { status: StatusType.COMPLETE, completed_at: new Date() },
+    );
   }
 
-  private executeSell(order) {
+  private async executeSell(order) {
     // TODO: 매도 체결 로직 필요...
     console.log(`${order.id}번 매도 예약이 체결되었습니다.`);
+    await this.stockOrderRepository.update(
+      { id: order.id },
+      { status: StatusType.COMPLETE, completed_at: new Date() },
+    );
   }
 }
