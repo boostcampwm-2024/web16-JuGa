@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class InquirePriceOutput1Dto {
+export class InquirePriceResponseDto {
   @ApiProperty({ description: 'HTS 한글 종목명' })
   hts_kor_isnm: string;
 
