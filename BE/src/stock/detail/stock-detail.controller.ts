@@ -2,7 +2,7 @@ import { Body, Controller, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { StockDetailService } from './stock-detail.service';
 import { StockDetailRequestDto } from './dto/stock-detail-request.dto';
-import { InquirePriceResponseDto } from './dto/stock-detail-response.dto';
+import { InquirePriceChartResponseDto } from './dto/stock-detail-chart-response.dto';
 
 @Controller('/api/stocks')
 export class StockDetailController {
@@ -28,14 +28,14 @@ export class StockDetailController {
   @ApiResponse({
     status: 201,
     description: '단일 주식 종목 기본값 조회 성공',
-    type: InquirePriceResponseDto,
+    type: InquirePriceChartResponseDto,
   })
   getStockDetail(
     @Param('stockCode') stockCode: string,
     @Body() body: StockDetailRequestDto,
   ) {
     const { fid_input_date_1, fid_input_date_2, fid_period_div_code } = body;
-    return this.stockDetailService.getInquirePrice(
+    return this.stockDetailService.getInquirePriceChart(
       stockCode,
       fid_input_date_1,
       fid_input_date_2,

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class InquirePriceOutput2Dto {
+export class InquirePriceChartDataDto {
   @ApiProperty({ description: '주식 영업 일자' })
   stck_bsop_date: string;
 
