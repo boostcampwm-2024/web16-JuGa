@@ -43,10 +43,11 @@ export class BaseSocketService implements OnModuleInit {
 
       if (data.length < 2) {
         const json = JSON.parse(data[0]);
-        this.logger.log(
-          `한국투자증권 웹소켓 연결: ${json.body.msg1}`,
-          json.header.tr_id,
-        );
+        if (json.body)
+          this.logger.log(
+            `한국투자증권 웹소켓 연결: ${json.body.msg1}`,
+            json.header.tr_id,
+          );
         return;
       }
 
