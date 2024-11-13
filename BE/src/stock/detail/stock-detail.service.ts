@@ -4,7 +4,7 @@ import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.s
 import { getHeader } from '../../util/get-header';
 import { getFullURL } from '../../util/get-full-URL';
 import { InquirePriceApiResponse } from './interface/stock-detail.interface';
-import { InquirePriceChartResponseDto } from './dto/stock-detail-chart-response.dto';
+import { InquirePriceChartDataDto } from './dto/stock-detail-chart-data.dto';
 
 @Injectable()
 export class StockDetailService {
@@ -102,11 +102,27 @@ export class StockDetailService {
    * @author uuuo3o
    */
   private formatStockInquirePriceData(response: InquirePriceApiResponse) {
-    const stockData = new InquirePriceChartResponseDto();
     const { output2 } = response;
 
-    stockData.output = output2;
+    return output2.map((info) => {
+      const stockData = new InquirePriceChartDataDto();
+      const {
+        stck_bsop_date,
+        stck_clpr,
+        stck_oprc,
+        stck_hgpr,
+        stck_lwpr,
+        acml_vol,
+      } = info;
 
-    return stockData;
+      stockData.stck_bsop_date = stck_bsop_date;
+      stockData.stck_clpr = stck_clpr;
+      stockData.stck_oprc = stck_oprc;
+      stockData.stck_hgpr = stck_hgpr;
+      stockData.stck_lwpr = stck_lwpr;
+      stockData.acml_vol = acml_vol;
+
+      return stockData;
+    });
   }
 }
