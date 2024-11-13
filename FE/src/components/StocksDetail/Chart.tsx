@@ -53,22 +53,13 @@ export default function Chart() {
 
     const chartWidth = canvas.width - padding.left - padding.right;
     const chartHeight = canvas.height - padding.top - padding.bottom;
-    const volumeBoundary = chartHeight * 0.2; // chartHeight의 20%
-    const mainHeight = chartHeight - volumeBoundary;
+    const boundary = chartHeight * 0.8; // chartHeight의 80%
 
-    drawLineChart(ctx, dummy, chartWidth, mainHeight, padding);
+    const data = dummy.map((e) => e.low);
 
-    drawBarChart(
-      ctx,
-      dummy,
-      chartWidth,
-      chartHeight,
-      padding,
-      0,
-      chartHeight * 0.8,
-    );
-
-    drawCandleChart(ctx, dummy, chartWidth, mainHeight, padding, 0, 0);
+    drawLineChart(ctx, data, 0, 0, chartWidth, boundary, padding, 0.1);
+    drawBarChart(ctx, dummy, 0, boundary, chartWidth, chartHeight, padding);
+    drawCandleChart(ctx, dummy, 0, 0, chartWidth, boundary, padding, 0.1);
   }, []);
 
   return (
@@ -97,25 +88,26 @@ export default function Chart() {
 
 function drawLineChart(
   ctx: CanvasRenderingContext2D,
-  data: DummyStock[],
+  data: number[],
+  x: number,
+  y: number,
   width: number,
   height: number,
   padding: Padding,
-  x: number = 0,
-  y: number = 0,
+  weight: number = 0, // 0~1 y축 범위 가중치
+  lineWidth: number = 1,
 ) {
+  if (data.length === 0) return;
+
   ctx.beginPath();
 
   const n = data.length;
+  const yMax = Math.round(Math.max(...data.map((d) => d)) * (1 + weight));
+  const yMin = Math.round(Math.min(...data.map((d) => d)) * (1 - weight));
 
-  const yMax = Math.round(Math.max(...data.map((d) => d.low)) * 1.1 * 100);
-  const yMin = Math.round(Math.min(...data.map((d) => d.low)) * 0.9 * 100);
-
-  data.forEach((v, i) => {
-    const value = Math.round(v.low * 100);
+  data.forEach((e, i) => {
     const cx = x + padding.left + (width * i) / (n - 1);
-    const cy =
-      y + padding.top + height - (height * (value - yMin)) / (yMax - yMin);
+    const cy = y + padding.top + height - (height * (e - yMin)) / (yMax - yMin);
 
     if (i === 0) {
       ctx.moveTo(cx, cy);
@@ -124,23 +116,26 @@ function drawLineChart(
     }
   });
 
-  ctx.lineWidth = 1;
+  ctx.lineWidth = lineWidth;
   ctx.stroke();
 }
 
 function drawBarChart(
   ctx: CanvasRenderingContext2D,
   data: DummyStock[],
+  x: number,
+  y: number,
   width: number,
   height: number,
   padding: Padding,
-  x: number,
-  y: number,
+  weight: number = 0, // 0~1 y축 범위 가중치
 ) {
+  if (data.length === 0) return;
+
   ctx.beginPath();
 
-  const yMax = Math.round(Math.max(...data.map((d) => d.volume)) * 1.006 * 100);
-  const yMin = Math.round(Math.min(...data.map((d) => d.volume)) * 0.994 * 100);
+  const yMax = Math.round(Math.max(...data.map((d) => d.volume)) * 1 + weight);
+  const yMin = Math.round(Math.min(...data.map((d) => d.volume)) * 1 - weight);
 
   const gap = Math.floor((width / dummy.length) * 0.8);
 
@@ -148,47 +143,41 @@ function drawBarChart(
   const red = '#FF3700';
 
   data.forEach((e, i) => {
-    const value = Math.round(e.volume * 100);
     const cx = x + padding.left + (width * i) / (dummy.length - 1);
-    const cy = padding.top + ((height - y) * (value - yMin)) / (yMax - yMin);
+    const cy = padding.top + ((height - y) * (e.volume - yMin)) / (yMax - yMin);
 
     ctx.fillStyle = e.open < e.close ? red : blue;
     ctx.fillRect(cx, height, gap, -cy);
   });
 
-  ctx.lineWidth = 2;
   ctx.stroke();
 }
 
 function drawCandleChart(
   ctx: CanvasRenderingContext2D,
   data: DummyStock[],
+  x: number,
+  y: number,
   width: number,
   height: number,
   padding: Padding,
-  x: number,
-  y: number,
+  weight: number = 0, // 0~1 y축 범위 가중치
 ) {
   ctx.beginPath();
 
   const yMax = Math.round(
     Math.max(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
-      1.1 *
-      100,
+      (1 + weight),
   );
   const yMin = Math.round(
     Math.min(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
-      0.9 *
-      100,
+      (1 - weight),
   );
 
-  const yymax = yMax / 100;
-  const yymin = yMin / 100;
-
-  const labels = getYAxisLabels(yymin, yymax);
+  const labels = getYAxisLabels(yMin, yMax);
   labels.forEach((label) => {
     const yPos =
-      padding.top + height - ((label - yymin) / (yymax - yymin)) * height;
+      padding.top + height - ((label - yMin) / (yMax - yMin)) * height;
 
     // 라벨 텍스트 그리기
     ctx.font = '20px Arial';
@@ -211,19 +200,14 @@ function drawCandleChart(
     const gap = Math.floor((width / dummy.length) * 0.8);
     const cx = x + padding.left + (width * i) / (dummy.length - 1);
 
-    const openValue = Math.round(open * 100);
-    const closeValue = Math.round(close * 100);
-    const highValue = Math.round(high * 100);
-    const lowValue = Math.round(low * 100);
-
     const openY =
-      y + padding.top + height - (height * (openValue - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (open - yMin)) / (yMax - yMin);
     const closeY =
-      y + padding.top + height - (height * (closeValue - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (close - yMin)) / (yMax - yMin);
     const highY =
-      y + padding.top + height - (height * (highValue - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (high - yMin)) / (yMax - yMin);
     const lowY =
-      y + padding.top + height - (height * (lowValue - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (low - yMin)) / (yMax - yMin);
 
     const blue = '#2175F3';
     const red = '#FF3700';
@@ -250,7 +234,6 @@ function getYAxisLabels(min: number, max: number) {
   let a = min.toString().length - 1;
   let k = 1;
   while (a--) k *= 10;
-  console.log(k);
 
   const start = Math.ceil(min / k) * k;
   const end = Math.floor(max / k) * k;
