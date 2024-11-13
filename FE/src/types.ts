@@ -7,3 +7,12 @@ export type LoginFailResponse = {
   message: string[];
   statusCode: number;
 };
+
+export type TiemCategory = 'D' | 'W' | 'M' | 'Y';
+
+export type Padding = {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+};
