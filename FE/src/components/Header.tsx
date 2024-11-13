@@ -28,7 +28,7 @@ export default function Header() {
             <input
               type='text'
               placeholder='Search...'
-              value={searchInput}
+              defaultValue={searchInput}
               className='h-[36px] w-[280px] rounded-lg bg-juga-grayscale-50 px-4 py-2'
               onClick={toggleSearchModal}
             />
