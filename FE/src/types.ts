@@ -7,3 +7,5 @@ export type LoginFailResponse = {
   message: string[];
   statusCode: number;
 };
+
+export type TiemCategoty = 'D' | 'W' | 'M' | 'Y';

@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { dummy, DummyStock } from './dummy';
+import { TiemCategory } from 'types';
 
 type Padding = {
   top: number;
@@ -11,6 +12,14 @@ type Padding = {
 export default function Chart() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [timeCategory, setTimeCategory] = useState<TiemCategory>('D');
+
+  const categories: { label: string; value: TiemCategory }[] = [
+    { label: '일', value: 'D' },
+    { label: '주', value: 'W' },
+    { label: '월', value: 'M' },
+    { label: '년', value: 'Y' },
+  ];
 
   useEffect(() => {
     const parent = containerRef.current;
@@ -67,13 +76,18 @@ export default function Chart() {
       className='flex flex-col items-center flex-1 p-3 rounded-lg bg-juga-grayscale-50'
       ref={containerRef}
     >
-      <div className='flex justify-between w-full'>
+      <div className='flex items-center justify-between w-full'>
         <p className='font-semibold'>차트</p>
-        <nav className='flex gap-4'>
-          <button>일</button>
-          <button>주</button>
-          <button>월</button>
-          <button>년</button>
+        <nav className='flex gap-4 text-sm'>
+          {categories.map(({ label, value }) => (
+            <button
+              key={value}
+              onClick={() => setTimeCategory(value)}
+              className={`${timeCategory === value ? 'bg-gray-200' : ''} h-7 w-7 rounded-lg p-1 transition hover:bg-juga-grayscale-100`}
+            >
+              {label}
+            </button>
+          ))}
         </nav>
       </div>
       <canvas ref={canvasRef} className='p-3' />
