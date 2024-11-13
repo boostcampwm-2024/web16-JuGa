@@ -2,11 +2,31 @@ import { useEffect, useRef, useState } from 'react';
 import PriceTableColumn from './PriceTableColumn.tsx';
 import PriceTableLiveCard from './PriceTableLiveCard.tsx';
 import PriceTableDayCard from './PriceTableDayCard.tsx';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { PriceDataType } from './PriceDataType.ts';
+
+export const tradeHistoryApi = async (id: string) => {
+  const response = await fetch(
+    `http://223.130.151.42:3000/api/stocks/${id}/trade-history`,
+  );
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
 
 export default function PriceSection() {
   const [buttonFlag, setButtonFlag] = useState(true);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const { id } = useParams();
+
+  const { data } = useQuery({
+    queryKey: ['detail', id],
+    queryFn: () => tradeHistoryApi(id as string),
+    enabled: !!id,
+  });
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;
@@ -44,22 +64,22 @@ export default function PriceSection() {
             style={{ height: '28px' }}
           />
           <button
-            className={`${
+            className={`z-7 relative w-full rounded-lg px-4 py-1 ${
               buttonFlag
                 ? 'text-juga-grayscale-black'
                 : 'text-juga-grayscale-400'
-            } relative z-10 w-full rounded-lg px-4 py-1`}
+            }`}
             onClick={() => setButtonFlag(true)}
             ref={(el) => (buttonRefs.current[0] = el)}
           >
             실시간
           </button>
           <button
-            className={`relative z-10 w-full rounded-lg ${
+            className={`z-7 relative w-full rounded-lg ${
               !buttonFlag
                 ? 'text-juga-grayscale-black'
                 : 'text-juga-grayscale-400'
-            } relative z-10 w-full rounded-lg px-4 py-1`}
+            } z-7 relative w-full rounded-lg px-4 py-1`}
             onClick={() => setButtonFlag(false)}
             ref={(el) => (buttonRefs.current[1] = el)}
           >
@@ -71,15 +91,13 @@ export default function PriceSection() {
           <table className={'w-full table-fixed text-xs font-normal'}>
             <PriceTableColumn viewMode={buttonFlag} />
             <tbody>
-              {Array(30)
-                .fill(null)
-                .map((_, index) =>
-                  buttonFlag ? (
-                    <PriceTableLiveCard key={index} />
-                  ) : (
-                    <PriceTableDayCard key={index} />
-                  ),
-                )}
+              {data?.map((eachData: PriceDataType, index: number) =>
+                buttonFlag ? (
+                  <PriceTableLiveCard key={index} data={eachData} />
+                ) : (
+                  <PriceTableDayCard key={index} />
+                ),
+              )}
             </tbody>
           </table>
         </div>
