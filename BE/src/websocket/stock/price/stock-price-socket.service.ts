@@ -7,6 +7,7 @@ import {
 import { BaseSocketService } from '../../base-socket.service';
 import { SocketGateway } from '../../socket.gateway';
 import { StockOrderService } from '../../../stock/order/stock-order.service';
+import { Order } from '../../../stock/order/stock-order.entity';
 
 @Injectable()
 export class StockPriceSocketService {
@@ -19,7 +20,7 @@ export class StockPriceSocketService {
     private readonly stockOrderService: StockOrderService,
   ) {
     baseSocketService.registerSocketOpenHandler(async () => {
-      const orders = await stockOrderService.findAllPendingOrder();
+      const orders: Order[] = await stockOrderService.findAllPendingOrderCode();
       orders.forEach((order) => {
         baseSocketService.registerCode(this.TR_ID, order.stock_code);
       });

@@ -11,6 +11,12 @@ export class StockOrderRepository extends Repository<Order> {
     super(Order, dataSource.createEntityManager());
   }
 
+  async findAllCodeByStatus() {
+    return this.createQueryBuilder('orders')
+      .select('DISTINCT orders.stock_code')
+      .getRawMany();
+  }
+
   async updateOrderAndAssetWhenBuy(order, realPrice) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();

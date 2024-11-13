@@ -24,10 +24,8 @@ export class StockOrderService {
 
   private readonly logger = new Logger();
 
-  async findAllPendingOrder() {
-    return this.stockOrderRepository.findBy({
-      status: StatusType.PENDING,
-    });
+  async findAllPendingOrderCode() {
+    return this.stockOrderRepository.findAllCodeByStatus();
   }
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
