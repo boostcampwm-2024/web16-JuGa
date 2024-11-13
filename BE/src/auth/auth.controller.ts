@@ -53,12 +53,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Kakao 로그인 API' })
   @Get('/kakao')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoLogin(
-    @Body() authCredentialsDto: AuthCredentialsDto,
-    @Res() res: Response,
-  ) {
+  async kakaoLogin(@Req() req: Request, @Res() res: Response) {
+    const authCredentialsDto: AuthCredentialsDto = {
+      email: req.user.email,
+      kakaoId: req.user.kakaoId,
+    };
     const { accessToken, refreshToken } =
       await this.authService.kakaoLoginUser(authCredentialsDto);
+
     res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
