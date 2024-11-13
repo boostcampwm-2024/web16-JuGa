@@ -1,6 +1,8 @@
 import {
   ConflictException,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import { NotFoundError } from 'rxjs';
@@ -9,10 +11,15 @@ import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
+import { StockPriceSocketService } from '../../websocket/stock/price/stock-price-socket.service';
 
 @Injectable()
 export class StockOrderService {
-  constructor(private readonly stockOrderRepository: StockOrderRepository) {}
+  constructor(
+    private readonly stockOrderRepository: StockOrderRepository,
+    @Inject(forwardRef(() => StockPriceSocketService))
+    private readonly stockPriceSocketService: StockPriceSocketService,
+  ) {}
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const order = this.stockOrderRepository.create({
@@ -25,6 +32,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
+    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
@@ -38,6 +46,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
+    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async cancel(userId: number, orderId: number) {

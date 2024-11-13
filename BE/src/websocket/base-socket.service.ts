@@ -78,6 +78,25 @@ export class BaseSocketService implements OnModuleInit {
     );
   }
 
+  unregisterCode(trId: string, trKey: string) {
+    this.socket.send(
+      JSON.stringify({
+        header: {
+          approval_key: this.socketConnectionKey,
+          custtype: 'P',
+          tr_type: '2',
+          'content-type': 'utf-8',
+        },
+        body: {
+          input: {
+            tr_id: trId,
+            tr_key: trKey,
+          },
+        },
+      }),
+    );
+  }
+
   registerSocketOpenHandler(handler: () => void | Promise<void>) {
     this.socketOpenHandlers.push(handler);
   }

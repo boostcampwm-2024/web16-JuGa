@@ -1,14 +1,13 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { StockIndexSocketService } from './stock-index-socket.service';
 import { SocketGateway } from './socket.gateway';
 import { SocketTokenService } from './socket-token.service';
 import { StockPriceSocketService } from './stock/price/stock-price-socket.service';
-import { StockItemModule } from '../stock/item/stock-item.module';
 import { BaseSocketService } from './base-socket.service';
 import { StockOrderModule } from '../stock/order/stock-order.module';
 
 @Module({
-  imports: [StockItemModule, StockOrderModule],
+  imports: [forwardRef(() => StockOrderModule)],
   controllers: [],
   providers: [
     SocketTokenService,
@@ -17,6 +16,6 @@ import { StockOrderModule } from '../stock/order/stock-order.module';
     StockPriceSocketService,
     BaseSocketService,
   ],
-  exports: [SocketGateway],
+  exports: [SocketGateway, StockPriceSocketService],
 })
 export class SocketModule {}

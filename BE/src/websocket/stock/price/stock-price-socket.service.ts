@@ -1,7 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { BaseSocketService } from '../../base-socket.service';
 import { SocketGateway } from '../../socket.gateway';
-import { StockItemService } from '../../../stock/item/stock-item.service';
 import { StockOrderService } from '../../../stock/order/stock-order.service';
 
 @Injectable()
@@ -11,16 +15,9 @@ export class StockPriceSocketService {
   constructor(
     private readonly socketGateway: SocketGateway,
     private readonly baseSocketService: BaseSocketService,
-    private readonly stockItemService: StockItemService,
+    @Inject(forwardRef(() => StockOrderService))
     private readonly stockOrderService: StockOrderService,
   ) {
-    baseSocketService.registerSocketOpenHandler(async () => {
-      const stockList = await this.stockItemService.getAllStockItems();
-      stockList.forEach((stock) => {
-        this.baseSocketService.registerCode(this.TR_ID, stock.code);
-      });
-    });
-
     baseSocketService.registerSocketDataHandler(
       this.TR_ID,
       (data: string[]) => {
@@ -34,5 +31,13 @@ export class StockPriceSocketService {
           });
       },
     );
+  }
+
+  subscribeByCode(trKey: string) {
+    this.baseSocketService.registerCode(this.TR_ID, trKey);
+  }
+
+  unsubscribeByCode(trKey: string) {
+    this.baseSocketService.unregisterCode(this.TR_ID, trKey);
   }
 }
