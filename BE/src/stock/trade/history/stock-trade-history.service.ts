@@ -4,8 +4,8 @@ import { KoreaInvestmentService } from '../../../koreaInvestment/korea-investmen
 import { getHeader } from '../../../util/get-header';
 import { getFullURL } from '../../../util/get-full-URL';
 import { InquireCCNLApiResponse } from './interface/Inquire-ccnl.interface';
-import { StockTradeHistoryOutputDto } from './dto/stock-trade-history-output.dto';
-import { StockTradeHistoryDataDto } from './dto/stock-trade-history-data.dto';
+import { TodayStockTradeHistoryOutputDto } from './dto/today-stock-trade-history-output.dto';
+import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
 
 @Injectable()
 export class StockTradeHistoryService {
@@ -20,7 +20,7 @@ export class StockTradeHistoryService {
    *
    * @author uuuo3o
    */
-  async getStockTradeHistory(stockCode: string) {
+  async getTodayStockTradeHistory(stockCode: string) {
     try {
       const queryParams = {
         fid_cond_mrkt_div_code: 'J',
@@ -33,7 +33,7 @@ export class StockTradeHistoryService {
         queryParams,
       );
 
-      return this.formatTradeHistoryData(response.output);
+      return this.formatTodayStockTradeHistoryData(response.output);
     } catch (error) {
       this.logger.error('API Error Details:', {
         status: error.response?.status,
@@ -48,14 +48,16 @@ export class StockTradeHistoryService {
 
   /**
    * @private API에서 받은 주식현재가 체결 데이터를 필요한 정보로 정제하는 함수
-   * @param {StockTradeHistoryOutputDto} infos - API 응답에서 받은 원시 데이터
+   * @param {TodayStockTradeHistoryOutputDto} infos - API 응답에서 받은 원시 데이터
    * @returns - 필요한 정보만 추출한 데이터 배열
    *
    * @author uuuo3o
    */
-  private formatTradeHistoryData(infos: StockTradeHistoryOutputDto[]) {
+  private formatTodayStockTradeHistoryData(
+    infos: TodayStockTradeHistoryOutputDto[],
+  ) {
     return infos.map((info) => {
-      const infoData = new StockTradeHistoryDataDto();
+      const infoData = new TodayStockTradeHistoryDataDto();
       infoData.stck_cntg_hour = info.stck_cntg_hour;
       infoData.stck_prpr = info.stck_prpr;
       infoData.prdy_vrss_sign = info.prdy_vrss_sign;
