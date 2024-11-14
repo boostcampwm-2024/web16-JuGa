@@ -35,11 +35,7 @@ jobs:
       - name: Create .env file
         run: |
           touch ./${{ matrix.app.dir }}/.env
-          if [ "${{ matrix.app.name }}" = "be" ]; then
-            echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
-          else
-            echo "${{ secrets.ENV_FE }}" > ./${{matrix.app.dir}}/.env
-          fi
+          echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
@@ -120,11 +116,7 @@ jobs:
           script: |
             docker system prune -af
 
-            if [ "${{ matrix.app.name }}" = "be" ]; then
-              echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
-            else
-              echo "${{ secrets.ENV_FE }}" > ./${{matrix.app.dir}}/.env
-            fi
+            echo "${{ secrets.ENV }}" > .env
             docker network create juga-network || true
 
             docker run -d \
