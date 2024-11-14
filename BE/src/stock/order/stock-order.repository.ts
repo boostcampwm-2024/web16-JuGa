@@ -4,8 +4,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Order } from './stock-order.entity';
 import { StatusType } from './enum/status-type';
 import { Asset } from '../../asset/asset.entity';
-import { StockOrderRequestDto } from './dto/stock-order-request.dto';
-import { TradeType } from './enum/trade-type';
 import { UserStock } from '../../userStock/user-stock.entity';
 
 @Injectable()
