@@ -73,7 +73,18 @@ jobs:
           NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
           NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} .
+          if [ "${{ matrix.app.name }}" = "fe" ]; then
+            docker build \
+              --build-arg VITE_SOCKET_URL=${{ secrets.VITE_SOCKET_URL }} \
+              --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
+              --build-arg VITE_API_KAKAO_URL=${{ secrets.VITE_API_KAKAO_URL }} \
+              --build-arg VITE_STORAGE_KEY=${{ secrets.VITE_STORAGE_KEY }} \
+              --build-arg VITE_MAX_HISTORY_ITEMS=${{ secrets.VITE_MAX_HISTORY_ITEMS }} \
+              -t ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} .
+          else
+            docker build -t ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} .
+          fi
+
           docker tag ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:latest
 
           docker push ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
