@@ -8,15 +8,19 @@ import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
+import { StockOrderSocketService } from './stock-order-socket.service';
 
 @Injectable()
 export class StockOrderService {
-  constructor(private readonly stockOrderRepository: StockOrderRepository) {}
+  constructor(
+    private readonly stockOrderRepository: StockOrderRepository,
+    private readonly stockOrderSocketService: StockOrderSocketService,
+  ) {}
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const order = this.stockOrderRepository.create({
       user_id: userId,
-      stock_id: stockOrderRequest.stock_id,
+      stock_code: stockOrderRequest.stock_code,
       trade_type: TradeType.BUY,
       amount: stockOrderRequest.amount,
       price: stockOrderRequest.price,
@@ -24,12 +28,13 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
+    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const order = this.stockOrderRepository.create({
       user_id: userId,
-      stock_id: stockOrderRequest.stock_id,
+      stock_code: stockOrderRequest.stock_code,
       trade_type: TradeType.SELL,
       amount: stockOrderRequest.amount,
       price: stockOrderRequest.price,
@@ -37,6 +42,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
+    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async cancel(userId: number, orderId: number) {
@@ -51,5 +57,13 @@ export class StockOrderService {
       throw new ConflictException('이미 체결된 주문은 취소할 수 없습니다.');
 
     await this.stockOrderRepository.remove(order);
+
+    if (
+      !(await this.stockOrderRepository.existsBy({
+        stock_code: order.stock_code,
+        status: StatusType.PENDING,
+      }))
+    )
+      this.stockOrderSocketService.unsubscribeByCode(order.stock_code);
   }
 }
