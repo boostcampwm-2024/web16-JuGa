@@ -32,7 +32,7 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
     const options: KakaoStrategyOptions = {
       clientID: configService.get<string>('KAKAO_CLIENT_ID') || '',
       clientSecret: '',
-      callbackURL: `${configService.get<string>('BACKEND_URL') || ''}/auth/kakao`,
+      callbackURL: `${configService.get<string>('BACKEND_URL') || ''}/api/auth/kakao`,
     };
 
     super(options);
