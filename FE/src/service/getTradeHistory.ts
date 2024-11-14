@@ -1,4 +1,4 @@
-export const tradeHistoryApi = async (id: string, buttonFlag: boolean) => {
+export const getTradeHistory = async (id: string, buttonFlag: boolean) => {
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/stocks/${id}/${buttonFlag ? 'today' : 'daily'}-trade-history`,
   );

@@ -5,7 +5,7 @@ import PriceTableDayCard from './PriceTableDayCard.tsx';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
-import { tradeHistoryApi } from 'service/getTradeHistory.ts';
+import { getTradeHistory } from 'service/getTradeHistory.ts';
 
 export default function PriceSection() {
   const [buttonFlag, setButtonFlag] = useState(true);
@@ -15,7 +15,7 @@ export default function PriceSection() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['detail', id, buttonFlag],
-    queryFn: () => tradeHistoryApi(id as string, buttonFlag),
+    queryFn: () => getTradeHistory(id as string, buttonFlag),
     refetchInterval: 1000,
     cacheTime: 30000,
     staleTime: 1000,

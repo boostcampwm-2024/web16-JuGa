@@ -40,15 +40,9 @@ export function useSearchHistory() {
     });
   };
 
-  const clearSearchHistory = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setSearchHistory([]);
-  };
-
   return {
     searchHistory,
     addSearchHistory,
     deleteSearchHistory,
-    clearSearchHistory,
   };
 }
