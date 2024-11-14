@@ -1,9 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockTradeHistoryService } from './stock-trade-history.service';
 import { TodayStockTradeHistoryResponseDto } from './dto/today-stock-trade-history-response.dto';
 import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-data.dto';
 
+@ApiTags('주식현재가 체결 조회 API')
 @Controller('/api/stocks')
 export class StockTradeHistoryController {
   constructor(
