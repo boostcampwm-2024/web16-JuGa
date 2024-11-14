@@ -14,6 +14,7 @@ import { StockDetailModule } from './stock/detail/stock-detail.module';
 import { typeOrmConfig } from './configs/typeorm.config';
 import { StockListModule } from './stock/list/stock-list.module';
 import { StockTradeHistoryModule } from './stock/trade/history/stock-trade-history.module';
+import { RedisModule } from './common/redis/redis.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { StockTradeHistoryModule } from './stock/trade/history/stock-trade-histo
     StockOrderModule,
     StockListModule,
     StockTradeHistoryModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

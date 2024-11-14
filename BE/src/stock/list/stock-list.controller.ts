@@ -1,5 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { StockListService } from './stock-list.service';
 import { StockListResponseDto } from './dto/stock-list-response.dto';
 
@@ -32,12 +34,15 @@ export class StockListController {
   @ApiQuery({ name: 'market', required: false })
   @ApiQuery({ name: 'code', required: false })
   @Get('/search')
+  @UseGuards(JwtAuthGuard)
   async searchWithQuery(
+    @Req() req: Request,
     @Query('name') name?: string,
     @Query('market') market?: string,
     @Query('code') code?: string,
   ): Promise<StockListResponseDto[]> {
-    return this.stockListService.search({ name, market, code });
+    const userId = parseInt(req.user.userId, 10);
+    return this.stockListService.search({ name, market, code, userId });
   }
 
   @ApiOperation({
