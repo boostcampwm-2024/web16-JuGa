@@ -21,6 +21,8 @@ export default function TopFive() {
         `${import.meta.env.VITE_API_URL}/stocks/topfive?market=${paramsMap[currentMarket]}`,
       ).then((res) => res.json()),
     keepPreviousData: true,
+    cacheTime: 60000,
+    staleTime: 1000,
   });
   return (
     <div className='flex flex-col gap-4'>
