@@ -115,7 +115,7 @@ jobs:
               --env-file .env \
               -v /etc/localtime:/etc/localtime:ro \
               -e TZ=Asia/Seoul \
-              ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} \
+              ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
 
       - name: Remove Github Action Ip to Security group
         run: |
