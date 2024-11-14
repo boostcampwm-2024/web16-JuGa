@@ -4,17 +4,8 @@ import PriceTableLiveCard from './PriceTableLiveCard.tsx';
 import PriceTableDayCard from './PriceTableDayCard.tsx';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { PriceDataType } from './PriceDataType.ts';
-
-export const tradeHistoryApi = async (id: string) => {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/stocks/${id}/trade-history`,
-  );
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
+import { tradeHistoryApi } from 'service/getTradeHistory.ts';
 
 export default function PriceSection() {
   const [buttonFlag, setButtonFlag] = useState(true);
@@ -22,10 +13,12 @@ export default function PriceSection() {
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const { id } = useParams();
 
-  const { data } = useQuery({
-    queryKey: ['detail', id],
-    queryFn: () => tradeHistoryApi(id as string),
-    enabled: !!id,
+  const { data, isLoading } = useQuery({
+    queryKey: ['detail', id, buttonFlag],
+    queryFn: () => tradeHistoryApi(id as string, buttonFlag),
+    refetchInterval: 1000,
+    cacheTime: 60000,
+    staleTime: 1000,
   });
 
   useEffect(() => {
@@ -91,12 +84,26 @@ export default function PriceSection() {
           <table className={'w-full table-fixed text-xs font-normal'}>
             <PriceTableColumn viewMode={buttonFlag} />
             <tbody>
-              {data?.map((eachData: PriceDataType, index: number) =>
-                buttonFlag ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={buttonFlag ? 4 : 7} className='py-4 text-center'>
+                    Loading...
+                  </td>
+                </tr>
+              ) : !data ? (
+                <tr>
+                  <td colSpan={buttonFlag ? 4 : 7} className='py-4 text-center'>
+                    No data available
+                  </td>
+                </tr>
+              ) : buttonFlag ? (
+                (data as PriceDataType[]).map((eachData, index) => (
                   <PriceTableLiveCard key={index} data={eachData} />
-                ) : (
-                  <PriceTableDayCard key={index} />
-                ),
+                ))
+              ) : (
+                (data as DailyPriceDataType[]).map((eachData, index) => (
+                  <PriceTableDayCard key={index} data={eachData} />
+                ))
               )}
             </tbody>
           </table>
