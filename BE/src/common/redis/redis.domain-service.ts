@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import Redis from 'ioredis';
 
 @Injectable()
-export class RedisUtil {
+export class RedisDomainService {
   constructor(
     @Inject('REDIS_CLIENT')
     private readonly redis: Redis,
@@ -27,8 +27,20 @@ export class RedisUtil {
     return this.redis.zadd(key, score, member);
   }
 
+  async zcard(key: string): Promise<number> {
+    return this.redis.zcard(key);
+  }
+
   async zrange(key: string, start: number, stop: number): Promise<string[]> {
     return this.redis.zrange(key, start, stop);
+  }
+
+  async zremrangebyrank(
+    key: string,
+    start: number,
+    stop: number,
+  ): Promise<number> {
+    return this.redis.zremrangebyrank(key, start, stop);
   }
 
   async zrevrange(key: string, start: number, stop: number): Promise<string[]> {
