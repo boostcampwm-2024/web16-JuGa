@@ -165,6 +165,7 @@ function getYAxisLabels(min: number, max: number) {
 export const drawChart = (
   ctx: CanvasRenderingContext2D,
   data: { time: string; value: string; diff: string }[],
+  xLength: number,
 ) => {
   const n = data.length;
 
@@ -222,7 +223,7 @@ export const drawChart = (
     ctx.beginPath();
     data.forEach((point, i) => {
       const value = Math.round(Number(point.value) * 100);
-      const x = padding.left + (chartWidth * i) / (n - 1);
+      const x = padding.left + (chartWidth * i) / (xLength - 1);
       const y =
         padding.top +
         chartHeight -

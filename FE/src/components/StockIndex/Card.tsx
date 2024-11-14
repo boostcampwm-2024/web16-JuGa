@@ -38,7 +38,7 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
     const ctx = canvas?.getContext('2d');
     if (!ctx) return;
 
-    drawChart(ctx, prices);
+    drawChart(ctx, prices, 79);
   }, [prices]);
 
   return (
