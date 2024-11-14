@@ -42,7 +42,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     canvas.height = displayHeight * 2;
 
     canvas.style.width = `${displayWidth}px`;
-    canvas.style.height = `${displayHeight * 0.83}px`;
+    canvas.style.height = `${displayHeight * 0.8}px`;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -81,10 +81,10 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
   return (
     <div
-      className='flex flex-col items-center flex-1 p-3 rounded-lg bg-juga-grayscale-50'
+      className='flex flex-1 flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'
       ref={containerRef}
     >
-      <div className='flex items-center justify-between w-full'>
+      <div className='flex w-full items-center justify-between'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
           {categories.map(({ label, value }) => (
