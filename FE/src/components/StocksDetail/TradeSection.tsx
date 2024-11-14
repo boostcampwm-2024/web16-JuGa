@@ -19,8 +19,8 @@ export default function TradeSection() {
   }, [category]);
 
   return (
-    <section className='ml-2 flex w-full min-w-72 flex-col rounded-lg bg-juga-grayscale-50 p-4 text-sm'>
-      <h2 className='mb-4 self-start font-semibold'>주문하기</h2>
+    <section className='flex flex-col w-full p-4 ml-2 text-sm rounded-lg min-w-72 bg-juga-grayscale-50'>
+      <h2 className='self-start mb-4 font-semibold'>주문하기</h2>
       <div className='relative flex w-full rounded-xl bg-gray-200 p-0.5'>
         <div
           ref={indicatorRef}
@@ -51,13 +51,13 @@ export default function TradeSection() {
       {category === 'buy' ? (
         <form className='flex flex-col'>
           <div className='my-4'>
-            <div className='flex h-12 items-center justify-between'>
+            <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'>매수 가격</p>
-              <input type='number' className='flex-1 rounded-lg px-2 py-1' />
+              <input type='number' className='flex-1 py-1 rounded-lg' />
             </div>
-            <div className='flex h-12 items-center justify-between'>
+            <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'> 수량</p>
-              <input type='number' className='flex-1 rounded-lg px-2 py-1' />
+              <input type='number' className='flex-1 py-1 rounded-lg' />
             </div>
           </div>
 
@@ -74,13 +74,13 @@ export default function TradeSection() {
             </div>
           </div>
 
-          <button className='mt-10 rounded-lg bg-juga-red-60 py-2 text-white'>
+          <button className='py-2 mt-10 text-white rounded-lg bg-juga-red-60'>
             매수하기
           </button>
         </form>
       ) : (
-        <div className='flex h-full items-center justify-center'>
-          <Lottie animationData={emptyAnimation} className='h-40 w-40' />
+        <div className='flex items-center justify-center h-full'>
+          <Lottie animationData={emptyAnimation} className='w-40 h-40' />
         </div>
       )}
     </section>

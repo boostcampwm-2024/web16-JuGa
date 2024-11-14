@@ -62,29 +62,19 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     const chartHeight = canvas.height - padding.top - padding.bottom;
     const boundary = chartHeight * 0.8; // chartHeight의 80%
 
-    const reverseData = data.reverse();
-
-    const arr = reverseData.map((e) => +e.stck_oprc);
+    const arr = data.map((e) => +e.stck_oprc);
 
     drawLineChart(ctx, arr, 0, 0, chartWidth, boundary, padding, 0.1);
-    drawBarChart(
-      ctx,
-      reverseData,
-      0,
-      boundary,
-      chartWidth,
-      chartHeight,
-      padding,
-    );
-    drawCandleChart(ctx, reverseData, 0, 0, chartWidth, boundary, padding, 0.1);
+    drawBarChart(ctx, data, 0, boundary, chartWidth, chartHeight, padding);
+    drawCandleChart(ctx, data, 0, 0, chartWidth, boundary, padding, 0.1);
   }, [timeCategory, data, isLoading]);
 
   return (
     <div
-      className='flex flex-1 flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'
+      className='flex flex-col items-center flex-1 p-3 rounded-lg bg-juga-grayscale-50'
       ref={containerRef}
     >
-      <div className='flex w-full items-center justify-between'>
+      <div className='flex items-center justify-between w-full'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
           {categories.map(({ label, value }) => (
