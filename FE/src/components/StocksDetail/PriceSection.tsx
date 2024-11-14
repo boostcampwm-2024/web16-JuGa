@@ -17,7 +17,7 @@ export default function PriceSection() {
     queryKey: ['detail', id, buttonFlag],
     queryFn: () => tradeHistoryApi(id as string, buttonFlag),
     refetchInterval: 1000,
-    cacheTime: 60000,
+    cacheTime: 30000,
     staleTime: 1000,
   });
 

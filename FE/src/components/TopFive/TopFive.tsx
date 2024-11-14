@@ -3,6 +3,7 @@ import Nav from './Nav';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MarketType } from './type.ts';
+import { getTopFiveStocks } from '../../service/getTopFiveStocks.ts';
 
 const paramsMap = {
   전체: 'ALL',
@@ -16,13 +17,10 @@ export default function TopFive() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['topfive', currentMarket],
-    queryFn: () =>
-      fetch(
-        `${import.meta.env.VITE_API_URL}/stocks/topfive?market=${paramsMap[currentMarket]}`,
-      ).then((res) => res.json()),
+    queryFn: () => getTopFiveStocks(paramsMap[currentMarket]),
     keepPreviousData: true,
-    cacheTime: 60000,
-    staleTime: 1000,
+    cacheTime: 30000,
+    refetchInterval: 1000,
   });
   return (
     <div className='flex flex-col gap-4'>
