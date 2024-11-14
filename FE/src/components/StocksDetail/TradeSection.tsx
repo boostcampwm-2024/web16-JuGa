@@ -1,4 +1,6 @@
+import Lottie from 'lottie-react';
 import { useEffect, useRef, useState } from 'react';
+import emptyAnimation from '../../../public/emptyAnimation.json';
 
 export default function TradeSection() {
   const [category, setCategory] = useState<'buy' | 'sell'>('buy');
@@ -77,7 +79,9 @@ export default function TradeSection() {
           </button>
         </form>
       ) : (
-        <div>하하</div>
+        <div className='flex items-center justify-center h-full'>
+          <Lottie animationData={emptyAnimation} className='w-40 h-40' />
+        </div>
       )}
     </section>
   );
