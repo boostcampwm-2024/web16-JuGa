@@ -13,7 +13,7 @@ export class Asset {
   @Column({ nullable: false, default: INIT_ASSET })
   cash_balance: number;
 
-  @Column({ nullable: false, default: INIT_ASSET })
+  @Column({ nullable: false, default: 0 })
   stock_balance: number;
 
   @Column({ nullable: false, default: INIT_ASSET })
@@ -22,7 +22,7 @@ export class Asset {
   @Column({ nullable: false, default: 0 })
   total_profit: number;
 
-  @Column({ nullable: false, default: 0 })
+  @Column('decimal', { nullable: false, default: 0, precision: 10, scale: 5 })
   total_profit_rate: number;
 
   @Column({ nullable: true })

@@ -27,12 +27,12 @@ export class StockOrderRepository extends Repository<Order> {
         { id: order.id },
         { status: StatusType.COMPLETE, completed_at: new Date() },
       );
+      // TODO: stock_balance와 total_asset은 실시간 주가에 따라 변동하도록 따로 구현해야 함
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
         .set({
           cash_balance: () => 'cash_balance - :realPrice',
-          stock_balance: () => 'stock_balance - :realPrice',
           total_asset: () => 'total_asset - :realPrice',
           total_profit: () => 'total_profit - :realPrice',
           total_profit_rate: () => `total_profit / 10000000`,
@@ -61,12 +61,12 @@ export class StockOrderRepository extends Repository<Order> {
         { id: order.id },
         { status: StatusType.COMPLETE, completed_at: new Date() },
       );
+      // TODO: stock_balance와 total_asset은 실시간 주가에 따라 변동하도록 따로 구현해야 함
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
         .set({
           cash_balance: () => 'cash_balance + :realPrice',
-          stock_balance: () => 'stock_balance + :realPrice',
           total_asset: () => 'total_asset + :realPrice',
           total_profit: () => 'total_profit + :realPrice',
           total_profit_rate: () => `total_profit / 10000000`,
