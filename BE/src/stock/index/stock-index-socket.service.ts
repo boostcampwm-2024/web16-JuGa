@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { StockIndexValueElementDto } from '../../../stock/index/dto/stock-index-value-element.dto';
-import { BaseSocketService } from '../../base-socket.service';
-import { SocketGateway } from '../../socket.gateway';
+import { StockIndexValueElementDto } from './dto/stock-index-value-element.dto';
+import { BaseSocketService } from '../../websocket/base-socket.service';
+import { SocketGateway } from '../../websocket/socket.gateway';
 
 @Injectable()
 export class StockIndexSocketService {

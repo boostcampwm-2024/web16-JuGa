@@ -1,8 +1,6 @@
 import {
   ConflictException,
   ForbiddenException,
-  forwardRef,
-  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -12,21 +10,14 @@ import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
-import { StockPriceSocketService } from '../../websocket/stock/price/stock-price-socket.service';
+import { StockOrderSocketService } from './stock-order-socket.service';
 
 @Injectable()
 export class StockOrderService {
   constructor(
     private readonly stockOrderRepository: StockOrderRepository,
-    @Inject(forwardRef(() => StockPriceSocketService))
-    private readonly stockPriceSocketService: StockPriceSocketService,
+    private readonly stockOrderSocketService: StockOrderSocketService,
   ) {}
-
-  private readonly logger = new Logger();
-
-  async findAllPendingOrderCode() {
-    return this.stockOrderRepository.findAllCodeByStatus();
-  }
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const order = this.stockOrderRepository.create({
@@ -39,7 +30,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
@@ -53,7 +44,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async cancel(userId: number, orderId: number) {
@@ -75,72 +66,6 @@ export class StockOrderService {
         status: StatusType.PENDING,
       }))
     )
-      this.stockPriceSocketService.unsubscribeByCode(order.stock_code);
-  }
-
-  async checkExecutableOrder(stockCode: string, value) {
-    const buyOrders = await this.stockOrderRepository.find({
-      where: {
-        stock_code: stockCode,
-        trade_type: TradeType.BUY,
-        status: StatusType.PENDING,
-        price: MoreThanOrEqual(value),
-      },
-    });
-
-    const sellOrders = await this.stockOrderRepository.find({
-      where: {
-        stock_code: stockCode,
-        trade_type: TradeType.SELL,
-        status: StatusType.PENDING,
-        price: LessThanOrEqual(value),
-      },
-    });
-
-    await Promise.all(buyOrders.map((buyOrder) => this.executeBuy(buyOrder)));
-    await Promise.all(
-      sellOrders.map((sellOrder) => this.executeSell(sellOrder)),
-    );
-
-    if (
-      !(await this.stockOrderRepository.existsBy({
-        stock_code: stockCode,
-        status: StatusType.PENDING,
-      }))
-    )
-      this.stockPriceSocketService.unsubscribeByCode(stockCode);
-  }
-
-  private async executeBuy(order) {
-    this.logger.log(`${order.id}번 매수 예약이 체결되었습니다.`, 'BUY');
-
-    const totalPrice = order.price * order.amount;
-    const fee = this.calculateFee(totalPrice);
-    await this.stockOrderRepository.updateOrderAndAssetWhenBuy(
-      order,
-      totalPrice + fee,
-    );
-  }
-
-  private async executeSell(order) {
-    this.logger.log(`${order.id}번 매도 예약이 체결되었습니다.`, 'SELL');
-
-    const totalPrice = order.price * order.amount;
-    const fee = this.calculateFee(totalPrice);
-    await this.stockOrderRepository.updateOrderAndAssetWhenSell(
-      order,
-      totalPrice - fee,
-    );
-  }
-
-  private calculateFee(totalPrice: number) {
-    if (totalPrice <= 10000000) return totalPrice * 0.16;
-    if (totalPrice > 10000000 && totalPrice <= 50000000)
-      return totalPrice * 0.14;
-    if (totalPrice > 50000000 && totalPrice <= 100000000)
-      return totalPrice * 0.12;
-    if (totalPrice > 100000000 && totalPrice <= 300000000)
-      return totalPrice * 0.1;
-    return totalPrice * 0.08;
+      this.stockOrderSocketService.unsubscribeByCode(order.stock_code);
   }
 }
