@@ -100,7 +100,7 @@ export class StockOrderSocketService {
 
     const totalPrice = order.price * order.amount;
     const fee = this.calculateFee(totalPrice);
-    await this.stockOrderRepository.updateOrderAndAssetWhenSell(
+    await this.stockOrderRepository.updateOrderAndAssetAndUserStockWhenSell(
       order,
       totalPrice - fee,
     );

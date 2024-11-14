@@ -7,9 +7,15 @@ import { StockOrderRepository } from './stock-order.repository';
 import { SocketModule } from '../../websocket/socket.module';
 import { AssetModule } from '../../asset/asset.module';
 import { StockOrderSocketService } from './stock-order-socket.service';
+import { UserStockModule } from '../../userStock/user-stock.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order]), SocketModule, AssetModule],
+  imports: [
+    TypeOrmModule.forFeature([Order]),
+    SocketModule,
+    AssetModule,
+    UserStockModule,
+  ],
   controllers: [StockOrderController],
   providers: [StockOrderService, StockOrderRepository, StockOrderSocketService],
 })

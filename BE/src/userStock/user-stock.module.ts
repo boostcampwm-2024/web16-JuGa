@@ -9,5 +9,6 @@ import { UserStockService } from './user-stock.service';
   imports: [TypeOrmModule.forFeature([UserStock])],
   controllers: [UserStockController],
   providers: [UserStockRepository, UserStockService],
+  exports: [UserStockRepository],
 })
-export class StockOrderModule {}
+export class UserStockModule {}

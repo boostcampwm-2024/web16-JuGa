@@ -72,7 +72,7 @@ export class StockOrderRepository extends Repository<Order> {
     }
   }
 
-  async updateOrderAndAssetWhenSell(order, realPrice) {
+  async updateOrderAndAssetAndUserStockWhenSell(order, realPrice) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
@@ -94,6 +94,15 @@ export class StockOrderRepository extends Repository<Order> {
           last_updated: new Date(),
         })
         .where({ user_id: order.user_id })
+        .execute();
+
+      await queryRunner.manager
+        .createQueryBuilder()
+        .update(UserStock)
+        .set({
+          quantity: () => `quantity - ${order.amount}`,
+        })
+        .where({ user_id: order.user_id, stock_code: order.stock_code })
         .execute();
 
       await queryRunner.commitTransaction();
