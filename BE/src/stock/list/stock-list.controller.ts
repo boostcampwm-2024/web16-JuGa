@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockListService } from './stock-list.service';
 import { StockListResponseDto } from './dto/stock-list-response.dto';
 
@@ -28,6 +28,9 @@ export class StockListController {
     type: StockListResponseDto,
     isArray: true,
   })
+  @ApiQuery({ name: 'name', required: false })
+  @ApiQuery({ name: 'market', required: false })
+  @ApiQuery({ name: 'code', required: false })
   @Get('/search')
   async searchWithQuery(
     @Query('name') name?: string,
