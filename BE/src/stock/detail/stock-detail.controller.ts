@@ -12,7 +12,7 @@ import { StockDetailChartRequestDto } from './dto/stock-detail-chart-request.dto
 import { InquirePriceChartResponseDto } from './dto/stock-detail-chart-response.dto';
 
 @ApiTags('특정 주식 종목에 대한 detail 페이지 조회 API')
-@Controller('/api/stocks')
+@Controller('/api/stocks/detail')
 export class StockDetailController {
   constructor(private readonly stockDetailService: StockDetailService) {}
 
