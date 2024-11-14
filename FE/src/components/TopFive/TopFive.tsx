@@ -25,7 +25,7 @@ export default function TopFive() {
   return (
     <div className='flex flex-col gap-4'>
       <Nav />
-      <div className={'flex flex-row gap-[64px]'}>
+      <div className={'flex flex-row justify-between gap-[64px]'}>
         <List
           listTitle={'급상승 Top 5'}
           data={data?.high}
