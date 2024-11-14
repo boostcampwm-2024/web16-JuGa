@@ -11,7 +11,7 @@ export class StockListService {
 
   constructor(
     private readonly stockListRepository: StockListRepository,
-    private readonly RedisDomainService: RedisDomainService,
+    private readonly redisDomainService: RedisDomainService,
   ) {}
 
   private toResponseDto(stock: Stocks): StockListResponseDto {
@@ -46,11 +46,11 @@ export class StockListService {
 
     const searchTerm = name || market || code;
 
-    await this.RedisDomainService.zadd(key, timeStamp, searchTerm);
+    await this.redisDomainService.zadd(key, timeStamp, searchTerm);
 
-    const searchHistoryCount = await this.RedisDomainService.zcard(key);
+    const searchHistoryCount = await this.redisDomainService.zcard(key);
     if (searchHistoryCount > this.SearchHistoryLimit) {
-      await this.RedisDomainService.zremrangebyrank(key, 0, 0);
+      await this.redisDomainService.zremrangebyrank(key, 0, 0);
     }
   }
 }
