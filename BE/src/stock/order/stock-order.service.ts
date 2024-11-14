@@ -2,10 +2,8 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  Logger,
 } from '@nestjs/common';
 import { NotFoundError } from 'rxjs';
-import { LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
