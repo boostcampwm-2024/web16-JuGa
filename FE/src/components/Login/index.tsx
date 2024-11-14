@@ -38,7 +38,7 @@ export default function Login() {
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-20 shadow-lg'>
         <h2 className='text-3xl font-bold'>JuGa</h2>
-        <p className='my-3 h-5 text-sm font-semibold text-juga-red-60'>
+        <p className='h-5 my-3 text-sm font-semibold text-juga-red-60'>
           {
             {
               '401': '존재하지 않는 사용자입니다.',
@@ -69,7 +69,7 @@ export default function Login() {
         </form>
         <button className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'>
           <ChatBubbleOvalLeftIcon className='size-5' />
-          <a href='http://223.130.151.42:3000/auth/kakao'>
+          <a href={import.meta.env.VITE_API_KAKAO_URL}>
             카카오 계정으로 로그인
           </a>
         </button>

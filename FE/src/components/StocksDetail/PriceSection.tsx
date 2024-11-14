@@ -8,7 +8,7 @@ import { PriceDataType } from './PriceDataType.ts';
 
 export const tradeHistoryApi = async (id: string) => {
   const response = await fetch(
-    `http://223.130.151.42:3000/api/stocks/${id}/trade-history`,
+    `${import.meta.env.VITE_API_URL}/stocks/${id}/trade-history`,
   );
   if (!response.ok) {
     throw new Error('Network response was not ok');

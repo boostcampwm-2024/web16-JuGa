@@ -18,7 +18,7 @@ export default function TopFive() {
     queryKey: ['topfive', currentMarket],
     queryFn: () =>
       fetch(
-        `${import.meta.env.VITE_API_TOP_FIVE_WITHOUT_PARAM}${paramsMap[currentMarket]}`,
+        `${import.meta.env.VITE_API_URL}/stocks/topfive?market=${paramsMap[currentMarket]}`,
       ).then((res) => res.json()),
     keepPreviousData: true,
   });
