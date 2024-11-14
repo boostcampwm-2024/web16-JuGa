@@ -1,5 +1,4 @@
-import { DummyStock } from 'components/StocksDetail/dummy';
-import { Padding } from 'types';
+import { Padding, StockChartUnit } from 'types';
 
 export function drawLineChart(
   ctx: CanvasRenderingContext2D,
@@ -37,7 +36,7 @@ export function drawLineChart(
 
 export function drawBarChart(
   ctx: CanvasRenderingContext2D,
-  data: DummyStock[],
+  data: StockChartUnit[],
   x: number,
   y: number,
   width: number,
@@ -50,8 +49,12 @@ export function drawBarChart(
 
   ctx.beginPath();
 
-  const yMax = Math.round(Math.max(...data.map((d) => d.volume)) * 1 + weight);
-  const yMin = Math.round(Math.min(...data.map((d) => d.volume)) * 1 - weight);
+  const yMax = Math.round(
+    Math.max(...data.map((d) => +d.acml_vol)) * 1 + weight,
+  );
+  const yMin = Math.round(
+    Math.min(...data.map((d) => +d.acml_vol)) * 1 - weight,
+  );
 
   const gap = Math.floor((width / n) * 0.8);
 
@@ -60,9 +63,10 @@ export function drawBarChart(
 
   data.forEach((e, i) => {
     const cx = x + padding.left + (width * i) / (n - 1);
-    const cy = padding.top + ((height - y) * (e.volume - yMin)) / (yMax - yMin);
+    const cy =
+      padding.top + ((height - y) * (+e.acml_vol - yMin)) / (yMax - yMin);
 
-    ctx.fillStyle = e.open < e.close ? red : blue;
+    ctx.fillStyle = +e.stck_oprc < +e.stck_clpr ? red : blue;
     ctx.fillRect(cx, height, gap, -cy);
   });
 
@@ -71,7 +75,7 @@ export function drawBarChart(
 
 export function drawCandleChart(
   ctx: CanvasRenderingContext2D,
-  data: DummyStock[],
+  data: StockChartUnit[],
   x: number,
   y: number,
   width: number,
@@ -83,14 +87,12 @@ export function drawCandleChart(
 
   const n = data.length;
 
-  const yMax = Math.round(
-    Math.max(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
-      (1 + weight),
+  const arr = data.map((d) =>
+    Math.max(+d.stck_clpr, +d.stck_oprc, +d.stck_hgpr, +d.stck_lwpr),
   );
-  const yMin = Math.round(
-    Math.min(...data.map((d) => Math.max(d.close, d.open, d.high, d.low))) *
-      (1 - weight),
-  );
+
+  const yMax = Math.round(Math.max(...arr) * (1 + weight));
+  const yMin = Math.round(Math.min(...arr) * (1 - weight));
 
   const labels = getYAxisLabels(yMin, yMax);
   labels.forEach((label) => {
@@ -114,23 +116,23 @@ export function drawCandleChart(
   data.forEach((e, i) => {
     ctx.beginPath();
 
-    const { open, close, high, low } = e;
+    const { stck_oprc, stck_clpr, stck_hgpr, stck_lwpr } = e;
     const gap = Math.floor((width / n) * 0.8);
     const cx = x + padding.left + (width * i) / (n - 1);
 
     const openY =
-      y + padding.top + height - (height * (open - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (+stck_oprc - yMin)) / (yMax - yMin);
     const closeY =
-      y + padding.top + height - (height * (close - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (+stck_clpr - yMin)) / (yMax - yMin);
     const highY =
-      y + padding.top + height - (height * (high - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (+stck_hgpr - yMin)) / (yMax - yMin);
     const lowY =
-      y + padding.top + height - (height * (low - yMin)) / (yMax - yMin);
+      y + padding.top + height - (height * (+stck_lwpr - yMin)) / (yMax - yMin);
 
     const blue = '#2175F3';
     const red = '#FF3700';
 
-    if (open > close) {
+    if (+stck_oprc > +stck_clpr) {
       ctx.fillStyle = blue;
       ctx.strokeStyle = blue;
       ctx.fillRect(cx, closeY, gap, openY - closeY);

@@ -15,7 +15,7 @@ export default function StocksDetail() {
       <Header code={id} />
       <div className='flex h-[500px]'>
         <div className='flex min-w-[850px] flex-col'>
-          <Chart />
+          <Chart code={id} />
           <PriceSection />
         </div>
         <TradeSection />

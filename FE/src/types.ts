@@ -27,3 +27,13 @@ export type StockDetailType = {
   hts_avls: string;
   per: string;
 };
+
+export type StockChartUnit = {
+  stck_bsop_date: string;
+  stck_clpr: string;
+  stck_oprc: string;
+  stck_hgpr: string;
+  stck_lwpr: string;
+  acml_vol: string;
+  prdy_vrss_sign: string;
+};
