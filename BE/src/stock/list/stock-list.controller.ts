@@ -41,7 +41,6 @@ export class StockListController {
   @ApiQuery({ name: 'market', required: false })
   @ApiQuery({ name: 'code', required: false })
   @Get('/search')
-  @UseGuards(JwtAuthGuard)
   async searchWithQuery(
     @Query('name') name?: string,
     @Query('market') market?: string,
