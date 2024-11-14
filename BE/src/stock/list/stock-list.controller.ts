@@ -1,5 +1,12 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { StockListService } from './stock-list.service';
@@ -36,13 +43,11 @@ export class StockListController {
   @Get('/search')
   @UseGuards(JwtAuthGuard)
   async searchWithQuery(
-    @Req() req: Request,
     @Query('name') name?: string,
     @Query('market') market?: string,
     @Query('code') code?: string,
   ): Promise<StockListResponseDto[]> {
-    const userId = parseInt(req.user.userId, 10);
-    return this.stockListService.search({ name, market, code, userId });
+    return this.stockListService.search({ name, market, code });
   }
 
   @ApiOperation({
@@ -57,5 +62,41 @@ export class StockListController {
   @Get('/:code')
   async findOne(@Query('code') code: string): Promise<StockListResponseDto> {
     return this.stockListService.findOne(code);
+  }
+
+  @Post('/search/addHistory')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '검색어 히스토리 추가 API',
+    description: '특정 유저의 검색어 히스토리를 추가한다.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        searchTerm: { type: 'string' },
+      },
+    },
+  })
+  @ApiBearerAuth()
+  async addSearchHistory(@Req() req: Request) {
+    const { searchTerm } = req.body;
+    const userId = parseInt(req.user.userId, 10);
+    await this.stockListService.addSearchTermToRedis({
+      searchTerm,
+      userId,
+    });
+  }
+
+  @Get('/search/getHistory')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '검색어 히스토리 조회 API',
+    description: '특정 유저의 검색어 히스토리를 조회한다.',
+  })
+  @ApiBearerAuth()
+  async getSearchHistory(@Req() req: Request) {
+    const userId = req.user.userId;
+    return this.stockListService.getSearchTermFromRedis(userId);
   }
 }

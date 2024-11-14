@@ -10,8 +10,8 @@ import { RedisDomainService } from './redis.domain-service';
       provide: 'REDIS_CLIENT',
       useFactory: () => {
         return new Redis({
-          host: process.env.REDIS_HOST,
-          port: Number(process.env.REDIS_PORT),
+          host: process.env.REDIS_HOST || 'redis',
+          port: Number(process.env.REDIS_PORT || 6379),
         });
       },
     },
