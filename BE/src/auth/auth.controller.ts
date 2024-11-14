@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
-@Controller('auth')
+@Controller('/api/auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
