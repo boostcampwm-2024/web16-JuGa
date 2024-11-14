@@ -113,7 +113,8 @@ jobs:
               --name ${{ matrix.app.container }} \
               -p ${{ matrix.app.port }}:${{ matrix.app.port }} \
               --env-file .env \
-              ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
+              ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }} \
+              -v /etc/localtime:/etc/localtime:ro -e TZ=Asia/Seoul
 
       - name: Remove Github Action Ip to Security group
         run: |
