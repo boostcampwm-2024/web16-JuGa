@@ -24,7 +24,7 @@ export default function SearchList({ searchData }: SearchListProps) {
   return (
     <ul>
       {searchData.map((data, index) => (
-        <SearchCard key={index} data={data} />
+        <SearchCard key={`${data.code}-${index}`} data={data} />
       ))}
     </ul>
   );

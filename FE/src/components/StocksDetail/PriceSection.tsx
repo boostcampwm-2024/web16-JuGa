@@ -86,23 +86,25 @@ export default function PriceSection() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={buttonFlag ? 4 : 7} className='py-4 text-center'>
-                    Loading...
-                  </td>
+                  <td>Loading...</td>
                 </tr>
               ) : !data ? (
                 <tr>
-                  <td colSpan={buttonFlag ? 4 : 7} className='py-4 text-center'>
-                    No data available
-                  </td>
+                  <td>No data available</td>
                 </tr>
               ) : buttonFlag ? (
-                (data as PriceDataType[]).map((eachData, index) => (
-                  <PriceTableLiveCard key={index} data={eachData} />
+                data.map((eachData: PriceDataType, index: number) => (
+                  <PriceTableLiveCard
+                    key={`${eachData.stck_cntg_hour}-${index}`}
+                    data={eachData}
+                  />
                 ))
               ) : (
-                (data as DailyPriceDataType[]).map((eachData, index) => (
-                  <PriceTableDayCard key={index} data={eachData} />
+                data.map((eachData: DailyPriceDataType, index: number) => (
+                  <PriceTableDayCard
+                    key={`${eachData.stck_bsop_date}-${index}`}
+                    data={eachData}
+                  />
                 ))
               )}
             </tbody>
