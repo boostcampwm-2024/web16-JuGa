@@ -4,12 +4,14 @@ import { ChatBubbleOvalLeftIcon } from '@heroicons/react/16/solid';
 import { FormEvent, useEffect, useState } from 'react';
 import { login } from 'service/auth';
 import useAuthStore from 'store/authStore';
+import Overay from '../ModalOveray.tsx';
 
 export default function Login() {
   const { isOpen, toggleModal } = useLoginModalStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setAccessToken } = useAuthStore();
+  const [errorCode, setErrorCode] = useState<number>(200);
 
   useEffect(() => {
     setEmail('');
@@ -23,6 +25,7 @@ export default function Login() {
     const res = await login(email, password);
 
     if ('error' in res) {
+      setErrorCode(res.statusCode);
       return;
     }
 
@@ -35,6 +38,14 @@ export default function Login() {
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-20 shadow-lg'>
         <h2 className='text-3xl font-bold'>JuGa</h2>
+        <p className='h-5 my-3 text-sm font-semibold text-juga-red-60'>
+          {
+            {
+              '401': '존재하지 않는 사용자입니다.',
+              '400': '잘못된 입력형식입니다.',
+            }[errorCode]
+          }
+        </p>
         <form className='flex flex-col mb-2' onSubmit={handleSubmit}>
           <div className='flex flex-col gap-2 my-10'>
             <Input
@@ -58,15 +69,11 @@ export default function Login() {
         </form>
         <button className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'>
           <ChatBubbleOvalLeftIcon className='size-5' />
-          <p>카카오 계정으로 로그인</p>
+          <a href={`${import.meta.env.VITE_API_URL}/auth/kakao`}>
+            카카오 계정으로 로그인
+          </a>
         </button>
       </section>
     </>
-  );
-}
-
-function Overay({ onClick }: { onClick: () => void }) {
-  return (
-    <div className='fixed inset-0 bg-black opacity-30' onClick={onClick}></div>
   );
 }
