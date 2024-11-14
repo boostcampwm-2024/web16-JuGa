@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { HistoryType } from './searchDataType';
 
-const STORAGE_KEY = import.meta.env.STORAGE_KEY;
-const MAX_HISTORY_ITEMS = import.meta.env.MAX_HISTORY_ITEMS;
-
+const STORAGE_KEY = import.meta.env.VITE_STORAGE_KEY;
+const MAX_HISTORY_ITEMS = import.meta.env.VITE_MAX_HISTORY_ITEMS;
 export function useSearchHistory() {
   const [searchHistory, setSearchHistory] = useState<HistoryType[]>([]);
 

@@ -10,7 +10,7 @@ export function SearchHistoryList({
   searchHistory,
   onDeleteItem,
 }: SearchHistoryListProps) {
-  if (searchHistory.length) return;
+  if (searchHistory.length === 0) return;
 
   return (
     <div className={'flex w-full flex-col pb-2'}>
