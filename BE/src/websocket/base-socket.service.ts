@@ -59,6 +59,10 @@ export class BaseSocketService implements OnModuleInit {
 
       this.socketDataHandlers[data[1]](dataList);
     };
+
+    this.socket.onclose = () => {
+      this.logger.warn(`한국투자증권 소켓 연결 종료`);
+    };
   }
 
   registerCode(trId: string, trKey: string) {
