@@ -15,7 +15,7 @@ export default function StockIndex() {
   const { KOSPI, KOSDAQ, KOSPI200, KSQ150 } = data;
 
   return (
-    <div className='flex items-center w-full gap-2'>
+    <div className='flex items-center justify-between w-full gap-2 my-2'>
       <Card name='코스피' id='KOSPI' initialData={KOSPI} />
       <Card name='코스닥' id='KOSDAQ' initialData={KOSDAQ} />
       <Card name='코스피200' id='KOSPI200' initialData={KOSPI200} />
