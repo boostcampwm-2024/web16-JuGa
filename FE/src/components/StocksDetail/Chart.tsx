@@ -1,21 +1,34 @@
 import { useEffect, useRef, useState } from 'react';
-import { dummy } from './dummy';
 import { TiemCategory } from 'types';
 import { drawBarChart, drawCandleChart, drawLineChart } from 'utils/chart';
+import { useQuery } from '@tanstack/react-query';
+import { getStocksChartDataByCode } from 'service/stocks';
 
-export default function Chart() {
+const categories: { label: string; value: TiemCategory }[] = [
+  { label: '일', value: 'D' },
+  { label: '주', value: 'W' },
+  { label: '월', value: 'M' },
+  { label: '년', value: 'Y' },
+];
+
+type StocksDeatailChartProps = {
+  code: string;
+};
+
+export default function Chart({ code }: StocksDeatailChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [timeCategory, setTimeCategory] = useState<TiemCategory>('D');
 
-  const categories: { label: string; value: TiemCategory }[] = [
-    { label: '일', value: 'D' },
-    { label: '주', value: 'W' },
-    { label: '월', value: 'M' },
-    { label: '년', value: 'Y' },
-  ];
+  const { data, isLoading } = useQuery(
+    ['stocksChartData', code, timeCategory],
+    () => getStocksChartDataByCode(code, timeCategory),
+  );
 
   useEffect(() => {
+    if (isLoading) return;
+    if (!data) return;
+
     const parent = containerRef.current;
     const canvas = canvasRef.current;
 
@@ -49,12 +62,22 @@ export default function Chart() {
     const chartHeight = canvas.height - padding.top - padding.bottom;
     const boundary = chartHeight * 0.8; // chartHeight의 80%
 
-    const data = dummy.map((e) => e.low);
+    const reverseData = data.reverse();
 
-    drawLineChart(ctx, data, 0, 0, chartWidth, boundary, padding, 0.1);
-    drawBarChart(ctx, dummy, 0, boundary, chartWidth, chartHeight, padding);
-    drawCandleChart(ctx, dummy, 0, 0, chartWidth, boundary, padding, 0.1);
-  }, []);
+    const arr = reverseData.map((e) => +e.stck_oprc);
+
+    drawLineChart(ctx, arr, 0, 0, chartWidth, boundary, padding, 0.1);
+    drawBarChart(
+      ctx,
+      reverseData,
+      0,
+      boundary,
+      chartWidth,
+      chartHeight,
+      padding,
+    );
+    drawCandleChart(ctx, reverseData, 0, 0, chartWidth, boundary, padding, 0.1);
+  }, [timeCategory, data, isLoading]);
 
   return (
     <div
