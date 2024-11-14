@@ -69,7 +69,7 @@ export default function Login() {
         </form>
         <button className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'>
           <ChatBubbleOvalLeftIcon className='size-5' />
-          <a href={import.meta.env.VITE_API_KAKAO_URL}>
+          <a href={`${import.meta.env.VITE_API_URL}/auth/kakao`}>
             카카오 계정으로 로그인
           </a>
         </button>
