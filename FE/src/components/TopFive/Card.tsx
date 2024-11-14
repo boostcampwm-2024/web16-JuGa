@@ -28,14 +28,14 @@ export default function Card({
       </div>
       <div className='w-[120px] text-right'>
         <p className='font-normal text-juga-grayscale-black'>
-          {price?.toLocaleString()}
+          {Number(price).toLocaleString()}
         </p>
       </div>
       <div className={`w-[150px] text-right ${changeColor}`}>
         <p className='font-normal'>
           {changeValue > 0
-            ? `${changePrice}(${changeValue}%)`
-            : `${changePrice}(${Math.abs(changeValue)}%)`}
+            ? `${Number(changePrice).toLocaleString()}(${changeValue}%)`
+            : `${Number(changePrice).toLocaleString()}(${Math.abs(changeValue)}%)`}
         </p>
       </div>
     </div>
