@@ -7,7 +7,7 @@ import { TodayStockTradeHistoryOutputDto } from './today-stock-trade-history-out
 export class TodayStockTradeHistoryResponseDto {
   @ApiProperty({
     type: TodayStockTradeHistoryOutputDto,
-    description: '상승률 순위',
+    description: '오늘 체결된 거래 내역 배열',
   })
   output: TodayStockTradeHistoryOutputDto[];
 }

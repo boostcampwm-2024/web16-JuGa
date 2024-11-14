@@ -1,9 +1,10 @@
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Query } from '@nestjs/common';
 import { StockTopfiveService } from './stock-topfive.service';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
 import { MarketType } from '../enum/market-type';
 
+@ApiTags('오늘의 상/하위 종목 조회 API')
 @Controller('/api/stocks')
 export class StockTopfiveController {
   constructor(private readonly topFiveService: StockTopfiveService) {}

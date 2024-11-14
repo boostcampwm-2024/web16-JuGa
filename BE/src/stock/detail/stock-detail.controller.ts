@@ -1,10 +1,17 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { StockDetailService } from './stock-detail.service';
 import { InquirePriceResponseDto } from './dto/stock-detail-response.dto';
 import { StockDetailChartRequestDto } from './dto/stock-detail-chart-request.dto';
 import { InquirePriceChartResponseDto } from './dto/stock-detail-chart-response.dto';
 
+@ApiTags('특정 주식 종목에 대한 detail 페이지 조회 API')
 @Controller('/api/stocks')
 export class StockDetailController {
   constructor(private readonly stockDetailService: StockDetailService) {}

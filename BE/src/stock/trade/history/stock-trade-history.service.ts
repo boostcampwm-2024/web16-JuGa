@@ -14,7 +14,9 @@ import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-d
 export class StockTradeHistoryService {
   private readonly logger = new Logger();
 
-  constructor(private readonly koreaInvetmentService: KoreaInvestmentService) {}
+  constructor(
+    private readonly koreaInvestmentService: KoreaInvestmentService,
+  ) {}
 
   /**
    * 특정 주식의 현재가 체결 데이터를 반환하는 함수
@@ -146,7 +148,7 @@ export class StockTradeHistoryService {
     params: Record<string, string>,
   ): Promise<T> {
     try {
-      const accessToken = await this.koreaInvetmentService.getAccessToken();
+      const accessToken = await this.koreaInvestmentService.getAccessToken();
       const headers = getHeader(accessToken, trId);
       const url = getFullURL(apiURL);
 

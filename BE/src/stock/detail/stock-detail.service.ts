@@ -17,7 +17,7 @@ export class StockDetailService {
   private readonly logger = new Logger();
 
   constructor(
-    private readonly koreaInvetmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentService: KoreaInvestmentService,
     private readonly stockDetailRepository: StockDetailRepository,
   ) {}
 
@@ -41,7 +41,7 @@ export class StockDetailService {
         queryParams,
       );
 
-      return this.formatStockData(response.output);
+      return await this.formatStockData(response.output);
     } catch (error) {
       this.logger.error('API Error Details:', {
         status: error.response?.status,
@@ -174,7 +174,7 @@ export class StockDetailService {
     params: Record<string, string>,
   ): Promise<T> {
     try {
-      const accessToken = await this.koreaInvetmentService.getAccessToken();
+      const accessToken = await this.koreaInvestmentService.getAccessToken();
       const headers = getHeader(accessToken, trId);
       const url = getFullURL(apiURL);
 
