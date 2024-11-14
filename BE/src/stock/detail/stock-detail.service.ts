@@ -112,7 +112,7 @@ export class StockDetailService {
         queryParams,
       );
 
-      return this.formatStockInquirePriceData(response);
+      return this.formatStockInquirePriceData(response).slice().reverse();
     } catch (error) {
       this.logger.error('API Error Details:', {
         status: error.response?.status,
