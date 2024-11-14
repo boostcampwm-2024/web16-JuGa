@@ -1,16 +1,23 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({ namespace: 'socket', cors: { origin: '*' } })
 export class SocketGateway {
   @WebSocketServer()
   private server: Server;
 
-  sendStockIndexListToClient(stockIndex) {
-    this.server.emit('index', stockIndex);
+  private readonly logger = new Logger();
+
+  sendStockIndexListToClient(stockChart) {
+    this.server.emit('chart', stockChart);
   }
 
-  sendStockIndexValueToClient(stockIndexValue) {
-    this.server.emit('indexValue', stockIndexValue);
+  sendStockIndexValueToClient(event, stockIndexValue) {
+    const now = new Date();
+    if (now.getMinutes() % 5 === 0 && now.getSeconds() === 0)
+      this.logger.log('한국투자증권 데이터 발신 성공 (5분 단위)', event);
+
+    this.server.emit(event, stockIndexValue);
   }
 }
