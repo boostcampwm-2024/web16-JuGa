@@ -9,6 +9,7 @@ import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { KakaoStrategy } from './strategy/kakao.strategy';
+import { AssetModule } from '../asset/asset.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { KakaoStrategy } from './strategy/kakao.strategy';
       }),
       inject: [ConfigService],
     }),
+    AssetModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, UserRepository, JwtStrategy, KakaoStrategy],
