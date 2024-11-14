@@ -13,8 +13,15 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
   if (isLoading) return;
   if (!data) return;
 
-  const { stck_prpr, prdy_vrss, prdy_vrss_sign, prdy_ctrt, hts_avls, per } =
-    data;
+  const {
+    hts_kor_isnm,
+    stck_prpr,
+    prdy_vrss,
+    prdy_vrss_sign,
+    prdy_ctrt,
+    hts_avls,
+    per,
+  } = data;
 
   const stockInfo: { label: string; value: string }[] = [
     { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
@@ -32,7 +39,7 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
     <div className='flex items-center justify-between w-full h-16 px-2'>
       <div className='flex flex-col font-semibold'>
         <div className='flex gap-2 text-sm'>
-          <h2>{'empty'}</h2>
+          <h2>{hts_kor_isnm}</h2>
           <p className='text-juga-grayscale-200'>{code}</p>
         </div>
         <div className='flex items-center gap-2'>
