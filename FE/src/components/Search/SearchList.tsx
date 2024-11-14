@@ -1,10 +1,10 @@
 import SearchCard from './SearchCard.tsx';
-import { searchDataType } from './searchDataType.ts';
+import { SearchDataType } from './searchDataType.ts';
 import Lottie from 'lottie-react';
 import noResultAnimation from 'assets/noResultAnimation.json';
 
 type SearchListProps = {
-  searchData: searchDataType[];
+  searchData: SearchDataType[];
 };
 
 export default function SearchList({ searchData }: SearchListProps) {

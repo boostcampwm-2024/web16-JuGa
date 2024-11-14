@@ -2,7 +2,7 @@ import { XMarkIcon } from '@heroicons/react/16/solid';
 
 type SearchHistoryItemProps = {
   item: string;
-  onDelete?: (item: string) => void;
+  onDelete: (item: string) => void;
 };
 
 export function SearchHistoryItem({ item, onDelete }: SearchHistoryItemProps) {
@@ -11,7 +11,7 @@ export function SearchHistoryItem({ item, onDelete }: SearchHistoryItemProps) {
       <span className='text-sm'>{item}</span>
       <button
         className='h-4 w-4 rounded-2xl p-0.5'
-        onClick={() => onDelete?.(item)}
+        onClick={() => onDelete(item)}
       >
         <XMarkIcon />
       </button>
