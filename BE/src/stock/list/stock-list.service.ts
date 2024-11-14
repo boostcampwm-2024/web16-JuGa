@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RedisUtil } from 'src/common/redis/redis';
+import { RedisDomainService } from 'src/common/redis/redis.domain-service';
 import { StockListRepository } from './stock-list.repostiory';
 import { Stocks } from './stock-list.entity';
 import { StockListResponseDto } from './dto/stock-list-response.dto';
@@ -7,9 +7,11 @@ import { SearchParams } from './interface/search-params.interface';
 
 @Injectable()
 export class StockListService {
+  private readonly SearchHistoryLimit = 10;
+
   constructor(
     private readonly stockListRepository: StockListRepository,
-    private readonly redisUtil: RedisUtil,
+    private readonly RedisDomainService: RedisDomainService,
   ) {}
 
   private toResponseDto(stock: Stocks): StockListResponseDto {
@@ -31,11 +33,24 @@ export class StockListService {
   }
 
   async search(params: SearchParams): Promise<StockListResponseDto[]> {
-    const key = `search:${params.userId}`;
-    const score = Date.now();
-
-    await this.redisUtil.zadd(key, score, JSON.stringify(params));
+    await this.addSearchTermToRedis(params);
     const stocks = await this.stockListRepository.search(params);
     return stocks.map((stock) => this.toResponseDto(stock));
+  }
+
+  async addSearchTermToRedis(params: SearchParams) {
+    const key = `search:${params.userId}`;
+    const timeStamp = Date.now();
+
+    const { name, market, code } = params;
+
+    const searchTerm = name || market || code;
+
+    await this.RedisDomainService.zadd(key, timeStamp, searchTerm);
+
+    const searchHistoryCount = await this.RedisDomainService.zcard(key);
+    if (searchHistoryCount > this.SearchHistoryLimit) {
+      await this.RedisDomainService.zremrangebyrank(key, 0, 0);
+    }
   }
 }
