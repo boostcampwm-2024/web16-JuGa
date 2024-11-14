@@ -17,7 +17,7 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
     data;
 
   const stockInfo: { label: string; value: string }[] = [
-    { label: '시총', value: hts_avls },
+    { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
     { label: 'PER', value: `${per}배` },
   ];
 
