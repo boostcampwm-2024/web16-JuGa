@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -10,14 +9,12 @@ import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
 import { StockOrderSocketService } from './stock-order-socket.service';
-import { UserStockRepository } from '../../userStock/user-stock.repository';
 
 @Injectable()
 export class StockOrderService {
   constructor(
     private readonly stockOrderRepository: StockOrderRepository,
     private readonly stockOrderSocketService: StockOrderSocketService,
-    private readonly userStockRepository: UserStockRepository,
   ) {}
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
@@ -35,14 +32,6 @@ export class StockOrderService {
   }
 
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
-    const userStock = await this.userStockRepository.findOneBy({
-      user_id: userId,
-      stock_code: stockOrderRequest.stock_code,
-    });
-
-    if (!userStock || userStock.quantity === 0)
-      throw new BadRequestException('주식을 매도 수만큼 가지고 있지 않습니다.');
-
     const order = this.stockOrderRepository.create({
       user_id: userId,
       stock_code: stockOrderRequest.stock_code,
