@@ -110,9 +110,9 @@ jobs:
             docker system prune -af
 
             if [ "${{ matrix.app.name }}" = "be" ]; then
-              echo "${{ secrets.ENV }}" > .env
+              echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
             else
-              echo "${{ secrets.ENV_FE }}" > .env
+              echo "${{ secrets.ENV_FE }}" > ./${{matrix.app.dir}}/.env
             fi
             docker network create juga-network || true
 
