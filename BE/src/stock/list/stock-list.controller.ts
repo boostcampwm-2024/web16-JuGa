@@ -41,7 +41,6 @@ export class StockListController {
   @ApiQuery({ name: 'market', required: false })
   @ApiQuery({ name: 'code', required: false })
   @Get('/search')
-  @UseGuards(JwtAuthGuard)
   async searchWithQuery(
     @Query('name') name?: string,
     @Query('market') market?: string,
@@ -96,7 +95,7 @@ export class StockListController {
   })
   @ApiBearerAuth()
   async getSearchHistory(@Req() req: Request) {
-    const userId = req.user.userId;
+    const { userId } = req.user;
     return this.stockListService.getSearchTermFromRedis(userId);
   }
 }

@@ -38,7 +38,7 @@ export class StockListService {
   }
 
   async addSearchTermToRedis(searchInfo: {
-    userId: Number;
+    userId: number;
     searchTerm: string;
   }) {
     const { userId, searchTerm } = searchInfo;
@@ -56,7 +56,7 @@ export class StockListService {
   async getSearchTermFromRedis(userId: string): Promise<string[]> {
     const key = `search:${userId}`;
 
-    return await this.redisDomainService.zrevrange(
+    return this.redisDomainService.zrevrange(
       key,
       0,
       this.SearchHistoryLimit - 1,
