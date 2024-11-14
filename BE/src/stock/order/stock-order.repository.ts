@@ -4,6 +4,9 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Order } from './stock-order.entity';
 import { StatusType } from './enum/status-type';
 import { Asset } from '../../asset/asset.entity';
+import { StockOrderRequestDto } from './dto/stock-order-request.dto';
+import { TradeType } from './enum/trade-type';
+import { UserStock } from '../../userStock/user-stock.entity';
 
 @Injectable()
 export class StockOrderRepository extends Repository<Order> {
@@ -17,7 +20,7 @@ export class StockOrderRepository extends Repository<Order> {
       .getRawMany();
   }
 
-  async updateOrderAndAssetWhenBuy(order, realPrice) {
+  async updateOrderAndAssetAndUserStockWhenBuy(order, realPrice) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
@@ -32,14 +35,32 @@ export class StockOrderRepository extends Repository<Order> {
         .createQueryBuilder()
         .update(Asset)
         .set({
-          cash_balance: () => 'cash_balance - :realPrice',
-          total_asset: () => 'total_asset - :realPrice',
-          total_profit: () => 'total_profit - :realPrice',
+          cash_balance: () => `cash_balance - ${realPrice}`,
+          total_asset: () => `total_asset - ${realPrice}`,
+          total_profit: () => `total_profit - ${realPrice}`,
           total_profit_rate: () => `total_profit / 10000000`,
           last_updated: new Date(),
         })
         .where({ user_id: order.user_id })
-        .setParameter('realPrice', realPrice)
+        .execute();
+
+      await queryRunner.manager
+        .createQueryBuilder()
+        .insert()
+        .into(UserStock)
+        .values({
+          user_id: order.user_id,
+          stock_code: order.stock_code,
+          quantity: order.amount,
+          avg_price: order.price,
+        })
+        .orUpdate(
+          [
+            `quantity = quantity + ${order.amount}`,
+            `avg_price = ((avg_price * quantity + ${order.price} * ${order.amount}) / (quantity + ${order.amount}))`,
+          ],
+          ['user_id', 'stock_code'],
+        )
         .execute();
 
       await queryRunner.commitTransaction();
@@ -66,14 +87,13 @@ export class StockOrderRepository extends Repository<Order> {
         .createQueryBuilder()
         .update(Asset)
         .set({
-          cash_balance: () => 'cash_balance + :realPrice',
-          total_asset: () => 'total_asset + :realPrice',
-          total_profit: () => 'total_profit + :realPrice',
+          cash_balance: () => `cash_balance + ${realPrice}`,
+          total_asset: () => `total_asset + ${realPrice}`,
+          total_profit: () => `total_profit + ${realPrice}`,
           total_profit_rate: () => `total_profit / 10000000`,
           last_updated: new Date(),
         })
         .where({ user_id: order.user_id })
-        .setParameter('realPrice', realPrice)
         .execute();
 
       await queryRunner.commitTransaction();
