@@ -48,7 +48,8 @@ export class BaseSocketService implements OnModuleInit {
             `한국투자증권 웹소켓 연결: ${json.body.msg1}`,
             json.header.tr_id,
           );
-        if (json.header.tr_id === 'PINGPONG') this.socket.pong(json);
+        if (json.header.tr_id === 'PINGPONG')
+          this.socket.pong(JSON.stringify(json));
         return;
       }
 
