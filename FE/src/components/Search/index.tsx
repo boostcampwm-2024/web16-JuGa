@@ -31,7 +31,7 @@ export default function SearchModal() {
   });
 
   useEffect(() => {
-    if (data && debounceValue && !isLoading) {
+    if (data && data.length > 0 && debounceValue && !isLoading) {
       addSearchHistory(debounceValue);
     }
   }, [data, debounceValue]);
