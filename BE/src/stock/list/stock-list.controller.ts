@@ -96,7 +96,7 @@ export class StockListController {
   })
   @ApiBearerAuth()
   async getSearchHistory(@Req() req: Request) {
-    const userId = req.user.userId;
+    const { userId } = req.user;
     return this.stockListService.getSearchTermFromRedis(userId);
   }
 }
