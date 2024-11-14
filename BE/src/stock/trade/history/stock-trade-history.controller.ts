@@ -3,12 +3,14 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockTradeHistoryService } from './stock-trade-history.service';
 import { TodayStockTradeHistoryResponseDto } from './dto/today-stock-trade-history-response.dto';
 import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-data.dto';
+import { StockTradeHistorySocketService } from './stock-trade-history-socket.service';
 
 @ApiTags('주식현재가 체결 조회 API')
 @Controller('/api/stocks')
 export class StockTradeHistoryController {
   constructor(
     private readonly stockTradeHistoryService: StockTradeHistoryService,
+    private readonly stockTradeHistorySocketService: StockTradeHistorySocketService,
   ) {}
 
   @Get(':stockCode/today-trade-history')
@@ -26,6 +28,7 @@ export class StockTradeHistoryController {
     type: TodayStockTradeHistoryResponseDto,
   })
   getTodayStockTradeHistory(@Param('stockCode') stockCode: string) {
+    this.stockTradeHistorySocketService.subscribeByCode(stockCode);
     return this.stockTradeHistoryService.getTodayStockTradeHistory(stockCode);
   }
 
