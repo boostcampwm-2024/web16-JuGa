@@ -1,19 +1,42 @@
-export default function PriceTableDayCard() {
+import { DailyPriceDataType } from './PriceDataType.ts';
+
+type PriceTableDayCardProps = {
+  data: DailyPriceDataType;
+};
+
+export default function PriceTableDayCard({ data }: PriceTableDayCardProps) {
+  const percent = Number(data.prdy_ctrt);
+  const color = percent > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
+  function formatTime(time: string) {
+    if (!time.length) return '----.--.--';
+    const year = time.slice(0, 4);
+    const mon = time.slice(4, 6);
+    const day = time.slice(6, 8);
+    return `${year}.${mon}.${day}`;
+  }
   return (
     <tr className={'h-[30px] hover:bg-juga-grayscale-50'}>
-      <td className={'px-4 py-1 text-start'}>날짜</td>
-      <td className={'px-4 py-1 text-right'}>종가</td>
-      <td
-        className={`px-4 py-1 text-right ${Math.round(Math.random() * 10) % 2 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
-      >
-        등략률 퍼센트
+      <td className={'px-4 py-1 text-start'}>
+        {formatTime(data.stck_bsop_date)}
       </td>
-      <td className={'px-4 py-1 text-right'}>거래량 갯수</td>
-      <td className={'px-4 py-1 text-right'}>거래대금</td>
-      <td className={'px-4 py-1 text-right'}>시가</td>
-      <td className={'px-4 py-1 text-right'}>고가</td>
-      <td className={'px-4 py-1 text-right'}>저가</td>
+      <td className={'px-4 py-1 text-right'}>
+        {Number(data.stck_clpr).toLocaleString()}
+      </td>
+      <td className={`px-4 py-1 text-right ${color}`}>
+        {percent > 0 ? `+${percent}%` : `${percent}%`}
+      </td>
+      <td className={'px-4 py-1 text-right'}>
+        {Number(data.acml_vol).toLocaleString()}
+      </td>
+      <td className={'px-4 py-1 text-right'}>
+        {Number(data.stck_oprc).toLocaleString()}
+      </td>
+      <td className={'px-4 py-1 text-right'}>
+        {Number(data.stck_hgpr).toLocaleString()}
+      </td>
+      <td className={'px-4 py-1 text-right'}>
+        {Number(data.stck_lwpr).toLocaleString()}
+      </td>
     </tr>
   );
 }
-//일자	종가	등락률	거래량(주)	거래대금	시가	고가	저가

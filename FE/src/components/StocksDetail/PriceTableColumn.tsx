@@ -10,7 +10,7 @@ export default function PriceTableColumn({ viewMode }: Props) {
           <th className={'px-4 py-1 text-right font-medium'}>종가</th>
           <th className={'px-4 py-1 text-right font-medium'}>등락률</th>
           <th className={'px-4 py-1 text-right font-medium'}>거래량(주)</th>
-          <th className={'px-4 py-1 text-right font-medium'}>거래대금</th>
+          {/*<th className={'px-4 py-1 text-right font-medium'}>거래대금</th>*/}
           <th className={'px-4 py-1 text-right font-medium'}>시가</th>
           <th className={'px-4 py-1 text-right font-medium'}>고가</th>
           <th className={'px-4 py-1 text-right font-medium'}>저가</th>

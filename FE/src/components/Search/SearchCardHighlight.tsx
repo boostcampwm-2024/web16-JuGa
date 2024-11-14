@@ -17,11 +17,14 @@ export const SearchCardHighLight = ({
     <div>
       {parts.map((part, index) =>
         part.toLowerCase() === highlight.toLowerCase() ? (
-          <span key={index} className={'font-medium text-juga-blue-50'}>
+          <span
+            key={`${part}-${index}`}
+            className={'font-medium text-juga-blue-50'}
+          >
             {part}
           </span>
         ) : (
-          <span key={index}>{part}</span>
+          <span key={`${part}-${index}`}>{part}</span>
         ),
       )}
     </div>

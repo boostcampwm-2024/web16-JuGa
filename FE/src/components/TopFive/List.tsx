@@ -24,7 +24,10 @@ export default function List({ listTitle, data, isLoading }: ListProps) {
               <SkeletonCard key={`skeleton-${index}`} />
             ))
           : data.map((stock: StockData, index) => (
-              <li key={index} className='transition-colors hover:bg-gray-50'>
+              <li
+                key={`${stock.hts_kor_isnm}-${index}`}
+                className='transition-colors hover:bg-gray-50'
+              >
                 <Card
                   name={stock.hts_kor_isnm}
                   price={stock.stck_prpr}

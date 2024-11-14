@@ -187,11 +187,20 @@ export const drawChart = (
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
-  const yMax = Math.round(
-    Math.max(...data.map((d) => Number(d.value))) * 1.006 * 100,
+  const MIDDLE =
+    n > 0
+      ? Number(
+          (parseFloat(data[0].value) - parseFloat(data[0].diff)).toFixed(2),
+        )
+      : 50;
+
+  const yMax = Math.max(
+    Math.round(Math.max(...data.map((d) => Number(d.value))) * 1.006 * 100),
+    MIDDLE * 100,
   );
-  const yMin = Math.round(
-    Math.min(...data.map((d) => Number(d.value))) * 0.994 * 100,
+  const yMin = Math.min(
+    Math.round(Math.min(...data.map((d) => Number(d.value))) * 0.994 * 100),
+    MIDDLE * 100,
   );
 
   data.sort((a, b) => {
@@ -199,13 +208,6 @@ export const drawChart = (
     if (a.time > b.time) return 1;
     return 0;
   });
-
-  const MIDDLE =
-    n > 0
-      ? Number(
-          (parseFloat(data[0].value) - parseFloat(data[0].diff)).toFixed(2),
-        )
-      : 50;
 
   const middleY =
     padding.top +

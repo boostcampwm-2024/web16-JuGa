@@ -1,4 +1,4 @@
-export const searchApi = async (inputWord: string) => {
+export const getSearchResults = async (inputWord: string) => {
   if (!inputWord) return null;
 
   const response = await fetch(

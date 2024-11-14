@@ -14,7 +14,9 @@ export default function PriceTableLiveCard({ data }: PriceTableLiveCardProps) {
   }
   return (
     <tr className={'h-[30px] hover:bg-juga-grayscale-50'}>
-      <td className={'px-4 py-1 text-start'}>{data.stck_prpr}</td>
+      <td className={'px-4 py-1 text-start'}>
+        {Number(data.stck_prpr).toLocaleString()}
+      </td>
       <td className={'px-4 py-1 text-right'}>{data.cntg_vol}</td>
       <td className={`px-4 py-1 text-right ${color}`}>
         {percent > 0 ? `+${percent}` : `${percent}`}

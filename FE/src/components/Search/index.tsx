@@ -1,21 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import useSearchModalStore from 'store/useSearchModalStore';
-import Overlay from '../ModalOveray.tsx';
+import Overlay from 'components/ModalOveray.tsx';
 import { SearchInput } from './SearchInput';
 import { SearchHistoryList } from './SearchHistoryList';
 import SearchList from './SearchList.tsx';
-import useSearchInputStore from '../../store/useSearchInputStore.ts';
-import { useDebounce } from '../../utils/useDebounce.ts';
+import useSearchInputStore from 'store/useSearchInputStore.ts';
+import { useDebounce } from 'utils/useDebounce.ts';
 import { useQuery } from '@tanstack/react-query';
-import { searchApi } from '../../service/searchApi.ts';
+import { getSearchResults } from 'service/getSearchResults.ts';
 import Lottie from 'lottie-react';
-import searchAnimation from '../../../public/searchAnimation.json';
+import searchAnimation from 'assets/searchAnimation.json';
+import { useSearchHistory } from './searchHistoryHook.ts';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
   const { searchInput, setSearchInput } = useSearchInputStore();
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
-
+  const { searchHistory, addSearchHistory, deleteSearchHistory } =
+    useSearchHistory();
   const shouldSearch = searchInput.trim().length >= 2;
 
   const { debounceValue, isDebouncing } = useDebounce(
@@ -25,17 +26,15 @@ export default function SearchModal() {
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['search', debounceValue],
-    queryFn: () => searchApi(debounceValue),
+    queryFn: () => getSearchResults(debounceValue),
     enabled: !!debounceValue && !isDebouncing,
   });
 
   useEffect(() => {
-    setSearchHistory(['서산증권', '삼성화재', '삼성전기']);
-  }, []);
-
-  const handleDeleteHistoryItem = (item: string) => {
-    setSearchHistory((prev) => prev.filter((history) => history !== item));
-  };
+    if (data && data.length > 0 && debounceValue && !isLoading) {
+      addSearchHistory(debounceValue);
+    }
+  }, [data, debounceValue]);
 
   if (!isOpen) return null;
 
@@ -61,7 +60,7 @@ export default function SearchModal() {
           {!searchInput ? (
             <SearchHistoryList
               searchHistory={searchHistory}
-              onDeleteItem={handleDeleteHistoryItem}
+              onDeleteItem={deleteSearchHistory}
             />
           ) : (
             <div className={'h-full'}>
