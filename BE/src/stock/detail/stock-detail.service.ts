@@ -41,7 +41,7 @@ export class StockDetailService {
         queryParams,
       );
 
-      return this.formatStockData(response.output);
+      return await this.formatStockData(response.output);
     } catch (error) {
       this.logger.error('API Error Details:', {
         status: error.response?.status,
