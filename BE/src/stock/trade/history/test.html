@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>주식 실시간 데이터 테스트</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { padding: 20px; font-family: Arial, sans-serif; }
+    .container { max-width: 800px; margin: 0 auto; }
+    .stock-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 8px;
+      font-size: 16px;
+      width: 200px;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover { background-color: #45a049; }
+    button.unsubscribe { background-color: #f44336; }
+    button.unsubscribe:hover { background-color: #da190b; }
+    #dataContainer {
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin-top: 20px;
+      min-height: 200px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .data-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .success { color: #2e7d32; }
+    .error { color: #d32f2f; }
+    .info { color: #1976d2; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>주식 실시간 데이터 테스트</h1>
+
+  <div class="stock-input">
+    <input type="text" id="stockCode" placeholder="종목 코드 입력 (예: 005930)" />
+    <div class="button-group">
+      <button onclick="getStockData()">현재가 조회</button>
+      <button class="unsubscribe" onclick="unsubscribe()">구독 해제</button>
+    </div>
+  </div>
+
+  <div id="dataContainer">
+    <p>실시간 데이터가 여기에 표시됩니다...</p>
+  </div>
+</div>
+
+<script>
+  const SERVER_URL = 'http://localhost:3000';
+  let currentStockCode = null;
+  let socket = io(`${SERVER_URL}/socket`, {
+    transports: ['websocket']
+  });
+
+  // 소켓 연결 관리
+  socket.on('connect', () => {
+    addMessage('서버에 연결되었습니다', 'success');
+    if (currentStockCode) {
+      addMessage(`이전 구독 종목(${currentStockCode}) 재연결 중...`, 'info');
+      setupTradeDataListener(currentStockCode);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    addMessage('서버와 연결이 끊어졌습니다', 'error');
+  });
+
+  // 실시간 데이터 리스너 설정
+  function setupTradeDataListener(stockCode) {
+    const eventName = `trade-history/${stockCode}`;
+
+    // 이전 리스너 제거
+    socket.off(eventName);
+
+    // 새 리스너 등록
+    socket.on(eventName, (tradeData) => {
+      const formattedData = {
+        종목코드: stockCode,
+        시간: tradeData.stck_cntg_hour,
+        현재가: tradeData.stck_prpr,
+        등락률: tradeData.prdy_ctrt + '%',
+        체결량: tradeData.cntg_vol
+      };
+      addMessage(`실시간 데이터:\n${JSON.stringify(formattedData, null, 2)}`, 'info');
+    });
+  }
+
+  // 현재가 조회 및 구독 시작
+  async function getStockData() {
+    const stockCode = document.getElementById('stockCode').value;
+    if (!stockCode) {
+      alert('종목 코드를 입력해주세요');
+      return;
+    }
+
+    try {
+      // 현재가 조회 API 호출 (자동으로 구독도 시작됨)
+      const response = await fetch(`${SERVER_URL}/api/stocks/trade-history/${stockCode}/today`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      addMessage(`[${stockCode}] 현재가 조회 결과:\n${JSON.stringify(data, null, 2)}`, 'success');
+
+      // 실시간 데이터 리스너 설정
+      currentStockCode = stockCode;
+      setupTradeDataListener(stockCode);
+      addMessage(`[${stockCode}] 실시간 데이터 구독 시작`, 'success');
+
+    } catch (error) {
+      addMessage(`에러 발생: ${error.message}`, 'error');
+      console.error('Error:', error);
+    }
+  }
+
+  // 구독 해제
+  async function unsubscribe() {
+    if (!currentStockCode) {
+      addMessage('현재 구독 중인 종목이 없습니다', 'error');
+      return;
+    }
+
+    try {
+      // 리스너 제거
+      socket.off(`trade-history/${currentStockCode}`);
+      addMessage(`[${currentStockCode}] 구독 해제됨`, 'info');
+      currentStockCode = null;
+
+      // 입력 필드 초기화
+      document.getElementById('stockCode').value = '';
+    } catch (error) {
+      addMessage(`구독 해제 중 에러 발생: ${error.message}`, 'error');
+      console.error('Error:', error);
+    }
+  }
+
+  function addMessage(message, type = '') {
+    const container = document.getElementById('dataContainer');
+    const div = document.createElement('div');
+    div.className = `data-item ${type}`;
+    div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    container.insertBefore(div, container.firstChild);
+    container.scrollTop = 0;
+  }
+
+  // 페이지 언로드 시 정리
+  window.addEventListener('beforeunload', () => {
+    if (currentStockCode) {
+      socket.off(`trade-history/${currentStockCode}`);
+    }
+  });
+</script>
+</body>
+</html>
