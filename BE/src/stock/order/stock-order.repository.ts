@@ -34,38 +34,41 @@ export class StockOrderRepository extends Repository<Order> {
         .createQueryBuilder()
         .update(Asset)
         .set({
-          cash_balance: () => `cash_balance - ${realPrice}`,
-          total_asset: () => `total_asset - ${realPrice}`,
-          total_profit: () => `total_profit - ${realPrice}`,
+          cash_balance: () => `cash_balance - :realPrice`,
+          total_asset: () => `total_asset - :realPrice`,
+          total_profit: () => `total_profit - :realPrice`,
           total_profit_rate: () => `total_profit / 10000000`,
           last_updated: new Date(),
         })
         .where({ user_id: order.user_id })
+        .setParameters({ realPrice })
         .execute();
 
-      await queryRunner.manager
-        .createQueryBuilder()
-        .insert()
-        .into(UserStock)
-        .values({
-          user_id: order.user_id,
-          stock_code: order.stock_code,
-          quantity: order.amount,
-          avg_price: order.price,
-        })
-        .orUpdate(
-          [
-            `quantity = quantity + ${order.amount}`,
-            `avg_price = ((avg_price * quantity + ${order.price} * ${order.amount}) / (quantity + ${order.amount}))`,
-          ],
-          ['user_id', 'stock_code'],
-        )
-        .execute();
+      await queryRunner.query(
+        `
+  INSERT INTO user_stocks (user_id, stock_code, quantity, avg_price, last_updated)
+  VALUES (?, ?, ?, ?, ?)
+  ON DUPLICATE KEY UPDATE 
+    quantity = quantity + ?, 
+    avg_price = (avg_price * quantity + ? * ?) / (quantity + ?)
+`,
+        [
+          order.user_id,
+          order.stock_code,
+          order.amount,
+          order.price,
+          new Date(),
+          order.amount,
+          order.amount,
+          order.price,
+          order.amount,
+        ],
+      );
 
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(err);
     } finally {
       await queryRunner.release();
     }
@@ -86,22 +89,24 @@ export class StockOrderRepository extends Repository<Order> {
         .createQueryBuilder()
         .update(Asset)
         .set({
-          cash_balance: () => `cash_balance + ${realPrice}`,
-          total_asset: () => `total_asset + ${realPrice}`,
-          total_profit: () => `total_profit + ${realPrice}`,
+          cash_balance: () => `cash_balance + :realPrice`,
+          total_asset: () => `total_asset + :realPrice`,
+          total_profit: () => `total_profit + :realPrice`,
           total_profit_rate: () => `total_profit / 10000000`,
           last_updated: new Date(),
         })
         .where({ user_id: order.user_id })
+        .setParameters({ realPrice })
         .execute();
 
       await queryRunner.manager
         .createQueryBuilder()
         .update(UserStock)
         .set({
-          quantity: () => `quantity - ${order.amount}`,
+          quantity: () => `quantity - :newQuantity`,
         })
         .where({ user_id: order.user_id, stock_code: order.stock_code })
+        .setParameters({ newQuantity: order.amount })
         .execute();
 
       await queryRunner.commitTransaction();
