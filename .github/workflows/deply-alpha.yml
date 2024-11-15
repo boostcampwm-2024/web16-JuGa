@@ -35,7 +35,11 @@ jobs:
       - name: Create .env file
         run: |
           touch ./${{ matrix.app.dir }}/.env
-          echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
+          if [ "${{ matrix.app.name }}" = "be" ]; then
+            echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
+          else
+            echo "${{ secrets.ENV_FE }}" > ./${{matrix.app.dir}}/.env
+          fi
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
@@ -104,13 +108,28 @@ jobs:
           port: 22
           script: |
             docker system prune -af
-            echo "${{ secrets.ENV }}" > .env
+            if [ "${{ matrix.app.name }}" = "be" ]; then
+              echo "${{ secrets.ENV }}" > .env
+            else
+              echo "${{ secrets.ENV_FE }}" > .env
+            fi
+
+
+            docker network create juga-network || true
+
+            docker run -d \
+              --name redis \
+              --network juga-network \
+              -p 6379:6379 \
+              -v redis_data:/data \
+              redis:latest redis-server --appendonly yes
 
             docker pull ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
             docker stop ${{ matrix.app.container }} || true
             docker rm ${{ matrix.app.container }} || true
             docker run -d \
               --name ${{ matrix.app.container }} \
+              --network juga-network \
               -p ${{ matrix.app.port }}:${{ matrix.app.port }} \
               --env-file .env \
               ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}

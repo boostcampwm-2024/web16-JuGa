@@ -48,6 +48,8 @@ export class BaseSocketService implements OnModuleInit {
             `한국투자증권 웹소켓 연결: ${json.body.msg1}`,
             json.header.tr_id,
           );
+        if (json.header.tr_id === 'PINGPONG')
+          this.socket.pong(JSON.stringify(json));
         return;
       }
 
@@ -57,6 +59,10 @@ export class BaseSocketService implements OnModuleInit {
         this.logger.log(`한국투자증권 데이터 수신 성공 (5분 단위)`, data[1]);
 
       this.socketDataHandlers[data[1]](dataList);
+    };
+
+    this.socket.onclose = () => {
+      this.logger.warn(`한국투자증권 소켓 연결 종료`);
     };
   }
 

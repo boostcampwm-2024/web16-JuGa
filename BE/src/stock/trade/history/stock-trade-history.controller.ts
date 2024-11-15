@@ -6,14 +6,14 @@ import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-d
 import { StockTradeHistorySocketService } from './stock-trade-history-socket.service';
 
 @ApiTags('주식현재가 체결 조회 API')
-@Controller('/api/stocks')
+@Controller('/api/stocks/trade-history')
 export class StockTradeHistoryController {
   constructor(
     private readonly stockTradeHistoryService: StockTradeHistoryService,
     private readonly stockTradeHistorySocketService: StockTradeHistorySocketService,
   ) {}
 
-  @Get(':stockCode/today-trade-history')
+  @Get(':stockCode/today')
   @ApiOperation({ summary: '단일 주식 종목에 대한 주식현재가 체결 API' })
   @ApiParam({
     name: 'stockCode',
@@ -32,7 +32,7 @@ export class StockTradeHistoryController {
     return this.stockTradeHistoryService.getTodayStockTradeHistory(stockCode);
   }
 
-  @Get(':stockCode/daily-trade-history')
+  @Get(':stockCode/daily')
   @ApiOperation({ summary: '단일 주식 종목에 대한 일자별 주식현재가 API' })
   @ApiParam({
     name: 'stockCode',

@@ -5,11 +5,11 @@ import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
 import { MarketType } from '../enum/market-type';
 
 @ApiTags('오늘의 상/하위 종목 조회 API')
-@Controller('/api/stocks')
+@Controller('/api/stocks/topfive')
 export class StockTopfiveController {
   constructor(private readonly topFiveService: StockTopfiveService) {}
 
-  @Get('topfive')
+  @Get()
   @ApiOperation({ summary: '오늘의 상/하위 종목 조회 API' })
   @ApiQuery({
     name: 'market',
