@@ -15,6 +15,7 @@ export class StockOrderRepository extends Repository<Order> {
   async findAllCodeByStatus() {
     return this.createQueryBuilder('orders')
       .select('DISTINCT orders.stock_code')
+      .where({ status: StatusType.PENDING })
       .getRawMany();
   }
 
