@@ -11,6 +11,7 @@ import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
 import { StockOrderSocketService } from './stock-order-socket.service';
 import { UserStockRepository } from '../../userStock/user-stock.repository';
+import { AssetRepository } from '../../asset/asset.repository';
 
 @Injectable()
 export class StockOrderService {
@@ -18,9 +19,18 @@ export class StockOrderService {
     private readonly stockOrderRepository: StockOrderRepository,
     private readonly stockOrderSocketService: StockOrderSocketService,
     private readonly userStockRepository: UserStockRepository,
+    private readonly assetRepository: AssetRepository,
   ) {}
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
+    const asset = await this.assetRepository.findOneBy({ user_id: userId });
+
+    if (
+      asset &&
+      asset.cash_balance >= stockOrderRequest.amount * stockOrderRequest.price
+    )
+      throw new BadRequestException('가용 자산이 충분하지 않습니다.');
+
     const order = this.stockOrderRepository.create({
       user_id: userId,
       stock_code: stockOrderRequest.stock_code,
