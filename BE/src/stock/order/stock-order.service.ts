@@ -27,7 +27,7 @@ export class StockOrderService {
 
     if (
       asset &&
-      asset.cash_balance >= stockOrderRequest.amount * stockOrderRequest.price
+      asset.cash_balance < stockOrderRequest.amount * stockOrderRequest.price
     )
       throw new BadRequestException('가용 자산이 충분하지 않습니다.');
 
