@@ -50,7 +50,7 @@ export class StockOrderService {
       stock_code: stockOrderRequest.stock_code,
     });
 
-    if (!userStock || userStock.quantity === 0)
+    if (!userStock || userStock.quantity < stockOrderRequest.amount)
       throw new BadRequestException('주식을 매도 수만큼 가지고 있지 않습니다.');
 
     const order = this.stockOrderRepository.create({

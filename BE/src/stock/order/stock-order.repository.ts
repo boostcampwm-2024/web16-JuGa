@@ -45,22 +45,16 @@ export class StockOrderRepository extends Repository<Order> {
         .execute();
 
       await queryRunner.query(
-        `
-  INSERT INTO user_stocks (user_id, stock_code, quantity, avg_price, last_updated)
-  VALUES (?, ?, ?, ?, ?)
-  ON DUPLICATE KEY UPDATE 
-    quantity = quantity + ?, 
-    avg_price = (avg_price * quantity + ? * ?) / (quantity + ?)
-`,
+        `INSERT INTO user_stocks (user_id, stock_code, quantity, avg_price, last_updated) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE avg_price = (avg_price * quantity + ? * ?) / (quantity + ?), quantity = quantity + ?`,
         [
           order.user_id,
           order.stock_code,
           order.amount,
           order.price,
           new Date(),
-          order.amount,
-          order.amount,
           order.price,
+          order.amount,
+          order.amount,
           order.amount,
         ],
       );
