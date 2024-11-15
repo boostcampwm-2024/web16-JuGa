@@ -21,7 +21,7 @@ export class UserStock {
   @Column({ nullable: false })
   quantity: number;
 
-  @Column('decimal', { nullable: false, precision: 10, scale: 5 })
+  @Column('float', { nullable: false, scale: 5 })
   avg_price: number;
 
   @UpdateDateColumn()
