@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('user_stocks')
+@Unique(['user_id', 'stock_code'])
 export class UserStock {
   @PrimaryGeneratedColumn()
   id: number;
