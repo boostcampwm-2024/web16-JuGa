@@ -10,12 +10,16 @@ import {
   InquirePriceOutputData,
 } from './interface/stock-detail.interface';
 import { InquirePriceResponseDto } from './dto/stock-detail-response.dto';
+import { StockDetailRepository } from './stock-detail.repository';
 
 @Injectable()
 export class StockDetailService {
   private readonly logger = new Logger();
 
-  constructor(private readonly koreaInvetmentService: KoreaInvestmentService) {}
+  constructor(
+    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly stockDetailRepository: StockDetailRepository,
+  ) {}
 
   /**
    * 주식현재가 시세 데이터를 반환하는 함수
@@ -37,7 +41,7 @@ export class StockDetailService {
         queryParams,
       );
 
-      return this.formatStockData(response.output);
+      return await this.formatStockData(response.output);
     } catch (error) {
       this.logger.error('API Error Details:', {
         status: error.response?.status,
@@ -57,16 +61,23 @@ export class StockDetailService {
    *
    * @author uuuo3o
    */
-  private formatStockData(stock: InquirePriceOutputData) {
-    const stockData = new InquirePriceResponseDto();
-    stockData.stck_shrn_iscd = stock.stck_shrn_iscd;
-    stockData.stck_prpr = stock.stck_prpr;
-    stockData.prdy_vrss = stock.prdy_vrss;
-    stockData.prdy_vrss_sign = stock.prdy_vrss_sign;
-    stockData.prdy_ctrt = stock.prdy_ctrt;
-    stockData.hts_avls = stock.hts_avls;
-    stockData.per = stock.per;
-    return stockData;
+  private async formatStockData(
+    stock: InquirePriceOutputData,
+  ): Promise<InquirePriceResponseDto> {
+    const { name } = await this.stockDetailRepository.findOneByCode(
+      stock.stck_shrn_iscd,
+    );
+
+    return {
+      hts_kor_isnm: name,
+      stck_shrn_iscd: stock.stck_shrn_iscd,
+      stck_prpr: stock.stck_prpr,
+      prdy_vrss: stock.prdy_vrss,
+      prdy_vrss_sign: stock.prdy_vrss_sign,
+      prdy_ctrt: stock.prdy_ctrt,
+      hts_avls: stock.hts_avls,
+      per: stock.per,
+    };
   }
 
   /**
@@ -163,7 +174,7 @@ export class StockDetailService {
     params: Record<string, string>,
   ): Promise<T> {
     try {
-      const accessToken = await this.koreaInvetmentService.getAccessToken();
+      const accessToken = await this.koreaInvestmentService.getAccessToken();
       const headers = getHeader(accessToken, trId);
       const url = getFullURL(apiURL);
 

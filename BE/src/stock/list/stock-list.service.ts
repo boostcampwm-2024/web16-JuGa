@@ -33,18 +33,17 @@ export class StockListService {
   }
 
   async search(params: SearchParams): Promise<StockListResponseDto[]> {
-    await this.addSearchTermToRedis(params);
     const stocks = await this.stockListRepository.search(params);
     return stocks.map((stock) => this.toResponseDto(stock));
   }
 
-  async addSearchTermToRedis(params: SearchParams) {
-    const key = `search:${params.userId}`;
+  async addSearchTermToRedis(searchInfo: {
+    userId: number;
+    searchTerm: string;
+  }) {
+    const { userId, searchTerm } = searchInfo;
+    const key = `search:${userId}`;
     const timeStamp = Date.now();
-
-    const { name, market, code } = params;
-
-    const searchTerm = name || market || code;
 
     await this.redisDomainService.zadd(key, timeStamp, searchTerm);
 
@@ -52,5 +51,15 @@ export class StockListService {
     if (searchHistoryCount > this.SearchHistoryLimit) {
       await this.redisDomainService.zremrangebyrank(key, 0, 0);
     }
+  }
+
+  async getSearchTermFromRedis(userId: string): Promise<string[]> {
+    const key = `search:${userId}`;
+
+    return this.redisDomainService.zrevrange(
+      key,
+      0,
+      this.SearchHistoryLimit - 1,
+    );
   }
 }
