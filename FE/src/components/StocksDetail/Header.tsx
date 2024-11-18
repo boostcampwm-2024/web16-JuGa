@@ -35,6 +35,8 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
         ? 'text-juga-red-60'
         : 'text-juga-blue-40';
 
+  const percentAbsolute = Math.abs(Number(prdy_ctrt)).toFixed(2);
+
   const plusOrMinus =
     prdy_vrss_sign === '3' ? '' : prdy_vrss_sign < '3' ? '+' : '-';
 
@@ -50,7 +52,8 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
           <p>어제보다</p>
           <p className={`${colorStyleBySign}`}>
             {plusOrMinus}
-            {Math.abs(Number(prdy_vrss)).toLocaleString()}원 ({prdy_ctrt}%)
+            {Math.abs(Number(prdy_vrss)).toLocaleString()}원 ({plusOrMinus}
+            {percentAbsolute}%)
           </p>
         </div>
       </div>
