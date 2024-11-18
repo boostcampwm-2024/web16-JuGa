@@ -4,7 +4,8 @@ import {
   drawBarChart,
   drawCandleChart,
   drawLineChart,
-  drawYLabel,
+  drawLowerYLabel,
+  drawUpperYLabel,
 } from 'utils/chart';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
@@ -61,25 +62,22 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     const chartWidth = displayWidth * 0.9;
     const yAxisWidth = displayWidth * 0.1;
 
-    // Upper 차트 영역 설정
+    // 차트 영역 설정
     upperChartCanvas.width = chartWidth * 2;
     upperChartCanvas.height = upperHeight * 2;
     upperChartCanvas.style.width = `${chartWidth}px`;
     upperChartCanvas.style.height = `${upperHeight}px`;
 
-    // Upper Y축 영역 설정
     upperChartYCanvas.width = yAxisWidth * 2;
     upperChartYCanvas.height = upperHeight * 2;
     upperChartYCanvas.style.width = `${yAxisWidth}px`;
     upperChartYCanvas.style.height = `${upperHeight}px`;
 
-    // Lower 차트 영역 설정 (Upper와 동일한 비율)
     lowerChartCanvas.width = chartWidth * 2;
     lowerChartCanvas.height = lowerHeight * 2;
     lowerChartCanvas.style.width = `${chartWidth}px`;
     lowerChartCanvas.style.height = `${lowerHeight}px`;
 
-    // Lower Y축 영역 설정
     lowerChartYCanvas.width = yAxisWidth * 2;
     lowerChartYCanvas.height = lowerHeight * 2;
     lowerChartYCanvas.style.width = `${yAxisWidth}px`;
@@ -109,7 +107,6 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     const arr = data.map((e) => +e.stck_oprc);
 
-    // Upper 차트 그리기
     drawLineChart(
       UpperChartCtx,
       arr,
@@ -139,16 +136,24 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       0,
       0,
       lowerChartWidth,
-      lowerChartHeight,
+      lowerChartHeight - padding.bottom,
       padding,
     );
 
-    // Upper Y축 라벨 그리기
-    drawYLabel(
+    drawUpperYLabel(
       UpperYCtx,
       data,
       upperChartYCanvas.width - padding.left - padding.right,
       upperChartYCanvas.height - padding.top - padding.bottom,
+      padding,
+      0.1,
+    );
+
+    drawLowerYLabel(
+      LowerYCtx,
+      data,
+      lowerChartYCanvas.width - padding.left - padding.right,
+      lowerChartYCanvas.height - padding.top - padding.bottom,
       padding,
       0.1,
     );

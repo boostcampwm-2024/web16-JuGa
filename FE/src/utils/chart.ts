@@ -46,7 +46,13 @@ export function drawBarChart(
   if (data.length === 0) return;
   const n = data.length;
 
-  ctx.beginPath();
+  // 캔버스 초기화
+  ctx.clearRect(
+    0,
+    0,
+    width + padding.left + padding.right,
+    height + padding.top + padding.bottom,
+  );
 
   const yMax = Math.round(Math.max(...data.map((d) => +d.acml_vol)) * 1.2);
   const yMin = Math.round(Math.min(...data.map((d) => +d.acml_vol)) * 0.8);
@@ -56,7 +62,15 @@ export function drawBarChart(
   const blue = '#2175F3';
   const red = '#FF3700';
 
+  ctx.beginPath();
+  ctx.moveTo(padding.left, height + 4);
+  ctx.lineTo(width + padding.left + padding.right, height + 4);
+  ctx.strokeStyle = '#D2DAE0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
   data.forEach((e, i) => {
+    ctx.beginPath();
     const cx = x + padding.left + (width * i) / (n - 1);
     const cy =
       padding.top + ((height - y) * (+e.acml_vol - yMin)) / (yMax - yMin);
@@ -64,8 +78,6 @@ export function drawBarChart(
     ctx.fillStyle = +e.stck_oprc < +e.stck_clpr ? red : blue;
     ctx.fillRect(cx, height, gap, -cy);
   });
-
-  ctx.stroke();
 }
 
 export function drawCandleChart(
@@ -213,7 +225,7 @@ export const drawChart = (
   }
 };
 
-export const drawYLabel = (
+export const drawUpperYLabel = (
   ctx: CanvasRenderingContext2D,
   data: StockChartUnit[],
   width: number,
@@ -257,4 +269,41 @@ export const drawYLabel = (
     const formattedValue = label.toLocaleString();
     ctx.fillText(formattedValue, width / 2, yPos);
   });
+
+  ctx.beginPath();
+  ctx.moveTo(padding.left, 0);
+  ctx.lineTo(padding.left, height + padding.top + padding.bottom);
+  ctx.strokeStyle = '#D2DAE0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+};
+
+export const drawLowerYLabel = (
+  ctx: CanvasRenderingContext2D,
+  data: StockChartUnit[],
+  width: number,
+  height: number,
+  padding: Padding,
+  weight: number = 0,
+) => {
+  ctx.clearRect(
+    0,
+    0,
+    width + padding.left + padding.right,
+    height + padding.top + padding.bottom,
+  );
+
+  // Y축 선 그리기
+  ctx.beginPath();
+  ctx.moveTo(padding.left, 0);
+  ctx.lineTo(padding.left, height + padding.top + 4);
+  ctx.strokeStyle = '#D2DAE0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // X축 선 그리기 (바닥 선)
+  ctx.beginPath();
+  ctx.moveTo(0, height + padding.top + 4);
+  ctx.lineTo(padding.left, height + padding.top + 4);
+  ctx.stroke();
 };
