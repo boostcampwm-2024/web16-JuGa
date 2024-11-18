@@ -3,23 +3,51 @@ import PriceTableColumn from './PriceTableColumn.tsx';
 import PriceTableLiveCard from './PriceTableLiveCard.tsx';
 import PriceTableDayCard from './PriceTableDayCard.tsx';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
 import { getTradeHistory } from 'service/getTradeHistory.ts';
+import { createSSEConnection } from './PriceSectionSseHook.ts';
 
 export default function PriceSection() {
   const [buttonFlag, setButtonFlag] = useState(true);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const { id } = useParams();
-
-  const { data, isLoading } = useQuery({
+  // const [tradeData, setTradeData] = useState<PriceDataType[]>([]);
+  // const queryClient = useQueryClient();
+  const { data: initialData = [], isLoading } = useQuery({
     queryKey: ['detail', id, buttonFlag],
     queryFn: () => getTradeHistory(id as string, buttonFlag),
     // refetchInterval: 1000,
     cacheTime: 30000,
     staleTime: 1000,
   });
+
+  // const addData = (newData: PriceDataType) => {
+  //   setTradeData((prev) => [...prev, newData]);
+  //
+  //   queryClient.setQueryData(
+  //     ['detail', id, buttonFlag],
+  //     (old: PriceDataType[] = []) => {
+  //       return [...old, newData];
+  //     },
+  //   );
+  // };
+
+  // useEffect(() => {
+  //   if (!buttonFlag) return;
+  //
+  //   const eventSource = createSSEConnection(
+  //     `http://223.130.151.42:3000/api/stocks/trade-history/${id}/today-sse`,
+  //     addData,
+  //   );
+  //
+  //   return () => {
+  //     if (eventSource) {
+  //       eventSource.close();
+  //     }
+  //   };
+  // }, [buttonFlag, id]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;
@@ -31,6 +59,10 @@ export default function PriceSection() {
       indicator.style.width = `${currentButton.offsetWidth}px`;
     }
   }, [buttonFlag]);
+
+  // useEffect(() => {
+  //   setTradeData(initialData);
+  // }, [initialData]);
 
   return (
     <div
@@ -88,24 +120,26 @@ export default function PriceSection() {
                 <tr>
                   <td>Loading...</td>
                 </tr>
-              ) : !data ? (
+              ) : !initialData ? (
                 <tr>
                   <td>No data available</td>
                 </tr>
               ) : buttonFlag ? (
-                data.map((eachData: PriceDataType, index: number) => (
+                initialData.map((eachData: PriceDataType, index: number) => (
                   <PriceTableLiveCard
                     key={`${eachData.stck_cntg_hour}-${index}`}
                     data={eachData}
                   />
                 ))
               ) : (
-                data.map((eachData: DailyPriceDataType, index: number) => (
-                  <PriceTableDayCard
-                    key={`${eachData.stck_bsop_date}-${index}`}
-                    data={eachData}
-                  />
-                ))
+                initialData.map(
+                  (eachData: DailyPriceDataType, index: number) => (
+                    <PriceTableDayCard
+                      key={`${eachData.stck_bsop_date}-${index}`}
+                      data={eachData}
+                    />
+                  ),
+                )
               )}
             </tbody>
           </table>
