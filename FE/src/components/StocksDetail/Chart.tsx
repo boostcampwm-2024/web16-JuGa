@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { TiemCategory } from 'types';
-import { drawBarChart, drawCandleChart, drawLineChart } from 'utils/chart';
+import {
+  drawBarChart,
+  drawCandleChart,
+  drawLineChart,
+  drawYLabel,
+} from 'utils/chart';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
 
@@ -31,8 +36,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   );
 
   useEffect(() => {
-    if (isLoading) return;
-    if (!data) return;
+    if (isLoading || !data) return;
 
     const parent = containerRef.current;
     const upperChartCanvas = upperChartCanvasRef.current;
@@ -40,76 +44,111 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     const upperChartYCanvas = upperChartY.current;
     const lowerChartYCanvas = lowerChartY.current;
 
-    if (!upperChartCanvas || !parent || !lowerChartCanvas) return;
+    if (
+      !parent ||
+      !upperChartCanvas ||
+      !lowerChartCanvas ||
+      !upperChartYCanvas ||
+      !lowerChartYCanvas
+    )
+      return;
 
     const displayWidth = parent.clientWidth;
     const displayHeight = parent.clientHeight;
 
-    // 해상도 높이기
-    upperChartCanvas.width = displayWidth * 2;
-    upperChartCanvas.height = displayHeight * 2;
+    const upperHeight = displayHeight * 0.5;
+    const lowerHeight = displayHeight * 0.3;
+    const chartWidth = displayWidth * 0.9;
+    const yAxisWidth = displayWidth * 0.1;
 
-    upperChartCanvas.style.width = `${displayWidth}px`;
-    upperChartCanvas.style.height = `${displayHeight * 0.5}px`;
+    // Upper 차트 영역 설정
+    upperChartCanvas.width = chartWidth * 2;
+    upperChartCanvas.height = upperHeight * 2;
+    upperChartCanvas.style.width = `${chartWidth}px`;
+    upperChartCanvas.style.height = `${upperHeight}px`;
 
-    lowerChartCanvas.width = displayWidth * 2;
-    lowerChartCanvas.height = displayHeight * 2;
+    // Upper Y축 영역 설정
+    upperChartYCanvas.width = yAxisWidth * 2;
+    upperChartYCanvas.height = upperHeight * 2;
+    upperChartYCanvas.style.width = `${yAxisWidth}px`;
+    upperChartYCanvas.style.height = `${upperHeight}px`;
 
-    lowerChartCanvas.style.width = `${displayWidth}px`;
-    lowerChartCanvas.style.height = `${displayHeight * 0.3}px`;
+    // Lower 차트 영역 설정 (Upper와 동일한 비율)
+    lowerChartCanvas.width = chartWidth * 2;
+    lowerChartCanvas.height = lowerHeight * 2;
+    lowerChartCanvas.style.width = `${chartWidth}px`;
+    lowerChartCanvas.style.height = `${lowerHeight}px`;
 
-    console.log(`${displayHeight * 0.8}px`);
+    // Lower Y축 영역 설정
+    lowerChartYCanvas.width = yAxisWidth * 2;
+    lowerChartYCanvas.height = lowerHeight * 2;
+    lowerChartYCanvas.style.width = `${yAxisWidth}px`;
+    lowerChartYCanvas.style.height = `${lowerHeight}px`;
 
     const UpperChartCtx = upperChartCanvas.getContext('2d');
     const LowerChartCtx = lowerChartCanvas.getContext('2d');
+    const UpperYCtx = upperChartYCanvas.getContext('2d');
+    const LowerYCtx = lowerChartYCanvas.getContext('2d');
 
-    if (!UpperChartCtx || !LowerChartCtx) return;
-
-    // UpperChartCtx.fillRect(
-    //   0,
-    //   0,
-    //   upperChartCanvas.width,
-    //   upperChartCanvas.height,
-    // );
+    if (!UpperChartCtx || !LowerChartCtx || !UpperYCtx || !LowerYCtx) return;
 
     const padding = {
       top: 20,
-      right: 160,
+      right: 60,
       bottom: 10,
       left: 20,
     };
 
-    const chartWidth = upperChartCanvas.width - padding.left - padding.right;
-    const chartHeight = upperChartCanvas.height - padding.top - padding.bottom;
+    const upperChartWidth =
+      upperChartCanvas.width - padding.left - padding.right;
+    const upperChartHeight =
+      upperChartCanvas.height - padding.top - padding.bottom;
+    const lowerChartWidth =
+      lowerChartCanvas.width - padding.left - padding.right;
+    const lowerChartHeight = lowerChartCanvas.height;
 
     const arr = data.map((e) => +e.stck_oprc);
 
+    // Upper 차트 그리기
     drawLineChart(
       UpperChartCtx,
       arr,
       0,
       0,
-      chartWidth,
-      chartHeight,
+      upperChartWidth,
+      upperChartHeight,
       padding,
       0.1,
     );
-    drawBarChart(
-      LowerChartCtx,
-      data,
-      0,
-      0, // chartHeight를 0으로 수정
-      lowerChartCanvas.width - padding.left - padding.right,
-      lowerChartCanvas.height - padding.top - padding.bottom,
-      padding,
-    );
+
     drawCandleChart(
       UpperChartCtx,
       data,
       0,
       0,
-      chartWidth,
-      chartHeight,
+      upperChartWidth,
+      upperChartHeight,
+      padding,
+      0.1,
+    );
+
+    // Lower 차트 그리기
+    drawBarChart(
+      LowerChartCtx,
+      data,
+      0,
+      0,
+      lowerChartWidth,
+      lowerChartHeight,
+      padding,
+    );
+
+    // Upper Y축 라벨 그리기
+    drawYLabel(
+      UpperYCtx,
+      data,
+      upperChartYCanvas.width - padding.left - padding.right,
+      upperChartYCanvas.height - padding.top - padding.bottom,
       padding,
       0.1,
     );
@@ -131,20 +170,20 @@ export default function Chart({ code }: StocksDeatailChartProps) {
           ))}
         </nav>
       </div>
-      <div ref={containerRef} className={'mt-2 flex h-full w-full flex-col'}>
-        <div className={'flex h-full w-full flex-row items-center'}>
-          <canvas ref={upperChartCanvasRef} className='' />
-          <canvas ref={upperChartY} className={'w-[56px]'} />
+      <div ref={containerRef} className='mt-2 flex h-full w-full flex-col'>
+        {/* Upper 차트 영역 */}
+        <div className='flex h-1/2 w-full flex-row items-center'>
+          <canvas ref={upperChartCanvasRef} className='h-full w-[90%]' />
+          <canvas ref={upperChartY} className='h-full w-[10%]' />
         </div>
-        {/*<div>*/}
-        {/*  <button> 실선</button>*/}
-        {/*</div>*/}
-        <div className={'flex w-full flex-row'}>
-          <canvas ref={lowerChartCanvasRef} className='' />
-          <canvas ref={lowerChartY} className={'w-[56px]'} />
+        {/* Lower 차트 영역 */}
+        <div className='flex h-[30%] w-full flex-row'>
+          <canvas ref={lowerChartCanvasRef} className='h-full w-[90%]' />
+          <canvas ref={lowerChartY} className='h-full w-[10%]' />
         </div>
-        <div className={'flex h-[32px] flex-row'}>
-          <canvas ref={chartX} />
+        {/* X축 영역 */}
+        <div className='flex h-[32px] w-[90%] flex-row'>
+          <canvas ref={chartX} className='h-full w-full' />
         </div>
       </div>
     </div>

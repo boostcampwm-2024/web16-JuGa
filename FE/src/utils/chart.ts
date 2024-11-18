@@ -42,19 +42,14 @@ export function drawBarChart(
   width: number,
   height: number,
   padding: Padding,
-  weight: number = 0, // 0~1 y축 범위 가중치
 ) {
   if (data.length === 0) return;
   const n = data.length;
 
   ctx.beginPath();
 
-  const yMax = Math.round(
-    Math.max(...data.map((d) => +d.acml_vol)) * 1 + weight,
-  );
-  const yMin = Math.round(
-    Math.min(...data.map((d) => +d.acml_vol)) * 1 - weight,
-  );
+  const yMax = Math.round(Math.max(...data.map((d) => +d.acml_vol)) * 1.2);
+  const yMin = Math.round(Math.min(...data.map((d) => +d.acml_vol)) * 0.8);
 
   const gap = Math.floor(width / n);
 
@@ -94,25 +89,6 @@ export function drawCandleChart(
   const yMax = Math.round(Math.max(...arr) * (1 + weight));
   const yMin = Math.round(Math.min(...arr) * (1 - weight));
 
-  const labels = getYAxisLabels(yMin, yMax);
-  labels.forEach((label) => {
-    const yPos =
-      padding.top + height - ((label - yMin) / (yMax - yMin)) * height;
-
-    // 라벨 텍스트 그리기
-    ctx.font = '20px Arial';
-    ctx.fillStyle = '#000';
-    ctx.textAlign = 'start';
-    ctx.fillText(label.toLocaleString(), padding.left + width + 80, yPos + 5);
-
-    // Y축 눈금선 그리기
-    ctx.strokeStyle = '#ddd';
-    ctx.beginPath();
-    ctx.moveTo(padding.left, yPos);
-    ctx.lineTo(padding.left + width + 56, yPos);
-    ctx.stroke();
-  });
-
   data.forEach((e, i) => {
     ctx.beginPath();
 
@@ -148,20 +124,6 @@ export function drawCandleChart(
     ctx.lineTo(middle, lowY);
     ctx.stroke();
   });
-}
-
-function getYAxisLabels(min: number, max: number) {
-  let a = min.toString().length - 1;
-  let k = 1;
-  while (a--) k *= 10;
-
-  const start = Math.ceil(min / k) * k;
-  const end = Math.floor(max / k) * k;
-  const labels = [];
-  for (let value = start; value <= end; value += k) {
-    labels.push(value);
-  }
-  return labels;
 }
 
 export const drawChart = (
@@ -249,4 +211,50 @@ export const drawChart = (
     ctx.lineWidth = 3;
     ctx.stroke();
   }
+};
+
+export const drawYLabel = (
+  ctx: CanvasRenderingContext2D,
+  data: StockChartUnit[],
+  width: number,
+  height: number,
+  padding: Padding,
+  weight: number = 0,
+) => {
+  const values = data
+    .map((d) => [+d.stck_hgpr, +d.stck_lwpr, +d.stck_clpr, +d.stck_oprc])
+    .flat();
+
+  const yMax = Math.round(Math.max(...values) * (1 + weight));
+  const yMin = Math.round(Math.min(...values) * (1 - weight));
+
+  ctx.clearRect(
+    0,
+    0,
+    width + padding.left + padding.right,
+    height + padding.top + padding.bottom,
+  );
+
+  // 라벨 갯수
+  const step = Math.ceil((yMax - yMin) / 3);
+  const labels = [];
+  for (let value = yMin; value <= yMax; value += step) {
+    labels.push(Math.round(value));
+  }
+  if (!labels.includes(yMax)) {
+    labels.push(yMax);
+  }
+
+  ctx.font = '24px sans-serif';
+  ctx.fillStyle = '#000';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+
+  labels.forEach((label) => {
+    const yPos =
+      padding.top + height - ((label - yMin) / (yMax - yMin)) * height;
+
+    const formattedValue = label.toLocaleString();
+    ctx.fillText(formattedValue, width / 2, yPos);
+  });
 };
