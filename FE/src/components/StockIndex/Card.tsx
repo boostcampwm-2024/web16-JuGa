@@ -22,8 +22,15 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
     useState<StockIndexValue>(value);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const changeColor =
-    Number(value.diff) > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
+  const color =
+    value.sign === '3'
+      ? ''
+      : value.sign < '3'
+        ? 'text-juga-red-60'
+        : 'text-juga-blue-40';
+  const percentAbsolute = Math.abs(Number(value.diff_rate)).toFixed(2);
+
+  const plusOrMinus = value.sign === '3' ? '' : value.sign < '3' ? '+' : '-';
 
   socket.on(id, (stockIndex) => {
     setStockIndexValue(stockIndex);
@@ -46,8 +53,10 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
       <div className='flex h-full w-[108px] flex-1 flex-col items-start justify-center text-sm'>
         <p className='font-semibold'>{name}</p>
         <p className='text-lg font-bold'>{stockIndexValue.curr_value}</p>
-        <p className={`font-semibold ${changeColor}`}>
-          {stockIndexValue.diff}({stockIndexValue.diff_rate}%)
+        <p className={`font-semibold ${color}`}>
+          {plusOrMinus}
+          {Math.abs(Number(stockIndexValue.diff)).toFixed(2)}({percentAbsolute}
+          %)
         </p>
       </div>
       <canvas

@@ -53,7 +53,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     const padding = {
       top: 20,
-      right: 80,
+      right: 160,
       bottom: 10,
       left: 20,
     };
@@ -71,10 +71,10 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
   return (
     <div
-      className='flex flex-col items-center flex-1 p-3 rounded-lg bg-juga-grayscale-50'
+      className='flex flex-1 flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'
       ref={containerRef}
     >
-      <div className='flex items-center justify-between w-full'>
+      <div className='flex w-full items-center justify-between'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
           {categories.map(({ label, value }) => (

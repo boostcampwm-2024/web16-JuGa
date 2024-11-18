@@ -5,8 +5,16 @@ type PriceTableDayCardProps = {
 };
 
 export default function PriceTableDayCard({ data }: PriceTableDayCardProps) {
-  const percent = Number(data.prdy_ctrt);
-  const color = percent > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
+  const color =
+    data.prdy_vrss_sign === '3'
+      ? ''
+      : data.prdy_vrss_sign < '3'
+        ? 'text-juga-red-60'
+        : 'text-juga-blue-40';
+  const percentAbsolute = Math.abs(Number(data.prdy_ctrt)).toFixed(2);
+
+  const plusOrMinus =
+    data.prdy_vrss_sign === '3' ? '' : data.prdy_vrss_sign < '3' ? '+' : '-';
   function formatTime(time: string) {
     if (!time.length) return '----.--.--';
     const year = time.slice(0, 4);
@@ -23,7 +31,8 @@ export default function PriceTableDayCard({ data }: PriceTableDayCardProps) {
         {Number(data.stck_clpr).toLocaleString()}
       </td>
       <td className={`px-4 py-1 text-right ${color}`}>
-        {percent > 0 ? `+${percent}%` : `${percent}%`}
+        {plusOrMinus}
+        {percentAbsolute}%
       </td>
       <td className={'px-4 py-1 text-right'}>
         {Number(data.acml_vol).toLocaleString()}

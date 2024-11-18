@@ -11,12 +11,13 @@ export const SearchCardHighLight = ({
     return <div>{text}</div>;
   }
 
-  const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+  const targetWord = highlight.trim();
 
+  const parts = text.trim().split(new RegExp(`(${targetWord})`, 'gi'));
   return (
     <div>
       {parts.map((part, index) =>
-        part.toLowerCase() === highlight.toLowerCase() ? (
+        part.toLowerCase() === targetWord.toLowerCase() ? (
           <span
             key={`${part}-${index}`}
             className={'font-medium text-juga-blue-50'}

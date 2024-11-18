@@ -20,7 +20,7 @@ export default function TopFive() {
     queryFn: () => getTopFiveStocks(paramsMap[currentMarket]),
     keepPreviousData: true,
     cacheTime: 30000,
-    refetchInterval: 1000,
+    // refetchInterval: 1000,
   });
   return (
     <div className='flex flex-col gap-4'>
