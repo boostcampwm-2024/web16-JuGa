@@ -1,18 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { getStocksByCode } from 'service/stocks';
+import { StockDetailType } from 'types';
 
 type StocksDeatailHeaderProps = {
   code: string;
+  data: StockDetailType;
 };
 
-export default function Header({ code }: StocksDeatailHeaderProps) {
-  const { data, isLoading } = useQuery(['stocks', code], () =>
-    getStocksByCode(code),
-  );
-
-  if (isLoading) return;
-  if (!data) return;
-
+export default function Header({ code, data }: StocksDeatailHeaderProps) {
   const {
     hts_kor_isnm,
     stck_prpr,
@@ -41,7 +34,7 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
     prdy_vrss_sign === '3' ? '' : prdy_vrss_sign < '3' ? '+' : '-';
 
   return (
-    <div className='flex h-16 w-full items-center justify-between px-2'>
+    <div className='flex items-center justify-between w-full h-16 px-2'>
       <div className='flex flex-col font-semibold'>
         <div className='flex gap-2 text-sm'>
           <h2>{hts_kor_isnm}</h2>

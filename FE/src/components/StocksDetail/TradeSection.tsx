@@ -2,7 +2,11 @@ import Lottie from 'lottie-react';
 import { useEffect, useRef, useState } from 'react';
 import emptyAnimation from 'assets/emptyAnimation.json';
 
-export default function TradeSection() {
+type TradeSectionProps = {
+  currPrice: string;
+};
+
+export default function TradeSection({ currPrice }: TradeSectionProps) {
   const [category, setCategory] = useState<'buy' | 'sell'>('buy');
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -53,7 +57,11 @@ export default function TradeSection() {
           <div className='my-4'>
             <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'>매수 가격</p>
-              <input type='number' className='flex-1 py-1 rounded-lg' />
+              <input
+                type='number'
+                value={+currPrice}
+                className='flex-1 py-1 rounded-lg'
+              />
             </div>
             <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'> 수량</p>
