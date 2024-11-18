@@ -7,14 +7,14 @@ import {
   StockApiOutputData,
   StockApiResponse,
 } from './interface/stock-topfive.interface';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
+import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea-investment.domain-service';
 
 @Injectable()
 export class StockTopfiveService {
   private readonly logger = new Logger();
 
   constructor(
-    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
   ) {}
 
   /**
@@ -47,7 +47,7 @@ export class StockTopfiveService {
       }
 
       const highResponse =
-        await this.koreaInvestmentService.requestApi<StockApiResponse>(
+        await this.koreaInvestmentDomainService.requestApi<StockApiResponse>(
           'FHPST01700000',
           '/uapi/domestic-stock/v1/ranking/fluctuation',
           this.getStockRankingParams({
@@ -57,7 +57,7 @@ export class StockTopfiveService {
         );
 
       const lowResponse =
-        await this.koreaInvestmentService.requestApi<StockApiResponse>(
+        await this.koreaInvestmentDomainService.requestApi<StockApiResponse>(
           'FHPST01700000',
           '/uapi/domestic-stock/v1/ranking/fluctuation',
           this.getStockRankingParams({

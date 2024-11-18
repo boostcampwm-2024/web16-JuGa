@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { Logger, UnauthorizedException } from '@nestjs/common';
-import { getFullURL } from '../util/get-full-URL';
+import { getFullURL } from '../../util/get-full-URL';
 import { AccessTokenInterface } from './interface/korea-investment.interface';
-import { getHeader } from '../util/get-header';
+import { getHeader } from '../../util/get-header';
 
-export class KoreaInvestmentService {
+export class KoreaInvestmentDomainService {
   private accessToken: string;
   private tokenExpireTime: Date;
 

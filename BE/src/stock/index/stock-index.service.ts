@@ -5,14 +5,14 @@ import {
   StockIndexChartInterface,
   StockIndexValueInterface,
 } from './interface/stock-index.interface';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
+import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea-investment.domain-service';
 
 @Injectable()
 export class StockIndexService {
   private readonly logger = new Logger();
 
   constructor(
-    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
   ) {}
 
   async getDomesticStockIndexListByCode(code: string) {
@@ -24,7 +24,7 @@ export class StockIndexService {
       };
 
       const result =
-        await this.koreaInvestmentService.requestApi<StockIndexChartInterface>(
+        await this.koreaInvestmentDomainService.requestApi<StockIndexChartInterface>(
           'FHPUP02110200',
           '/uapi/domestic-stock/v1/quotations/inquire-index-timeprice',
           queryParams,
@@ -57,7 +57,7 @@ export class StockIndexService {
       };
 
       const result =
-        await this.koreaInvestmentService.requestApi<StockIndexValueInterface>(
+        await this.koreaInvestmentDomainService.requestApi<StockIndexValueInterface>(
           'FHPUP02100000',
           '/uapi/domestic-stock/v1/quotations/inquire-index-price',
           queryParams,

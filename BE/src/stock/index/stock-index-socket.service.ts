@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { StockIndexValueElementDto } from './dto/stock-index-value-element.dto';
-import { BaseSocketService } from '../../websocket/base-socket.service';
-import { SocketGateway } from '../../websocket/socket.gateway';
+import { BaseSocketDomainService } from '../../common/websocket/base-socket.domain-service';
+import { SocketGateway } from '../../common/websocket/socket.gateway';
 
 @Injectable()
 export class StockIndexSocketService {
@@ -15,16 +15,16 @@ export class StockIndexSocketService {
 
   constructor(
     private readonly socketGateway: SocketGateway,
-    private readonly baseSocketService: BaseSocketService,
+    private readonly baseSocketDomainService: BaseSocketDomainService,
   ) {
-    baseSocketService.registerSocketOpenHandler(() => {
-      this.baseSocketService.registerCode(this.TR_ID, '0001'); // 코스피
-      this.baseSocketService.registerCode(this.TR_ID, '1001'); // 코스닥
-      this.baseSocketService.registerCode(this.TR_ID, '2001'); // 코스피200
-      this.baseSocketService.registerCode(this.TR_ID, '3003'); // KSQ150
+    baseSocketDomainService.registerSocketOpenHandler(() => {
+      this.baseSocketDomainService.registerCode(this.TR_ID, '0001'); // 코스피
+      this.baseSocketDomainService.registerCode(this.TR_ID, '1001'); // 코스닥
+      this.baseSocketDomainService.registerCode(this.TR_ID, '2001'); // 코스피200
+      this.baseSocketDomainService.registerCode(this.TR_ID, '3003'); // KSQ150
     });
 
-    baseSocketService.registerSocketDataHandler(
+    baseSocketDomainService.registerSocketDataHandler(
       this.TR_ID,
       (data: string[]) => {
         this.socketGateway.sendStockIndexValueToClient(

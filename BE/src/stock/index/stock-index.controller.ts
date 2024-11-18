@@ -3,15 +3,15 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cron } from '@nestjs/schedule';
 import { StockIndexService } from './stock-index.service';
 import { StockIndexResponseDto } from './dto/stock-index-response.dto';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
-import { SocketGateway } from '../../websocket/socket.gateway';
+import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea-investment.domain-service';
+import { SocketGateway } from '../../common/websocket/socket.gateway';
 
 @Controller('/api/stocks/index')
 @ApiTags('주가 지수 API')
 export class StockIndexController {
   constructor(
     private readonly stockIndexService: StockIndexService,
-    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
     private readonly socketGateway: SocketGateway,
   ) {}
 
@@ -26,7 +26,7 @@ export class StockIndexController {
     type: StockIndexResponseDto,
   })
   async getStockIndex() {
-    await this.koreaInvestmentService.getAccessToken();
+    await this.koreaInvestmentDomainService.getAccessToken();
 
     const [kospiChart, kosdaqChart, kospi200Chart, ksq150Chart] =
       await Promise.all([
@@ -66,7 +66,7 @@ export class StockIndexController {
 
   @Cron('*/5 9-16 * * 1-5')
   async cronStockIndexLists() {
-    await this.koreaInvestmentService.getAccessToken();
+    await this.koreaInvestmentDomainService.getAccessToken();
 
     const stockLists = await Promise.all([
       this.stockIndexService.getDomesticStockIndexListByCode('0001'), // 코스피

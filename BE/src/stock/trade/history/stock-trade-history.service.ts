@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { KoreaInvestmentService } from '../../../koreaInvestment/korea-investment.service';
+import { KoreaInvestmentDomainService } from '../../../common/koreaInvestment/korea-investment.domain-service';
 import { InquireCCNLApiResponse } from './interface/Inquire-ccnl.interface';
 import { TodayStockTradeHistoryOutputDto } from './dto/today-stock-trade-history-output.dto';
 import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
@@ -12,7 +12,7 @@ export class StockTradeHistoryService {
   private readonly logger = new Logger();
 
   constructor(
-    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
   ) {}
 
   /**
@@ -30,7 +30,7 @@ export class StockTradeHistoryService {
       };
 
       const response =
-        await this.koreaInvestmentService.requestApi<InquireCCNLApiResponse>(
+        await this.koreaInvestmentDomainService.requestApi<InquireCCNLApiResponse>(
           'FHKST01010300',
           '/uapi/domestic-stock/v1/quotations/inquire-ccnl',
           queryParams,
@@ -88,7 +88,7 @@ export class StockTradeHistoryService {
       };
 
       const response =
-        await this.koreaInvestmentService.requestApi<InquireDailyPriceApiResponse>(
+        await this.koreaInvestmentDomainService.requestApi<InquireDailyPriceApiResponse>(
           'FHKST01010400',
           '/uapi/domestic-stock/v1/quotations/inquire-daily-price',
           queryParams,

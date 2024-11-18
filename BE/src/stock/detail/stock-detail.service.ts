@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
+import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea-investment.domain-service';
 import { InquirePriceChartApiResponse } from './interface/stock-detail-chart.interface';
 import { InquirePriceChartDataDto } from './dto/stock-detail-chart-data.dto';
 import {
@@ -14,7 +14,7 @@ export class StockDetailService {
   private readonly logger = new Logger();
 
   constructor(
-    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
     private readonly stockDetailRepository: StockDetailRepository,
   ) {}
 
@@ -33,7 +33,7 @@ export class StockDetailService {
       };
 
       const response =
-        await this.koreaInvestmentService.requestApi<InquirePriceApiResponse>(
+        await this.koreaInvestmentDomainService.requestApi<InquirePriceApiResponse>(
           'FHKST01010100',
           '/uapi/domestic-stock/v1/quotations/inquire-price',
           queryParams,
@@ -105,7 +105,7 @@ export class StockDetailService {
       };
 
       const response =
-        await this.koreaInvestmentService.requestApi<InquirePriceChartApiResponse>(
+        await this.koreaInvestmentDomainService.requestApi<InquirePriceChartApiResponse>(
           'FHKST03010100',
           '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
           queryParams,
