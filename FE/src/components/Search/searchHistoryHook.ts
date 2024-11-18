@@ -22,7 +22,7 @@ export function useSearchHistory() {
       );
       const newItem: HistoryType = {
         id: `${keyword}-${Date.now()}`,
-        text: keyword,
+        text: keyword.trim(),
         timestamp: new Date().toISOString(),
       };
       const newHistory = [newItem, ...filteredHistory].slice(
