@@ -24,7 +24,9 @@ export default function Card({
     <div className='flex flex-row items-center justify-between py-3 hover:cursor-pointer'>
       <div className={'ml-2 font-medium text-juga-blue-50'}>{index + 1}</div>
       <div className='ml-4 w-[180px] text-start'>
-        <p className='font-medium text-juga-grayscale-black'>{name}</p>
+        <p className='overflow-hidden text-ellipsis whitespace-nowrap font-medium text-juga-grayscale-black'>
+          {name}
+        </p>
       </div>
       <div className='w-[120px] text-right'>
         <p className='font-normal text-juga-grayscale-black'>
