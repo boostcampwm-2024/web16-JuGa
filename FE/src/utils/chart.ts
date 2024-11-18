@@ -56,7 +56,7 @@ export function drawBarChart(
     Math.min(...data.map((d) => +d.acml_vol)) * 1 - weight,
   );
 
-  const gap = Math.floor((width / n) * 0.8);
+  const gap = Math.floor(width / n);
 
   const blue = '#2175F3';
   const red = '#FF3700';
@@ -103,13 +103,13 @@ export function drawCandleChart(
     ctx.font = '20px Arial';
     ctx.fillStyle = '#000';
     ctx.textAlign = 'start';
-    ctx.fillText(label.toLocaleString(), padding.left + width + 10, yPos + 5);
+    ctx.fillText(label.toLocaleString(), padding.left + width + 80, yPos + 5);
 
     // Y축 눈금선 그리기
     ctx.strokeStyle = '#ddd';
     ctx.beginPath();
-    ctx.moveTo(0, yPos);
-    ctx.lineTo(padding.left + width, yPos);
+    ctx.moveTo(padding.left, yPos);
+    ctx.lineTo(padding.left + width + 56, yPos);
     ctx.stroke();
   });
 
@@ -117,7 +117,7 @@ export function drawCandleChart(
     ctx.beginPath();
 
     const { stck_oprc, stck_clpr, stck_hgpr, stck_lwpr } = e;
-    const gap = Math.floor((width / n) * 0.8);
+    const gap = Math.floor(width / n);
     const cx = x + padding.left + (width * i) / (n - 1);
 
     const openY =
