@@ -35,8 +35,11 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
         ? 'text-juga-red-60'
         : 'text-juga-blue-40';
 
+  const plusOrMinus =
+    prdy_vrss_sign === '3' ? '' : prdy_vrss_sign < '3' ? '+' : '-';
+
   return (
-    <div className='flex items-center justify-between w-full h-16 px-2'>
+    <div className='flex h-16 w-full items-center justify-between px-2'>
       <div className='flex flex-col font-semibold'>
         <div className='flex gap-2 text-sm'>
           <h2>{hts_kor_isnm}</h2>
@@ -46,7 +49,8 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
           <p className='text-lg'>{Number(stck_prpr).toLocaleString()}원</p>
           <p>어제보다</p>
           <p className={`${colorStyleBySign}`}>
-            +{Number(prdy_vrss).toLocaleString()}원 ({prdy_ctrt}%)
+            {plusOrMinus}
+            {Math.abs(Number(prdy_vrss)).toLocaleString()}원 ({prdy_ctrt}%)
           </p>
         </div>
       </div>

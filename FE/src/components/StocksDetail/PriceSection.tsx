@@ -16,7 +16,7 @@ export default function PriceSection() {
   const { data, isLoading } = useQuery({
     queryKey: ['detail', id, buttonFlag],
     queryFn: () => getTradeHistory(id as string, buttonFlag),
-    refetchInterval: 1000,
+    // refetchInterval: 1000,
     cacheTime: 30000,
     staleTime: 1000,
   });
