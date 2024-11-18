@@ -55,8 +55,8 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
         <p className='text-lg font-bold'>{stockIndexValue.curr_value}</p>
         <p className={`font-semibold ${color}`}>
           {plusOrMinus}
-          {Math.abs(Number(stockIndexValue.diff)).toFixed(2)}({plusOrMinus}
-          {percentAbsolute}%)
+          {Math.abs(Number(stockIndexValue.diff)).toFixed(2)}({percentAbsolute}
+          %)
         </p>
       </div>
       <canvas
