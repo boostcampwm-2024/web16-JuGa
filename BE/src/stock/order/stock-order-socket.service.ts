@@ -36,8 +36,8 @@ export class StockOrderSocketService {
         this.checkExecutableOrder(
           data[0], // 주식 코드
           data[2], // 주식 체결가
-        ).catch(() => {
-          throw new InternalServerErrorException();
+        ).catch((err) => {
+          throw new InternalServerErrorException(err);
         });
       },
     );
