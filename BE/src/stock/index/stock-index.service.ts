@@ -1,95 +1,85 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import axios from 'axios';
+import { Injectable, Logger } from '@nestjs/common';
 import { StockIndexListChartElementDto } from './dto/stock-index-list-chart.element.dto';
 import { StockIndexValueElementDto } from './dto/stock-index-value-element.dto';
 import {
   StockIndexChartInterface,
   StockIndexValueInterface,
 } from './interface/stock-index.interface';
-import { getFullURL } from '../../util/get-full-URL';
-import { getHeader } from '../../util/get-header';
+import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
 
 @Injectable()
 export class StockIndexService {
-  async getDomesticStockIndexListByCode(code: string, accessToken: string) {
-    const result = await this.requestDomesticStockIndexListApi(
-      code,
-      accessToken,
-    );
+  private readonly logger = new Logger();
 
-    return result.output.map((element) => {
-      return new StockIndexListChartElementDto(
-        element.bsop_hour,
-        element.bstp_nmix_prpr,
-        element.bstp_nmix_prdy_vrss,
-      );
-    });
-  }
+  constructor(
+    private readonly koreaInvestmentService: KoreaInvestmentService,
+  ) {}
 
-  async getDomesticStockIndexValueByCode(code: string, accessToken: string) {
-    const result = await this.requestDomesticStockIndexValueApi(
-      code,
-      accessToken,
-    );
+  async getDomesticStockIndexListByCode(code: string) {
+    try {
+      const queryParams = {
+        fid_input_hour_1: '300',
+        fid_cond_mrkt_div_code: 'U',
+        fid_input_iscd: code,
+      };
 
-    const data = result.output;
-
-    return new StockIndexValueElementDto(
-      data.bstp_nmix_prpr,
-      data.bstp_nmix_prdy_vrss,
-      data.bstp_nmix_prdy_ctrt,
-      data.prdy_vrss_sign,
-    );
-  }
-
-  private async requestDomesticStockIndexListApi(
-    code: string,
-    accessToken: string,
-  ) {
-    const response = await axios
-      .get<StockIndexChartInterface>(
-        getFullURL(
+      const result =
+        await this.koreaInvestmentService.requestApi<StockIndexChartInterface>(
+          'FHPUP02110200',
           '/uapi/domestic-stock/v1/quotations/inquire-index-timeprice',
-        ),
-        {
-          headers: getHeader(accessToken, 'FHPUP02110200'),
-          params: {
-            fid_input_hour_1: 300,
-            fid_cond_mrkt_div_code: 'U',
-            fid_input_iscd: code,
-          },
-        },
-      )
-      .catch(() => {
-        throw new InternalServerErrorException(
-          '주가 지수 차트 정보를 조회하지 못했습니다.',
+          queryParams,
+        );
+
+      return result.output.map((element) => {
+        return new StockIndexListChartElementDto(
+          element.bsop_hour,
+          element.bstp_nmix_prpr,
+          element.bstp_nmix_prdy_vrss,
         );
       });
-
-    return response.data;
+    } catch (error) {
+      this.logger.error('API Error Details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.config?.headers, // 실제 요청 헤더
+        message: error.message,
+      });
+      throw error;
+    }
   }
 
-  private async requestDomesticStockIndexValueApi(
-    code: string,
-    accessToken: string,
-  ) {
-    const response = await axios
-      .get<StockIndexValueInterface>(
-        getFullURL('/uapi/domestic-stock/v1/quotations/inquire-index-price'),
-        {
-          headers: getHeader(accessToken, 'FHPUP02100000'),
-          params: {
-            fid_cond_mrkt_div_code: 'U',
-            fid_input_iscd: code,
-          },
-        },
-      )
-      .catch(() => {
-        throw new InternalServerErrorException(
-          '주가 지수 값 정보를 조회하지 못했습니다.',
-        );
-      });
+  async getDomesticStockIndexValueByCode(code: string) {
+    try {
+      const queryParams = {
+        fid_cond_mrkt_div_code: 'U',
+        fid_input_iscd: code,
+      };
 
-    return response.data;
+      const result =
+        await this.koreaInvestmentService.requestApi<StockIndexValueInterface>(
+          'FHPUP02100000',
+          '/uapi/domestic-stock/v1/quotations/inquire-index-price',
+          queryParams,
+        );
+
+      const data = result.output;
+
+      return new StockIndexValueElementDto(
+        data.bstp_nmix_prpr,
+        data.bstp_nmix_prdy_vrss,
+        data.bstp_nmix_prdy_ctrt,
+        data.prdy_vrss_sign,
+      );
+    } catch (error) {
+      this.logger.error('API Error Details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.config?.headers, // 실제 요청 헤더
+        message: error.message,
+      });
+      throw error;
+    }
   }
 }

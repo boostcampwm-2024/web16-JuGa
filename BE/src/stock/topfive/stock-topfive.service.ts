@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { StockRankingQueryParameterDto } from './dto/stock-ranking-request.dto';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
@@ -8,8 +7,6 @@ import {
   StockApiOutputData,
   StockApiResponse,
 } from './interface/stock-topfive.interface';
-import { getHeader } from '../../util/get-header';
-import { getFullURL } from '../../util/get-full-URL';
 import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
 
 @Injectable()
@@ -19,38 +16,6 @@ export class StockTopfiveService {
   constructor(
     private readonly koreaInvestmentService: KoreaInvestmentService,
   ) {}
-
-  /**
-   * @private 한국투자 Open API - [국내주식] 순위 분석 - 국내주식 등락률 순위 호출 함수
-   * @param {StockRankingQueryParameterDto} queryParams - API 요청 시 필요한 쿼리 파라미터 DTO
-   * @returns - 국내주식 등락률 데이터
-   *
-   * @author uuuo3o
-   */
-  private async requestApi(queryParams: StockRankingQueryParameterDto) {
-    try {
-      const accessToken = await this.koreaInvestmentService.getAccessToken();
-      const headers = getHeader(accessToken, 'FHPST01700000');
-      const url = getFullURL('/uapi/domestic-stock/v1/ranking/fluctuation');
-      const params = this.getStockRankingParams(queryParams);
-
-      const response = await axios.get<StockApiResponse>(url, {
-        headers,
-        params,
-      });
-
-      return response.data;
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers,
-        message: error.message,
-      });
-      throw error;
-    }
-  }
 
   /**
    * 국내주식 등락률 데이터 중 필요한 시장 종류 데이터를 반환하는 함수
@@ -81,15 +46,25 @@ export class StockTopfiveService {
           break;
       }
 
-      const highResponse = await this.requestApi({
-        ...queryParams,
-        fid_rank_sort_cls_code: '0',
-      });
+      const highResponse =
+        await this.koreaInvestmentService.requestApi<StockApiResponse>(
+          'FHPST01700000',
+          '/uapi/domestic-stock/v1/ranking/fluctuation',
+          this.getStockRankingParams({
+            ...queryParams,
+            fid_rank_sort_cls_code: '0',
+          }),
+        );
 
-      const lowResponse = await this.requestApi({
-        ...queryParams,
-        fid_rank_sort_cls_code: '1',
-      });
+      const lowResponse =
+        await this.koreaInvestmentService.requestApi<StockApiResponse>(
+          'FHPST01700000',
+          '/uapi/domestic-stock/v1/ranking/fluctuation',
+          this.getStockRankingParams({
+            ...queryParams,
+            fid_rank_sort_cls_code: '1',
+          }),
+        );
 
       const response = new StockRankingResponseDto();
       response.high = this.formatStockData(highResponse.output);
