@@ -63,6 +63,11 @@ export class BaseSocketService implements OnModuleInit {
 
     this.socket.onclose = () => {
       this.logger.warn(`한국투자증권 소켓 연결 종료`);
+      setTimeout(() => {
+        this.onModuleInit().catch((err) => {
+          throw new InternalServerErrorException(err);
+        });
+      }, 60000);
     };
   }
 
