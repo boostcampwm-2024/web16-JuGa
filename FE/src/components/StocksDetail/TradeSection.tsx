@@ -3,11 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import emptyAnimation from 'assets/emptyAnimation.json';
 
 type TradeSectionProps = {
-  currPrice: string;
+  price: string;
 };
 
-export default function TradeSection({ currPrice }: TradeSectionProps) {
+export default function TradeSection({ price }: TradeSectionProps) {
   const [category, setCategory] = useState<'buy' | 'sell'>('buy');
+  const [currPrice, setCurrPrice] = useState<string>(price);
+  const [count, setCount] = useState<number>(0);
+
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -58,14 +61,23 @@ export default function TradeSection({ currPrice }: TradeSectionProps) {
             <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'>매수 가격</p>
               <input
-                type='number'
-                value={+currPrice}
+                type='text'
+                value={currPrice}
+                onChange={(e) => {
+                  if (!isNumericString(e.target.value)) return;
+                  setCurrPrice(e.target.value);
+                }}
                 className='flex-1 py-1 rounded-lg'
               />
             </div>
             <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'> 수량</p>
-              <input type='number' className='flex-1 py-1 rounded-lg' />
+              <input
+                type='number'
+                value={count}
+                onChange={(e) => setCount(+e.target.value)}
+                className='flex-1 py-1 rounded-lg'
+              />
             </div>
           </div>
 
@@ -78,7 +90,7 @@ export default function TradeSection({ currPrice }: TradeSectionProps) {
             </div>
             <div className='flex justify-between'>
               <p>총 주문 금액</p>
-              <p>0원</p>
+              <p>{(+currPrice * count).toLocaleString()}원</p>
             </div>
           </div>
 
@@ -93,4 +105,8 @@ export default function TradeSection({ currPrice }: TradeSectionProps) {
       )}
     </section>
   );
+}
+
+function isNumericString(str: string) {
+  return str.length === 0 || /^[0-9]+$/.test(str);
 }
