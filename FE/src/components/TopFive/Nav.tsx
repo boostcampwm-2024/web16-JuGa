@@ -43,7 +43,7 @@ export default function Nav() {
           key={market}
           ref={(el) => (buttonRefs.current[index] = el)}
           onClick={() => handleMarketChange(market)}
-          className={`relative px-2 py-2`}
+          className={'relative px-2 py-2'}
         >
           {market}
         </button>
