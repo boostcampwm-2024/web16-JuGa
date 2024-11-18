@@ -10,10 +10,8 @@ type ListProps = {
 
 export default function List({ listTitle, data, isLoading }: ListProps) {
   return (
-    <div className='w-[520px] rounded-lg bg-white px-2'>
-      <div className={'my-5 flex gap-1 px-1 text-xl font-bold'}>
-        {listTitle}
-      </div>
+    <div className='w-full px-1 bg-white rounded-lg'>
+      <div className={'my-5 flex text-xl font-bold'}>{listTitle}</div>
       <div className='flex flex-row items-center justify-between py-3 text-sm font-medium text-gray-600'>
         <div className='w-[200px] text-start'>종목</div>
         <div className='w-[140px] p-1 text-right'>현재가</div>
@@ -26,7 +24,10 @@ export default function List({ listTitle, data, isLoading }: ListProps) {
               <SkeletonCard key={`skeleton-${index}`} />
             ))
           : data.map((stock: StockData, index) => (
-              <li key={index} className='transition-colors hover:bg-gray-50'>
+              <li
+                key={`${stock.hts_kor_isnm}-${index}`}
+                className='transition-colors hover:bg-gray-50'
+              >
                 <Card
                   name={stock.hts_kor_isnm}
                   price={stock.stck_prpr}

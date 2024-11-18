@@ -5,7 +5,9 @@ export default function StockIndex() {
   const { data, isLoading } = useQuery({
     queryKey: ['StockIndex'],
     queryFn: () =>
-      fetch(import.meta.env.VITE_API_STOCk_INDEX).then((res) => res.json()),
+      fetch(`${import.meta.env.VITE_API_URL}/stocks/index`).then((res) =>
+        res.json(),
+      ),
   });
 
   if (isLoading) return;
@@ -13,7 +15,7 @@ export default function StockIndex() {
   const { KOSPI, KOSDAQ, KOSPI200, KSQ150 } = data;
 
   return (
-    <div className='flex w-full items-center gap-2'>
+    <div className='flex items-center justify-between w-full gap-2 my-2'>
       <Card name='코스피' id='KOSPI' initialData={KOSPI} />
       <Card name='코스닥' id='KOSDAQ' initialData={KOSDAQ} />
       <Card name='코스피200' id='KOSPI200' initialData={KOSPI200} />

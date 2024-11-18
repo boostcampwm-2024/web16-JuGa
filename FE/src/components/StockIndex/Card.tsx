@@ -4,7 +4,7 @@ import {
   StockIndexValue,
 } from 'components/TopFive/type';
 import { useEffect, useRef, useState } from 'react';
-import { socket } from 'socket';
+import { socket } from 'utils/socket.ts';
 import { drawChart } from 'utils/chart';
 
 // const X_LENGTH = 79;
@@ -30,7 +30,7 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
   });
 
   socket.on('chart', (chartData) => {
-    setPrices(chartData.id);
+    setPrices(chartData[id]);
   });
 
   useEffect(() => {
@@ -38,11 +38,11 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
     const ctx = canvas?.getContext('2d');
     if (!ctx) return;
 
-    drawChart(ctx, prices);
+    drawChart(ctx, prices, 79);
   }, [prices]);
 
   return (
-    <div className='flex h-[100px] w-[260px] items-center justify-between rounded-lg bg-juga-grayscale-50 p-3'>
+    <div className='flex h-[100px] w-full items-center justify-between rounded-lg bg-juga-grayscale-50 p-3'>
       <div className='flex h-full w-[108px] flex-1 flex-col items-start justify-center text-sm'>
         <p className='font-semibold'>{name}</p>
         <p className='text-lg font-bold'>{stockIndexValue.curr_value}</p>

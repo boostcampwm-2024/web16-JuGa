@@ -4,7 +4,7 @@ import { ChatBubbleOvalLeftIcon } from '@heroicons/react/16/solid';
 import { FormEvent, useEffect, useState } from 'react';
 import { login } from 'service/auth';
 import useAuthStore from 'store/authStore';
-import Overay from '../../utils/ModalOveray.tsx';
+import Overay from '../ModalOveray.tsx';
 
 export default function Login() {
   const { isOpen, toggleModal } = useLoginModalStore();
@@ -46,8 +46,8 @@ export default function Login() {
             }[errorCode]
           }
         </p>
-        <form className='mb-2 flex flex-col' onSubmit={handleSubmit}>
-          <div className='my-10 flex flex-col gap-2'>
+        <form className='flex flex-col mb-2' onSubmit={handleSubmit}>
+          <div className='flex flex-col gap-2 my-10'>
             <Input
               type='text'
               placeholder='아이디'
@@ -63,13 +63,15 @@ export default function Login() {
               autoComplete='current-password'
             />
           </div>
-          <button className='rounded-3xl bg-juga-blue-40 py-2 text-white transition hover:bg-juga-blue-50'>
+          <button className='py-2 text-white transition rounded-3xl bg-juga-blue-40 hover:bg-juga-blue-50'>
             로그인
           </button>
         </form>
         <button className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'>
           <ChatBubbleOvalLeftIcon className='size-5' />
-          <p>카카오 계정으로 로그인</p>
+          <a href={`${import.meta.env.VITE_API_URL}/auth/kakao`}>
+            카카오 계정으로 로그인
+          </a>
         </button>
       </section>
     </>

@@ -2,17 +2,20 @@ import { Link } from 'react-router-dom';
 import useAuthStore from 'store/authStore';
 import useLoginModalStore from 'store/useLoginModalStore';
 import useSearchModalStore from '../store/useSearchModalStore.ts';
+import useSearchInputStore from '../store/useSearchInputStore.ts';
+import logo from 'assets/Logo.png';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
   const { isLogin, resetToken } = useAuthStore();
   const { toggleSearchModal } = useSearchModalStore();
+  const { searchInput } = useSearchInputStore();
 
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full'>
-      <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-[88px]'>
+      <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
         <Link to={'/'} className='flex items-center gap-2'>
-          <img src={'/Logo.png'} className={'h-[32px]'} />
+          <img src={logo} className={'h-[32px]'} />
           <h1 className='text-xl font-bold text-juga-grayscale-black'>JuGa</h1>
         </Link>
 
@@ -26,6 +29,7 @@ export default function Header() {
             <input
               type='text'
               placeholder='Search...'
+              defaultValue={searchInput}
               className='h-[36px] w-[280px] rounded-lg bg-juga-grayscale-50 px-4 py-2'
               onClick={toggleSearchModal}
             />
