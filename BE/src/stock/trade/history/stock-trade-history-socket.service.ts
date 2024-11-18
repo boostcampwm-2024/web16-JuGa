@@ -1,6 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+} from '@nestjs/common';
 import { SocketGateway } from '../../../websocket/socket.gateway';
-import { BaseSocketService } from '../../../websocket/base-socket.service';
+import { WebSocket } from 'ws';
+import axios from 'axios';
+import { SocketConnectTokenInterface } from '../../../websocket/interface/socket.interface';
 
 interface TradeHistoryData {
   stck_prpr: string; // 체결가(주식 현재가)
@@ -10,56 +16,115 @@ interface TradeHistoryData {
 }
 
 @Injectable()
-export class StockTradeHistorySocketService {
+export class StockTradeHistorySocketService implements OnModuleInit {
   private TR_ID = 'H0STCNT0';
   private readonly logger = new Logger('StockTradeHistorySocketService');
   private subscribedStocks = new Set<string>();
+  private socket: WebSocket;
+  private socketConnectionKey: string;
 
-  constructor(
-    private readonly socketGateway: SocketGateway,
-    private readonly baseSocketService: BaseSocketService,
-  ) {
-    baseSocketService.registerSocketOpenHandler(() => {
-      this.logger.debug('trade-history 소켓 연결 성공');
-      this.subscribedStocks.forEach((stockCode) => {
-        this.baseSocketService.registerCode(this.TR_ID, stockCode);
-      });
-    });
+  constructor(private readonly socketGateway: SocketGateway) {}
 
-    baseSocketService.registerSocketDataHandler(
-      this.TR_ID,
-      (dataList: string[]) => {
-        try {
-          const stockCode = dataList[0];
+  async onModuleInit() {
+    this.socketConnectionKey = await this.getSocketConnectionKey();
+    this.socket = new WebSocket(process.env.KOREA_INVESTMENT_TEST_SOCKET_URL);
 
-          const tradeData: TradeHistoryData = {
-            stck_prpr: dataList[2],
-            cntg_vol: dataList[12],
-            prdy_ctrt: dataList[5],
-            stck_cntg_hour: dataList[1],
-          };
+    this.socket.onopen = () => {
+      this.registerCode(this.TR_ID, '005930');
+    };
 
-          const eventName = `trade-history/${stockCode}`;
-          this.logger.debug(`Emitting trade data for ${stockCode}`);
-          this.socketGateway.sendStockTradeHistoryValueToClient(
-            eventName,
-            tradeData,
+    this.socket.onmessage = (event) => {
+      const data =
+        typeof event.data === 'string'
+          ? event.data.split('|')
+          : JSON.stringify(event.data);
+
+      if (data.length < 2) {
+        const json = JSON.parse(data[0]);
+        if (json.body)
+          this.logger.log(
+            `한국투자증권 웹소켓 연결: ${json.body.msg1}`,
+            json.header.tr_id,
           );
-        } catch (error) {
-          this.logger.error('Error processing trade data:', error);
-          this.logger.error('Raw data was:', dataList);
-        }
-      },
+        if (json.header.tr_id === 'PINGPONG')
+          this.socket.pong(JSON.stringify(json));
+        return;
+      }
+
+      const dataList = data[3].split('^');
+
+      if (Number(dataList[1]) % 500 === 0)
+        this.logger.log(`한국투자증권 데이터 수신 성공 (5분 단위)`, data[1]);
+
+      console.log(dataList);
+    };
+
+    this.socket.onclose = () => {
+      this.logger.warn(`한국투자증권 소켓 연결 종료`);
+    };
+  }
+
+  registerCode(trId: string, trKey: string) {
+    this.socket.send(
+      JSON.stringify({
+        header: {
+          approval_key: this.socketConnectionKey,
+          custtype: 'P',
+          tr_type: '1',
+          'content-type': 'utf-8',
+        },
+        body: {
+          input: {
+            tr_id: trId,
+            tr_key: trKey,
+          },
+        },
+      }),
+    );
+  }
+
+  unregisterCode(trId: string, trKey: string) {
+    this.socket.send(
+      JSON.stringify({
+        header: {
+          approval_key: this.socketConnectionKey,
+          custtype: 'P',
+          tr_type: '2',
+          'content-type': 'utf-8',
+        },
+        body: {
+          input: {
+            tr_id: trId,
+            tr_key: trKey,
+          },
+        },
+      }),
     );
   }
 
   subscribeByCode(stockCode: string) {
-    this.baseSocketService.registerCode(this.TR_ID, stockCode);
     this.subscribedStocks.add(stockCode);
   }
 
   unsubscribeByCode(stockCode: string) {
-    this.baseSocketService.unregisterCode(this.TR_ID, stockCode);
     this.subscribedStocks.delete(stockCode);
+  }
+
+  async getSocketConnectionKey() {
+    if (this.socketConnectionKey) {
+      return this.socketConnectionKey;
+    }
+
+    const response = await axios.post<SocketConnectTokenInterface>(
+      'https://openapivts.koreainvestment.com:29443/oauth2/Approval',
+      {
+        grant_type: 'client_credentials',
+        appkey: process.env.KOREA_INVESTMENT_TEST_APP_KEY,
+        secretkey: process.env.KOREA_INVESTMENT_TEST_APP_SECRET,
+      },
+    );
+
+    this.socketConnectionKey = response.data.approval_key;
+    return this.socketConnectionKey;
   }
 }
