@@ -280,11 +280,9 @@ export const drawUpperYLabel = (
 
 export const drawLowerYLabel = (
   ctx: CanvasRenderingContext2D,
-  data: StockChartUnit[],
   width: number,
   height: number,
   padding: Padding,
-  weight: number = 0,
 ) => {
   ctx.clearRect(
     0,

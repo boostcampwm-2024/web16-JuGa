@@ -151,11 +151,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     drawLowerYLabel(
       LowerYCtx,
-      data,
       lowerChartYCanvas.width - padding.left - padding.right,
       lowerChartYCanvas.height - padding.top - padding.bottom,
       padding,
-      0.1,
     );
   }, [timeCategory, data, isLoading]);
 
