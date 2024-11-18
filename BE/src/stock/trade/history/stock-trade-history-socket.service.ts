@@ -1,37 +1,26 @@
-import {
-  Injectable,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
-import { SocketGateway } from '../../../websocket/socket.gateway';
 import { WebSocket } from 'ws';
 import axios from 'axios';
+import { Observable, Subject } from 'rxjs';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { SseEvent } from './interface/sse-event';
 import { SocketConnectTokenInterface } from '../../../websocket/interface/socket.interface';
-
-interface TradeHistoryData {
-  stck_prpr: string; // 체결가(주식 현재가)
-  cntg_vol: string; // 체결 거래량
-  prdy_ctrt: string; // 전일 대비율
-  stck_cntg_hour: string; // 주식 체결 시간
-}
+import { getFullTestURL } from '../../../util/get-full-URL';
+import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
 
 @Injectable()
 export class StockTradeHistorySocketService implements OnModuleInit {
-  private TR_ID = 'H0STCNT0';
-  private readonly logger = new Logger('StockTradeHistorySocketService');
-  private subscribedStocks = new Set<string>();
+  private readonly logger = new Logger('');
   private socket: WebSocket;
   private socketConnectionKey: string;
-
-  constructor(private readonly socketGateway: SocketGateway) {}
+  private subscribedStocks = new Set<string>();
+  private TR_ID = 'H0STCNT0';
+  private eventSubject = new Subject<SseEvent>();
 
   async onModuleInit() {
     this.socketConnectionKey = await this.getSocketConnectionKey();
     this.socket = new WebSocket(process.env.KOREA_INVESTMENT_TEST_SOCKET_URL);
 
-    this.socket.onopen = () => {
-      this.registerCode(this.TR_ID, '005930');
-    };
+    this.socket.onopen = () => {};
 
     this.socket.onmessage = (event) => {
       const data =
@@ -53,15 +42,39 @@ export class StockTradeHistorySocketService implements OnModuleInit {
 
       const dataList = data[3].split('^');
 
-      if (Number(dataList[1]) % 500 === 0)
-        this.logger.log(`한국투자증권 데이터 수신 성공 (5분 단위)`, data[1]);
+      const tradeData: TodayStockTradeHistoryDataDto = {
+        stck_cntg_hour: dataList[1],
+        stck_prpr: dataList[2],
+        prdy_vrss_sign: dataList[3],
+        cntg_vol: dataList[12],
+        prdy_ctrt: dataList[5],
+      };
 
-      console.log(dataList);
+      this.eventSubject.next({
+        data: JSON.stringify({
+          stockCode: data[1],
+          tradeData,
+        }),
+      });
     };
 
     this.socket.onclose = () => {
       this.logger.warn(`한국투자증권 소켓 연결 종료`);
     };
+  }
+
+  getTradeDataStream(): Observable<SseEvent> {
+    return this.eventSubject.asObservable();
+  }
+
+  subscribeByCode(stockCode: string) {
+    this.registerCode(this.TR_ID, stockCode);
+    this.subscribedStocks.add(stockCode);
+  }
+
+  unsubscribeByCode(stockCode: string) {
+    this.unregisterCode(this.TR_ID, stockCode);
+    this.subscribedStocks.delete(stockCode);
   }
 
   registerCode(trId: string, trKey: string) {
@@ -102,21 +115,13 @@ export class StockTradeHistorySocketService implements OnModuleInit {
     );
   }
 
-  subscribeByCode(stockCode: string) {
-    this.subscribedStocks.add(stockCode);
-  }
-
-  unsubscribeByCode(stockCode: string) {
-    this.subscribedStocks.delete(stockCode);
-  }
-
   async getSocketConnectionKey() {
     if (this.socketConnectionKey) {
       return this.socketConnectionKey;
     }
 
     const response = await axios.post<SocketConnectTokenInterface>(
-      'https://openapivts.koreainvestment.com:29443/oauth2/Approval',
+      getFullTestURL('/oauth2/Approval'),
       {
         grant_type: 'client_credentials',
         appkey: process.env.KOREA_INVESTMENT_TEST_APP_KEY,
