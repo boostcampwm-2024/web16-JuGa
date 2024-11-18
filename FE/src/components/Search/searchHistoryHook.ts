@@ -17,7 +17,9 @@ export function useSearchHistory() {
     if (!keyword.trim()) return;
 
     setSearchHistory((prev) => {
-      const filteredHistory = prev.filter((item) => item.text !== keyword);
+      const filteredHistory = prev.filter(
+        (item) => item.text.trim() !== keyword.trim(),
+      );
       const newItem: HistoryType = {
         id: `${keyword}-${Date.now()}`,
         text: keyword,
