@@ -32,7 +32,7 @@ jobs:
       - name: Create .env file
         run: |
           touch ./${{ matrix.app.dir }}/.env
-          echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
+          echo "${{ secrets.ENV_ALPHA }}" > ./${{matrix.app.dir}}/.env
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
@@ -101,7 +101,7 @@ jobs:
           port: 22
           script: |
             docker system prune -af
-            echo "${{ secrets.ENV }}" > .env
+            echo "${{ secrets.ENV_ALPHA }}" > .env
 
             docker network create juga-network || true
 
