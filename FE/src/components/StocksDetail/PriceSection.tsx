@@ -3,10 +3,10 @@ import PriceTableColumn from './PriceTableColumn.tsx';
 import PriceTableLiveCard from './PriceTableLiveCard.tsx';
 import PriceTableDayCard from './PriceTableDayCard.tsx';
 import { useParams } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
 import { getTradeHistory } from 'service/getTradeHistory.ts';
-import { createSSEConnection } from './PriceSectionSseHook.ts';
+// import { createSSEConnection } from './PriceSectionSseHook.ts';
 
 export default function PriceSection() {
   const [buttonFlag, setButtonFlag] = useState(true);
@@ -35,10 +35,10 @@ export default function PriceSection() {
   // };
 
   // useEffect(() => {
-  //   if (!buttonFlag) return;
+  //   const targetWord = buttonFlag ? 'today' : 'daily';
   //
   //   const eventSource = createSSEConnection(
-  //     `http://223.130.151.42:3000/api/stocks/trade-history/${id}/today-sse`,
+  //     `http://223.130.151.42:3000/api/stocks/trade-history/${id}/${targetWord}-sse`,
   //     addData,
   //   );
   //
