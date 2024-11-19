@@ -32,10 +32,9 @@ export default function PriceSection() {
   };
 
   useEffect(() => {
-    const targetWord = buttonFlag ? 'today' : 'daily';
-
+    if (!buttonFlag) return;
     const eventSource = createSSEConnection(
-      `http://223.130.151.42:3000/api/stocks/trade-history/${id}/${targetWord}-sse`,
+      `http://223.130.151.42:3000/api/stocks/trade-history/${id}/today-sse`,
       addData,
     );
 
