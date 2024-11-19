@@ -58,9 +58,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     const displayHeight = parent.clientHeight;
 
     const upperHeight = displayHeight * 0.5;
-    const lowerHeight = displayHeight * 0.3;
-    const chartWidth = displayWidth * 0.9;
-    const yAxisWidth = displayWidth * 0.1;
+    const lowerHeight = displayHeight * 0.25;
+    const chartWidth = displayWidth * 0.92;
+    const yAxisWidth = displayWidth * 0.08;
 
     // 차트 영역 설정
     upperChartCanvas.width = chartWidth * 2;
@@ -133,10 +133,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     drawBarChart(
       LowerChartCtx,
       data,
-      0,
-      0,
       lowerChartWidth,
-      lowerChartHeight - padding.bottom,
+      lowerChartHeight - padding.top - padding.bottom,
       padding,
     );
 
@@ -151,6 +149,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     drawLowerYLabel(
       LowerYCtx,
+      data,
       lowerChartYCanvas.width - padding.left - padding.right,
       lowerChartYCanvas.height - padding.top - padding.bottom,
       padding,
@@ -158,8 +157,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   }, [timeCategory, data, isLoading]);
 
   return (
-    <div className='flex h-[260px] flex-1 flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'>
-      <div className='flex w-full items-center justify-between'>
+    <div className='flex h-[260px] flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'>
+      <div className='flex h-fit w-full items-center justify-between'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
           {categories.map(({ label, value }) => (
@@ -176,16 +175,16 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       <div ref={containerRef} className='mt-2 flex h-full w-full flex-col'>
         {/* Upper 차트 영역 */}
         <div className='flex h-1/2 w-full flex-row items-center'>
-          <canvas ref={upperChartCanvasRef} className='h-full w-[90%]' />
-          <canvas ref={upperChartY} className='h-full w-[10%]' />
+          <canvas ref={upperChartCanvasRef} className='h-full w-[92%]' />
+          <canvas ref={upperChartY} className='h-full w-[8%]' />
         </div>
         {/* Lower 차트 영역 */}
-        <div className='flex h-[30%] w-full flex-row'>
-          <canvas ref={lowerChartCanvasRef} className='h-full w-[90%]' />
-          <canvas ref={lowerChartY} className='h-full w-[10%]' />
+        <div className='flex h-[25%] w-full flex-row'>
+          <canvas ref={lowerChartCanvasRef} className='h-full w-[92%]' />
+          <canvas ref={lowerChartY} className='h-full w-[8%]' />
         </div>
         {/* X축 영역 */}
-        <div className='flex h-[20%] w-[90%] flex-row'>
+        <div className='flex h-[10%] w-full flex-row'>
           <canvas ref={chartX} className='h-full w-full' />
         </div>
       </div>

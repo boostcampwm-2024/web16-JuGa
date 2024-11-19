@@ -37,16 +37,12 @@ export function drawLineChart(
 export function drawBarChart(
   ctx: CanvasRenderingContext2D,
   data: StockChartUnit[],
-  x: number,
-  y: number,
   width: number,
   height: number,
   padding: Padding,
 ) {
   if (data.length === 0) return;
-  const n = data.length;
 
-  // 캔버스 초기화
   ctx.clearRect(
     0,
     0,
@@ -54,29 +50,45 @@ export function drawBarChart(
     height + padding.top + padding.bottom,
   );
 
-  const yMax = Math.round(Math.max(...data.map((d) => +d.acml_vol)) * 1.2);
-  const yMin = Math.round(Math.min(...data.map((d) => +d.acml_vol)) * 0.8);
+  const volumes = data.map((d) => +d.acml_vol);
+  const yMax = Math.round(Math.max(...volumes) * 1.2);
+  const yMin = Math.round(Math.min(...volumes) * 0.8);
+  const barWidth = Math.floor(width / data.length);
 
-  const gap = Math.floor(width / n);
-
-  const blue = '#2175F3';
-  const red = '#FF3700';
+  const labels = makeYLabels(yMax, yMin, 2);
 
   ctx.beginPath();
-  ctx.moveTo(padding.left, height + 4);
-  ctx.lineTo(width + padding.left + padding.right, height + 4);
+
+  labels.forEach((label) => {
+    const valueRatio = (label - yMin) / (yMax - yMin);
+    const yPos = height - valueRatio * height;
+
+    ctx.moveTo(0, yPos + padding.top);
+    ctx.lineTo(width + padding.left + padding.right, yPos + padding.top);
+  });
+
+  ctx.moveTo(0, height + padding.top);
+  ctx.lineTo(width + padding.left + padding.right, height + padding.top);
   ctx.strokeStyle = '#D2DAE0';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  data.forEach((e, i) => {
-    ctx.beginPath();
-    const cx = x + padding.left + (width * i) / (n - 1);
-    const cy =
-      padding.top + ((height - y) * (+e.acml_vol - yMin)) / (yMax - yMin);
+  data.forEach((item, i) => {
+    const value = +item.acml_vol;
+    const valueRatio = (value - yMin) / (yMax - yMin);
 
-    ctx.fillStyle = +e.stck_oprc < +e.stck_clpr ? red : blue;
-    ctx.fillRect(cx, height, gap, -cy);
+    const barX = padding.left + (width * i) / (data.length - 1);
+    const barHeight = valueRatio * height;
+
+    ctx.beginPath();
+    ctx.fillStyle = +item.stck_oprc < +item.stck_clpr ? '#FF3700' : '#2175F3';
+
+    ctx.fillRect(
+      barX,
+      height + padding.top,
+      barWidth,
+      -(barHeight + padding.bottom),
+    );
   });
 }
 
@@ -100,7 +112,7 @@ export function drawCandleChart(
   const yMax = Math.round(Math.max(...values) * (1 + weight));
   const yMin = Math.round(Math.min(...values) * (1 - weight));
 
-  const labels = makeYLabels(yMax, yMin);
+  const labels = makeYLabels(yMax, yMin, 3);
 
   ctx.beginPath();
   labels.forEach((label) => {
@@ -259,7 +271,7 @@ export const drawUpperYLabel = (
     height + padding.top + padding.bottom,
   );
 
-  const labels = makeYLabels(yMax, yMin);
+  const labels = makeYLabels(yMax, yMin, 3);
 
   ctx.font = '24px sans-serif';
   ctx.fillStyle = '#000';
@@ -286,6 +298,7 @@ export const drawUpperYLabel = (
 
 export const drawLowerYLabel = (
   ctx: CanvasRenderingContext2D,
+  data: StockChartUnit[],
   width: number,
   height: number,
   padding: Padding,
@@ -297,24 +310,44 @@ export const drawLowerYLabel = (
     height + padding.top + padding.bottom,
   );
 
-  // Y축 선 그리기
   ctx.beginPath();
   ctx.moveTo(padding.left, 0);
-  ctx.lineTo(padding.left, height + padding.top + 4);
+  ctx.lineTo(padding.left, height + padding.top);
   ctx.strokeStyle = '#D2DAE0';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // X축 선 그리기 (바닥 선)
   ctx.beginPath();
-  ctx.moveTo(0, height + padding.top + 4);
-  ctx.lineTo(padding.left, height + padding.top + 4);
+  ctx.moveTo(0, height + padding.top);
+  ctx.lineTo(padding.left, height + padding.top);
+  ctx.stroke();
+
+  const yMax = Math.round(Math.max(...data.map((d) => +d.acml_vol)) * 1.2);
+  const yMin = Math.round(Math.min(...data.map((d) => +d.acml_vol)) * 0.8);
+
+  const labels = makeYLabels(yMax, yMin, 2);
+  ctx.font = '24px sans-serif';
+  ctx.fillStyle = '#000';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+
+  ctx.beginPath();
+  labels.forEach((label) => {
+    const valueRatio = (label - yMin) / (yMax - yMin);
+    const yPos = height - valueRatio * height;
+    const formattedValue = formatNumber(label);
+    ctx.moveTo(0, yPos + padding.top);
+    ctx.lineTo(padding.left, yPos + padding.top);
+    ctx.fillText(formattedValue, width / 2, yPos + padding.top);
+  });
+  ctx.strokeStyle = '#D2DAE0';
+  ctx.lineWidth = 2;
   ctx.stroke();
 };
 
-const makeYLabels = (yMax: number, yMin: number) => {
+const makeYLabels = (yMax: number, yMin: number, divideNumber: number) => {
   const labels = [];
-  const rawTickInterval = Math.ceil((yMax - yMin) / 3);
+  const rawTickInterval = Math.ceil((yMax - yMin) / divideNumber);
   const magnitude = 10 ** (String(rawTickInterval).length - 1);
   const tickInterval = Math.floor(rawTickInterval / magnitude) * magnitude;
   const startValue = Math.ceil(yMin / tickInterval) * tickInterval;
@@ -324,4 +357,34 @@ const makeYLabels = (yMax: number, yMin: number) => {
   }
 
   return labels;
+};
+
+const formatNumber = (value: number) => {
+  const absValue = Math.abs(value);
+
+  if (absValue >= 1_000_000_000) {
+    const inBillions = value / 1_000_000_000;
+    const rounded = Math.round(inBillions * 10) / 10;
+    return rounded % 1 === 0
+      ? `${rounded.toFixed(0)}B`
+      : `${rounded.toFixed(1)}B`;
+  }
+
+  if (absValue >= 1_000_000) {
+    const inMillions = value / 1_000_000;
+    const rounded = Math.round(inMillions * 10) / 10;
+    return rounded % 1 === 0
+      ? `${rounded.toFixed(0)}M`
+      : `${rounded.toFixed(1)}M`;
+  }
+
+  if (absValue >= 1_000) {
+    const inThousands = value / 1_000;
+    const rounded = Math.round(inThousands * 10) / 10;
+    return rounded % 1 === 0
+      ? `${rounded.toFixed(0)}K`
+      : `${rounded.toFixed(1)}K`;
+  }
+
+  return value.toString();
 };
