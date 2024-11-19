@@ -18,8 +18,8 @@ export class Ranking extends BaseEntity {
   user: User;
 
   @Column()
-  profit: number;
+  profitRate: number;
 
   @Column()
-  profitRate: number;
+  asset: number;
 }

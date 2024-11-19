@@ -18,7 +18,7 @@ export class RankingRepository extends Repository<Ranking> {
         'user.email',
       ])
       .leftJoin('ranking.user', 'user')
-      .orderBy('ranking.profit', 'DESC')
+      .orderBy('ranking.profitRate', 'DESC')
       .getMany();
     return ranking;
   }
@@ -27,13 +27,17 @@ export class RankingRepository extends Repository<Ranking> {
     this.createQueryBuilder().delete().from(Ranking).execute;
   }
 
-  async setRanking(userId: number, profit: number, profitRate: number) {
-    const ranking = this.create({
-      user: { id: userId },
-      profit,
-      profitRate,
-    });
+  async setRanking(
+    rankingData: { userId: number; profit: number; profitRate: number }[],
+  ) {
+    const rankings = this.create(
+      rankingData.map((data) => ({
+        user: { id: data.userId },
+        profit: data.profit,
+        profitRate: data.profitRate,
+      })),
+    );
 
-    return await this.save(ranking);
+    return await this.save(rankings);
   }
 }

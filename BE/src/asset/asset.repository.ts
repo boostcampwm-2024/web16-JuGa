@@ -8,4 +8,8 @@ export class AssetRepository extends Repository<Asset> {
   constructor(@InjectDataSource() dataSource: DataSource) {
     super(Asset, dataSource.createEntityManager());
   }
+
+  async getAssets() {
+    return await this.find();
+  }
 }
