@@ -47,7 +47,7 @@ export class AuthController {
   @Get('/test')
   @UseGuards(AuthGuard('jwt'))
   test(@Req() req: Request) {
-    return req;
+    return 'test';
   }
 
   @ApiOperation({ summary: 'Kakao 로그인 API' })

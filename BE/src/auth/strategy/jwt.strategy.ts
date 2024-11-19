@@ -5,6 +5,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../user.repository';
 import { User } from '../user.entity';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       secretOrKey: configService.get<string>('JWT_SECRET'),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: extractJWTFromCookie,
     });
   }
 
@@ -30,4 +31,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       kakaoId: user.kakaoId,
     };
   }
+}
+
+function extractJWTFromCookie(req: Request): string | null {
+  if (req.cookies && 'accessToken' in req.cookies) {
+    return req.cookies['accessToken'];
+  }
+  return null;
 }
