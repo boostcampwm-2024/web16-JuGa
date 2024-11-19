@@ -4,7 +4,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Order } from './stock-order.entity';
 import { StatusType } from './enum/status-type';
 import { Asset } from '../../asset/asset.entity';
-import { UserStock } from '../../userStock/user-stock.entity';
+import { UserStock } from '../../asset/user-stock.entity';
 
 @Injectable()
 export class StockOrderRepository extends Repository<Order> {

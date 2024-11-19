@@ -10,7 +10,7 @@ import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
 import { StockOrderSocketService } from './stock-order-socket.service';
-import { UserStockRepository } from '../../userStock/user-stock.repository';
+import { UserStockRepository } from '../../asset/user-stock.repository';
 import { AssetRepository } from '../../asset/asset.repository';
 
 @Injectable()
