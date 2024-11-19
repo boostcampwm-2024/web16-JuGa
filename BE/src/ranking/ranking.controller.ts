@@ -1,9 +1,10 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { OptionalAuthGuard } from 'src/auth/optional-auth-guard';
 import { RankingService } from './ranking.service';
 import { RankingResponseDto } from './dto/ranking-response.dto';
+import { SortType } from './enum/sort-type.enum';
 
 @Controller('/api/ranking')
 @ApiTags('랭킹 API')
@@ -18,12 +19,21 @@ export class RankingController {
   })
   @Get()
   @UseGuards(OptionalAuthGuard)
-  async getRanking(@Req() req: Request) {
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    description: 'profitRate: 수익률순, asset: 자산순',
+    enum: ['profitRate', 'asset'],
+  })
+  async getRanking(
+    @Req() req: Request,
+    @Query('sortBy') sortBy: SortType = SortType.PROFIT_RATE,
+  ): Promise<RankingResponseDto> {
     if (!req.user) {
-      return this.rankingService.getRanking();
+      return this.rankingService.getRanking(sortBy);
     }
 
     const { email } = req.user;
-    return this.rankingService.getRankingAuthUser(email);
+    return this.rankingService.getRankingAuthUser(email, sortBy);
   }
 }

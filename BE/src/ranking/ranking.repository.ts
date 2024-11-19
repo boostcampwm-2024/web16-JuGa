@@ -9,16 +9,16 @@ export class RankingRepository extends Repository<Ranking> {
     super(Ranking, dataSource.createEntityManager());
   }
 
-  async getRanking(): Promise<Ranking[]> {
+  async getRanking(sortBy): Promise<Ranking[]> {
     const ranking = await this.createQueryBuilder('ranking')
       .select([
         'ranking.id',
-        'ranking.profit',
+        'ranking.totalAsset',
         'ranking.profitRate',
         'user.email',
       ])
       .leftJoin('ranking.user', 'user')
-      .orderBy('ranking.profitRate', 'DESC')
+      .orderBy(`ranking.${sortBy}`, 'DESC')
       .getMany();
     return ranking;
   }

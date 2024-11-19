@@ -3,6 +3,8 @@ import { RedisDomainService } from 'src/common/redis/redis.domain-service';
 import { AssetRepository } from 'src/asset/asset.repository';
 import { Cron } from '@nestjs/schedule';
 import { RankingRepository } from './ranking.repository';
+import { SortType } from './enum/sort-type.enum';
+import { Ranking } from './ranking.entity';
 
 @Injectable()
 export class RankingService {
@@ -12,44 +14,44 @@ export class RankingService {
     private readonly redisDomainService: RedisDomainService,
   ) {}
 
-  async getRanking() {
+  async getRanking(sortBy: SortType = SortType.PROFIT_RATE) {
     const date = new Date().toISOString().slice(0, 10);
     const key = `ranking:${date}`;
 
-    if (await this.redisDomainService.exists(key)) {
-      return this.redisDomainService.zrevrange(key, 0, 9);
-    }
-
-    const ranking = await this.rankingRepository.getRanking();
+    const ranking = await this.rankingRepository.getRanking(sortBy);
 
     await Promise.all(
       ranking.map((rank) =>
-        this.redisDomainService.zadd(key, rank.profitRate, rank.user.email),
+        this.redisDomainService.zadd(
+          key,
+          this.getSortScore(rank, sortBy),
+          rank.user.email,
+        ),
       ),
     );
 
     return {
       topRank: await this.redisDomainService.zrevrange(key, 0, 9),
+      userRank: null,
     };
   }
 
-  async getRankingAuthUser(email: string) {
+  async getRankingAuthUser(
+    email: string,
+    sortBy: SortType = SortType.PROFIT_RATE,
+  ) {
     const date = new Date().toISOString().slice(0, 10);
     const key = `ranking:${date}`;
 
-    if (await this.redisDomainService.exists(key)) {
-      const userRank = await this.redisDomainService.zrevrank(key, email);
-      return {
-        topRank: await this.redisDomainService.zrevrange(key, 0, 9),
-        userRank: userRank !== null ? userRank + 1 : null,
-      };
-    }
-
-    const ranking = await this.rankingRepository.getRanking();
+    const ranking = await this.rankingRepository.getRanking(sortBy);
 
     await Promise.all(
       ranking.map((rank) =>
-        this.redisDomainService.zadd(key, rank.profitRate, rank.user.email),
+        this.redisDomainService.zadd(
+          key,
+          this.getSortScore(rank, sortBy),
+          rank.user.email,
+        ),
       ),
     );
 
@@ -74,5 +76,16 @@ export class RankingService {
 
     await this.rankingRepository.clearRanking();
     await this.rankingRepository.setRanking(ranking);
+  }
+
+  private getSortScore(rank: Ranking, sortBy: SortType) {
+    switch (sortBy) {
+      case SortType.PROFIT_RATE:
+        return rank.profitRate;
+      case SortType.ASSET:
+        return rank.totalAsset;
+      default:
+        return rank.profitRate;
+    }
   }
 }

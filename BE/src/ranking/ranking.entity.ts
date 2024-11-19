@@ -21,5 +21,5 @@ export class Ranking extends BaseEntity {
   profitRate: number;
 
   @Column()
-  asset: number;
+  totalAsset: number;
 }
