@@ -43,13 +43,6 @@ export class AuthController {
     return res.status(200).json({ accessToken });
   }
 
-  @ApiOperation({ summary: 'Token 인증 테스트 API' })
-  @Get('/test')
-  @UseGuards(AuthGuard('jwt'))
-  test(@Req() req: Request) {
-    return 'test';
-  }
-
   @ApiOperation({ summary: 'Kakao 로그인 API' })
   @Get('/kakao')
   @UseGuards(AuthGuard('kakao'))

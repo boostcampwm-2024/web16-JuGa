@@ -1,11 +1,25 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 import { UserRepository } from '../user.repository';
 import { User } from '../user.entity';
-import { Request } from 'express';
+
+interface RequestWithCookies extends Request {
+  cookies: {
+    accessToken?: string;
+    [key: string]: string | undefined;
+  };
+}
+
+function extractJWTFromCookie(req: RequestWithCookies): string | null {
+  if (req.cookies && 'accessToken' in req.cookies) {
+    return req.cookies.accessToken;
+  }
+  return null;
+}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,7 +33,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload) {
+  async validate(payload: { email: string }): Promise<{
+    userId: number;
+    email: string;
+    tutorial: boolean;
+    kakaoId: string | null;
+  }> {
     const { email } = payload;
     const user: User = await this.userRepository.findOne({ where: { email } });
     if (!user) throw new UnauthorizedException();
@@ -31,11 +50,4 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       kakaoId: user.kakaoId,
     };
   }
-}
-
-function extractJWTFromCookie(req: Request): string | null {
-  if (req.cookies && 'accessToken' in req.cookies) {
-    return req.cookies['accessToken'];
-  }
-  return null;
 }
