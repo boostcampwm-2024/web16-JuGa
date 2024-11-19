@@ -24,4 +24,10 @@ export class InquirePriceResponseDto {
 
   @ApiProperty({ description: 'PER' })
   per: string;
+
+  @ApiProperty({ description: '주식 상한가' })
+  stck_mxpr: string;
+
+  @ApiProperty({ description: '주식 하한가' })
+  stck_llam: string;
 }

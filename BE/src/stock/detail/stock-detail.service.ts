@@ -61,6 +61,8 @@ export class StockDetailService {
       prdy_ctrt: stock.prdy_ctrt,
       hts_avls: stock.hts_avls,
       per: stock.per,
+      stck_mxpr: stock.stck_mxpr,
+      stck_llam: stock.stck_llam,
     };
   }
 
