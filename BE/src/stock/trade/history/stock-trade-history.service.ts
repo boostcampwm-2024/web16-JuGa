@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { KoreaInvestmentDomainService } from '../../../common/koreaInvestment/korea-investment.domain-service';
 import { InquireCCNLApiResponse } from './interface/Inquire-ccnl.interface';
 import { TodayStockTradeHistoryOutputDto } from './dto/today-stock-trade-history-output.dto';
@@ -9,8 +9,6 @@ import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-d
 
 @Injectable()
 export class StockTradeHistoryService {
-  private readonly logger = new Logger();
-
   constructor(
     private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
   ) {}
@@ -23,30 +21,19 @@ export class StockTradeHistoryService {
    * @author uuuo3o
    */
   async getTodayStockTradeHistory(stockCode: string) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+    };
 
-      const response =
-        await this.koreaInvestmentDomainService.requestApi<InquireCCNLApiResponse>(
-          'FHKST01010300',
-          '/uapi/domestic-stock/v1/quotations/inquire-ccnl',
-          queryParams,
-        );
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquireCCNLApiResponse>(
+        'FHKST01010300',
+        '/uapi/domestic-stock/v1/quotations/inquire-ccnl',
+        queryParams,
+      );
 
-      return this.formatTodayStockTradeHistoryData(response.output);
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    return this.formatTodayStockTradeHistoryData(response.output);
   }
 
   /**
@@ -79,32 +66,21 @@ export class StockTradeHistoryService {
    * @author uuuo3o
    */
   async getDailyStockTradeHistory(stockCode: string) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-        fid_period_div_code: 'D',
-        fid_org_adj_prc: '0',
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+      fid_period_div_code: 'D',
+      fid_org_adj_prc: '0',
+    };
 
-      const response =
-        await this.koreaInvestmentDomainService.requestApi<InquireDailyPriceApiResponse>(
-          'FHKST01010400',
-          '/uapi/domestic-stock/v1/quotations/inquire-daily-price',
-          queryParams,
-        );
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquireDailyPriceApiResponse>(
+        'FHKST01010400',
+        '/uapi/domestic-stock/v1/quotations/inquire-daily-price',
+        queryParams,
+      );
 
-      return this.formatDailyStockTradeHistoryData(response.output);
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    return this.formatDailyStockTradeHistoryData(response.output);
   }
 
   /**

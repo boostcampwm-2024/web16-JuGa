@@ -25,62 +25,51 @@ export class StockTopfiveService {
    * @author uuuo3o
    */
   async getMarketRanking(marketType: MarketType) {
-    try {
-      const queryParams = new StockRankingQueryParameterDto();
-      queryParams.fid_cond_mrkt_div_code = 'J';
+    const queryParams = new StockRankingQueryParameterDto();
+    queryParams.fid_cond_mrkt_div_code = 'J';
 
-      switch (marketType) {
-        case MarketType.ALL:
-          queryParams.fid_input_iscd = '0000';
-          break;
-        case MarketType.KOSPI:
-          queryParams.fid_input_iscd = '0001';
-          break;
-        case MarketType.KOSDAQ:
-          queryParams.fid_input_iscd = '1001';
-          break;
-        case MarketType.KOSPI200:
-          queryParams.fid_input_iscd = '2001';
-          break;
-        default:
-          break;
-      }
-
-      const highResponse =
-        await this.koreaInvestmentDomainService.requestApi<StockApiResponse>(
-          'FHPST01700000',
-          '/uapi/domestic-stock/v1/ranking/fluctuation',
-          this.getStockRankingParams({
-            ...queryParams,
-            fid_rank_sort_cls_code: '0',
-          }),
-        );
-
-      const lowResponse =
-        await this.koreaInvestmentDomainService.requestApi<StockApiResponse>(
-          'FHPST01700000',
-          '/uapi/domestic-stock/v1/ranking/fluctuation',
-          this.getStockRankingParams({
-            ...queryParams,
-            fid_rank_sort_cls_code: '1',
-          }),
-        );
-
-      const response = new StockRankingResponseDto();
-      response.high = this.formatStockData(highResponse.output);
-      response.low = this.formatStockData(lowResponse.output);
-
-      return response;
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
+    switch (marketType) {
+      case MarketType.ALL:
+        queryParams.fid_input_iscd = '0000';
+        break;
+      case MarketType.KOSPI:
+        queryParams.fid_input_iscd = '0001';
+        break;
+      case MarketType.KOSDAQ:
+        queryParams.fid_input_iscd = '1001';
+        break;
+      case MarketType.KOSPI200:
+        queryParams.fid_input_iscd = '2001';
+        break;
+      default:
+        break;
     }
+
+    const highResponse =
+      await this.koreaInvestmentDomainService.requestApi<StockApiResponse>(
+        'FHPST01700000',
+        '/uapi/domestic-stock/v1/ranking/fluctuation',
+        this.getStockRankingParams({
+          ...queryParams,
+          fid_rank_sort_cls_code: '0',
+        }),
+      );
+
+    const lowResponse =
+      await this.koreaInvestmentDomainService.requestApi<StockApiResponse>(
+        'FHPST01700000',
+        '/uapi/domestic-stock/v1/ranking/fluctuation',
+        this.getStockRankingParams({
+          ...queryParams,
+          fid_rank_sort_cls_code: '1',
+        }),
+      );
+
+    const response = new StockRankingResponseDto();
+    response.high = this.formatStockData(highResponse.output);
+    response.low = this.formatStockData(lowResponse.output);
+
+    return response;
   }
 
   /**

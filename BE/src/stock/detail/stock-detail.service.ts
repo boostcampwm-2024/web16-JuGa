@@ -26,30 +26,18 @@ export class StockDetailService {
    * @author uuuo3o
    */
   async getInquirePrice(stockCode: string) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+    };
 
-      const response =
-        await this.koreaInvestmentDomainService.requestApi<InquirePriceApiResponse>(
-          'FHKST01010100',
-          '/uapi/domestic-stock/v1/quotations/inquire-price',
-          queryParams,
-        );
-
-      return await this.formatStockData(response.output);
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquirePriceApiResponse>(
+        'FHKST01010100',
+        '/uapi/domestic-stock/v1/quotations/inquire-price',
+        queryParams,
+      );
+    return this.formatStockData(response.output);
   }
 
   /**
@@ -94,34 +82,23 @@ export class StockDetailService {
     date2: string,
     periodDivCode: string,
   ) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-        fid_input_date_1: date1,
-        fid_input_date_2: date2,
-        fid_period_div_code: periodDivCode,
-        fid_org_adj_prc: '0',
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+      fid_input_date_1: date1,
+      fid_input_date_2: date2,
+      fid_period_div_code: periodDivCode,
+      fid_org_adj_prc: '0',
+    };
 
-      const response =
-        await this.koreaInvestmentDomainService.requestApi<InquirePriceChartApiResponse>(
-          'FHKST03010100',
-          '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
-          queryParams,
-        );
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquirePriceChartApiResponse>(
+        'FHKST03010100',
+        '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
+        queryParams,
+      );
 
-      return this.formatStockInquirePriceData(response).slice().reverse();
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    return this.formatStockInquirePriceData(response).slice().reverse();
   }
 
   /**

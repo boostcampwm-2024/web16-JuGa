@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Logger, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { getFullURL } from '../../util/get-full-URL';
 import { AccessTokenInterface } from './interface/korea-investment.interface';
 import { getHeader } from '../../util/get-header';
@@ -7,8 +7,6 @@ import { getHeader } from '../../util/get-header';
 export class KoreaInvestmentDomainService {
   private accessToken: string;
   private tokenExpireTime: Date;
-
-  private readonly logger = new Logger();
 
   async getAccessToken() {
     // accessToken이 유효한 경우
@@ -47,26 +45,15 @@ export class KoreaInvestmentDomainService {
     apiURL: string,
     params: Record<string, string>,
   ): Promise<T> {
-    try {
-      const accessToken = await this.getAccessToken();
-      const headers = getHeader(accessToken, trId);
-      const url = getFullURL(apiURL);
+    const accessToken = await this.getAccessToken();
+    const headers = getHeader(accessToken, trId);
+    const url = getFullURL(apiURL);
 
-      const response = await axios.get<T>(url, {
-        headers,
-        params,
-      });
+    const response = await axios.get<T>(url, {
+      headers,
+      params,
+    });
 
-      return response.data;
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers,
-        message: error.message,
-      });
-      throw error;
-    }
+    return response.data;
   }
 }
