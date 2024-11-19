@@ -192,7 +192,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
           ))}
         </nav>
       </div>
-      <div ref={containerRef} className='mt-2 flex h-[208px] w-full flex-col'>
+      <div ref={containerRef} className='mt-2 flex h-[200px] w-full flex-col'>
         {/* Upper 차트 영역 */}
         <div className='flex flex-row items-center'>
           <canvas ref={upperChartCanvasRef} className='' />
