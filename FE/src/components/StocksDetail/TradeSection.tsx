@@ -1,11 +1,25 @@
 import Lottie from 'lottie-react';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FocusEvent, useEffect, useRef, useState } from 'react';
 import emptyAnimation from 'assets/emptyAnimation.json';
 
-export default function TradeSection() {
+type TradeSectionProps = {
+  price: string;
+};
+
+export default function TradeSection({ price }: TradeSectionProps) {
+  const upperLimit = Math.floor(+price * 1.3);
+  const lowerLimit = Math.floor(+price * 0.7);
+
   const [category, setCategory] = useState<'buy' | 'sell'>('buy');
+  const [currPrice, setCurrPrice] = useState<string>(price);
+  const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
+  const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
+
+  const [count, setCount] = useState<number>(0);
+
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const idx = category === 'buy' ? 0 : 1;
@@ -17,6 +31,41 @@ export default function TradeSection() {
       indicator.style.width = `${currentButton.offsetWidth}px`;
     }
   }, [category]);
+
+  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!isNumericString(e.target.value)) return;
+
+    setCurrPrice(e.target.value);
+  };
+
+  const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
+    const n = +e.target.value;
+    if (n > upperLimit) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      setCurrPrice(upperLimit.toString());
+
+      setUpperLimitFlag(true);
+      timerRef.current = setTimeout(() => {
+        setUpperLimitFlag(false);
+      }, 2000);
+      return;
+    }
+
+    if (n < lowerLimit) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      setCurrPrice(lowerLimit.toString());
+
+      setLowerLimitFlag(true);
+      timerRef.current = setTimeout(() => {
+        setLowerLimitFlag(false);
+      }, 2000);
+      return;
+    }
+  };
 
   return (
     <section className='flex flex-col w-full p-4 ml-2 text-sm rounded-lg min-w-72 bg-juga-grayscale-50'>
@@ -53,11 +102,32 @@ export default function TradeSection() {
           <div className='my-4'>
             <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'>매수 가격</p>
-              <input type='number' className='flex-1 py-1 rounded-lg' />
+              <input
+                type='text'
+                value={currPrice}
+                onChange={handlePriceChange}
+                onBlur={handlePriceInputBlur}
+                className='flex-1 py-1 rounded-lg'
+              />
             </div>
+            {lowerLimitFlag && (
+              <div className='text-sm text-juga-red-60'>
+                이 주식의 최소 가격은 {lowerLimit.toLocaleString()}입니다.
+              </div>
+            )}
+            {upperLimitFlag && (
+              <div className='text-xs text-juga-red-60'>
+                이 주식의 최대 가격은 {upperLimit.toLocaleString()}입니다.
+              </div>
+            )}
             <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'> 수량</p>
-              <input type='number' className='flex-1 py-1 rounded-lg' />
+              <input
+                type='number'
+                value={count}
+                onChange={(e) => setCount(+e.target.value)}
+                className='flex-1 py-1 rounded-lg'
+              />
             </div>
           </div>
 
@@ -70,7 +140,7 @@ export default function TradeSection() {
             </div>
             <div className='flex justify-between'>
               <p>총 주문 금액</p>
-              <p>0원</p>
+              <p>{(+currPrice * count).toLocaleString()}원</p>
             </div>
           </div>
 
@@ -79,10 +149,19 @@ export default function TradeSection() {
           </button>
         </form>
       ) : (
-        <div className='flex items-center justify-center h-full'>
-          <Lottie animationData={emptyAnimation} className='w-40 h-40' />
+        <div className='flex flex-col items-center justify-center h-full'>
+          <Lottie
+            animationData={emptyAnimation}
+            className='w-40 h-40'
+            loop={false}
+          />
+          <p>매도할 주식이 없어요</p>
         </div>
       )}
     </section>
   );
+}
+
+function isNumericString(str: string) {
+  return str.length === 0 || /^[0-9]+$/.test(str);
 }
