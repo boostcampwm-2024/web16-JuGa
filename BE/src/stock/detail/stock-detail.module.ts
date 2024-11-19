@@ -10,5 +10,6 @@ import { Stocks } from './stock-detail.entity';
   imports: [KoreaInvestmentModule, TypeOrmModule.forFeature([Stocks])],
   controllers: [StockDetailController],
   providers: [StockDetailService, StockDetailRepository],
+  exports: [StockDetailService],
 })
 export class StockDetailModule {}

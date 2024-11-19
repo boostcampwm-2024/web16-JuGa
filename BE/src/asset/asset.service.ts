@@ -4,12 +4,15 @@ import { AssetRepository } from './asset.repository';
 import { MypageResponseDto } from './dto/mypage-response.dto';
 import { StockElementResponseDto } from './dto/stock-element-response.dto';
 import { AssetResponseDto } from './dto/asset-response.dto';
+import { StockDetailService } from '../stock/detail/stock-detail.service';
+import { UserStock } from './user-stock.entity';
 
 @Injectable()
 export class AssetService {
   constructor(
     private readonly userStockRepository: UserStockRepository,
     private readonly assetRepository: AssetRepository,
+    private readonly stockDetailService: StockDetailService,
   ) {}
 
   async getUserStockByCode(userId: number, stockCode: string) {
@@ -54,5 +57,47 @@ export class AssetService {
     response.stocks = myStocks;
 
     return response;
+  }
+
+  async updateStockBalance() {
+    const currPrices = await this.getCurrPrices();
+    const assets = await this.assetRepository.find();
+
+    await Promise.allSettled(
+      assets.map(async (asset) => {
+        const userId = asset.user_id;
+        const userStocks = await this.userStockRepository.find({
+          where: { user_id: userId },
+        });
+
+        const totalPrice = userStocks.reduce(
+          (sum, userStock) =>
+            sum + userStock.quantity * currPrices[userStock.stock_code],
+          0,
+        );
+
+        await this.assetRepository.update(asset.id, {
+          stock_balance: totalPrice,
+          total_asset: asset.cash_balance + totalPrice,
+        });
+      }),
+    );
+  }
+
+  private async getCurrPrices() {
+    const userStocks: UserStock[] =
+      await this.userStockRepository.findAllDistinctCode();
+    const currPrices = {};
+
+    await Promise.allSettled(
+      userStocks.map(async (userStock) => {
+        const inquirePrice = await this.stockDetailService.getInquirePrice(
+          userStock.stock_code,
+        );
+        currPrices[userStock.stock_code] = Number(inquirePrice.stck_prpr);
+      }),
+    );
+
+    return currPrices;
   }
 }

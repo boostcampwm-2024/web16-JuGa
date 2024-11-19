@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, MoreThan, Repository } from 'typeorm';
 import { UserStock } from './user-stock.entity';
 import { UserStockInterface } from './interface/user-stock.interface';
 
@@ -19,5 +19,12 @@ export class UserStockRepository extends Repository<UserStock> {
       )
       .where('user_stocks.user_id = :userId', { userId })
       .getRawMany<UserStockInterface>();
+  }
+
+  findAllDistinctCode() {
+    return this.createQueryBuilder('user_stocks')
+      .select('DISTINCT user_stocks.stock_code')
+      .where({ quantity: MoreThan(0) })
+      .getRawMany();
   }
 }

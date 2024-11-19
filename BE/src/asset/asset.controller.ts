@@ -6,6 +6,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
+import { Cron } from '@nestjs/schedule';
 import { JwtAuthGuard } from '../auth/jwt-auth-guard';
 import { AssetService } from './asset.service';
 import { MypageResponseDto } from './dto/mypage-response.dto';
@@ -66,5 +67,10 @@ export class AssetController {
   })
   async getMyPage(@Req() request: Request) {
     return this.assetService.getMyPage(parseInt(request.user.userId, 10));
+  }
+
+  @Cron('*/1 9-16 * * 1-5')
+  async updateStockBalance() {
+    await this.assetService.updateStockBalance();
   }
 }
