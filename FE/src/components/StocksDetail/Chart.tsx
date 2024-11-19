@@ -177,7 +177,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   }, [timeCategory, data, isLoading]);
 
   return (
-    <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'>
+    <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-white p-3'>
       <div className='flex h-fit w-full items-center justify-between'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
@@ -197,6 +197,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         <div className='flex flex-row items-center'>
           <canvas ref={upperChartCanvasRef} className='' />
           <canvas ref={upperChartY} className='' />
+        </div>
+        <div className='group flex h-[1px] w-full cursor-row-resize items-center justify-center bg-juga-grayscale-100'>
+          <div className='z-[7] h-2 w-full group-hover:bg-juga-grayscale-100/50'></div>
         </div>
         {/* Lower 차트 영역 */}
         <div className='flex flex-row'>
