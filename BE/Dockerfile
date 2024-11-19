@@ -12,7 +12,7 @@ WORKDIR /var/app
 COPY package*.json ./
 RUN npm install --only=production
 COPY --from=builder /app/dist ./dist
-RUN sudo ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
