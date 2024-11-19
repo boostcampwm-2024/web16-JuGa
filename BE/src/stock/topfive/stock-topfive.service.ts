@@ -118,6 +118,7 @@ export class StockTopfiveService {
   private formatStockData(stocks: StockApiOutputData[]) {
     return stocks.slice(0, 5).map((stock) => {
       const stockData = new StockRankingDataDto();
+      stockData.stck_shrn_iscd = stock.stck_shrn_iscd;
       stockData.hts_kor_isnm = stock.hts_kor_isnm;
       stockData.stck_prpr = stock.stck_prpr;
       stockData.prdy_vrss = stock.prdy_vrss;
