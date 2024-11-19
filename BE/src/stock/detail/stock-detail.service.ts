@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea-investment.domain-service';
 import { InquirePriceChartApiResponse } from './interface/stock-detail-chart.interface';
 import { InquirePriceChartDataDto } from './dto/stock-detail-chart-data.dto';
@@ -11,8 +11,6 @@ import { StockDetailRepository } from './stock-detail.repository';
 
 @Injectable()
 export class StockDetailService {
-  private readonly logger = new Logger();
-
   constructor(
     private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
     private readonly stockDetailRepository: StockDetailRepository,

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { StockRankingQueryParameterDto } from './dto/stock-ranking-request.dto';
 import { StockRankingResponseDto } from './dto/stock-ranking-response.dto';
 import { StockRankingDataDto } from './dto/stock-ranking-data.dto';
@@ -11,8 +11,6 @@ import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea
 
 @Injectable()
 export class StockTopfiveService {
-  private readonly logger = new Logger();
-
   constructor(
     private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
   ) {}
