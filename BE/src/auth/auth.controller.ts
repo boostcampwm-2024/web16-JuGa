@@ -38,14 +38,9 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.loginUser(authCredentialsDto);
 
-    const cookieOptions = {
-      httpOnly: true,
-      domain: origin?.includes('localhost') ? 'localhost' : '223.130.151.42',
-    };
-
-    res.cookie('accessToken', accessToken, cookieOptions);
-    res.cookie('refreshToken', refreshToken, cookieOptions);
-    res.cookie('isRefreshToken', true, cookieOptions);
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    res.cookie('isRefreshToken', true, { httpOnly: true });
     return res.status(200).json({ accessToken });
   }
 
