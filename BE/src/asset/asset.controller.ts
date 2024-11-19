@@ -34,4 +34,20 @@ export class AssetController {
       stockCode,
     );
   }
+
+  @Get('/cash')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '매수 가능 금액 조회 API',
+    description:
+      '특정 주식 매수 시에 필요한 매수 가능한 금액(현재 가용자산)을 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '매수 가능 금액 조회 성공',
+  })
+  async getCashBalance(@Req() request: Request) {
+    return this.assetService.getCashBalance(parseInt(request.user.userId, 10));
+  }
 }

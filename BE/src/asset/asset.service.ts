@@ -17,4 +17,10 @@ export class AssetService {
 
     return { quantity: userStock ? userStock.quantity : 0 };
   }
+
+  async getCashBalance(userId: number) {
+    const asset = await this.assetRepository.findOneBy({ user_id: userId });
+
+    return { cash_balance: asset ? asset.cash_balance : 0 };
+  }
 }
