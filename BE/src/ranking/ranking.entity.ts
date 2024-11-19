@@ -3,16 +3,18 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
-export class Rankings extends BaseEntity {
+export class Ranking extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @Column()
@@ -20,7 +22,4 @@ export class Rankings extends BaseEntity {
 
   @Column()
   profitRate: number;
-
-  @Column()
-  period: number;
 }

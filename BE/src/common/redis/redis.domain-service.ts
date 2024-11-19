@@ -8,6 +8,10 @@ export class RedisDomainService {
     private readonly redis: Redis,
   ) {}
 
+  async exists(key: string): Promise<number> {
+    return this.redis.exists(key);
+  }
+
   async get(key: string): Promise<string | null> {
     return this.redis.get(key);
   }
