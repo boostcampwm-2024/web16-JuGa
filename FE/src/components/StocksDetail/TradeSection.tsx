@@ -10,21 +10,22 @@ import {
 import emptyAnimation from 'assets/emptyAnimation.json';
 import { buyStock } from 'service/stocks';
 import useAuthStore from 'store/authStore';
+import { StockDetailType } from 'types';
 
 type TradeSectionProps = {
   code: string;
-  price: string;
+  data: StockDetailType;
 };
 
 const MyAsset = 10000000;
 
-export default function TradeSection({ code, price }: TradeSectionProps) {
-  const upperLimit = Math.floor(+price * 1.3);
-  const lowerLimit = Math.floor(+price * 0.7);
+export default function TradeSection({ code, data }: TradeSectionProps) {
+  const { stck_prpr, stck_mxpr, stck_llam } = data;
+
   const { accessToken } = useAuthStore();
 
   const [category, setCategory] = useState<'buy' | 'sell'>('buy');
-  const [currPrice, setCurrPrice] = useState<string>(price);
+  const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
   const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
   const [lackAssetFlag, setLackAssetFlag] = useState<boolean>(false);
@@ -54,11 +55,11 @@ export default function TradeSection({ code, price }: TradeSectionProps) {
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
     const n = +e.target.value;
-    if (n > upperLimit) {
+    if (n > +stck_mxpr) {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      setCurrPrice(upperLimit.toString());
+      setCurrPrice(stck_mxpr);
 
       setUpperLimitFlag(true);
       timerRef.current = setTimeout(() => {
@@ -67,11 +68,11 @@ export default function TradeSection({ code, price }: TradeSectionProps) {
       return;
     }
 
-    if (n < lowerLimit) {
+    if (n < +stck_llam) {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      setCurrPrice(lowerLimit.toString());
+      setCurrPrice(stck_llam);
 
       setLowerLimitFlag(true);
       timerRef.current = setTimeout(() => {
@@ -147,12 +148,12 @@ export default function TradeSection({ code, price }: TradeSectionProps) {
             </div>
             {lowerLimitFlag && (
               <div className='text-sm text-juga-red-60'>
-                이 주식의 최소 가격은 {lowerLimit.toLocaleString()}입니다.
+                이 주식의 최소 가격은 {(+stck_llam).toLocaleString()}입니다.
               </div>
             )}
             {upperLimitFlag && (
               <div className='text-xs text-juga-red-60'>
-                이 주식의 최대 가격은 {upperLimit.toLocaleString()}입니다.
+                이 주식의 최대 가격은 {(+stck_mxpr).toLocaleString()}입니다.
               </div>
             )}
             <div className='flex items-center justify-between h-12'>

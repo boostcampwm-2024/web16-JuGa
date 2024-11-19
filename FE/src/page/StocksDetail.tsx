@@ -20,8 +20,6 @@ export default function StocksDetail() {
   if (isLoading) return <div>Loading...</div>;
   if (!data) return <div>Non data</div>;
 
-  const { stck_prpr } = data;
-
   return (
     <div className='flex flex-col'>
       <Header code={code} data={data} />
@@ -30,7 +28,7 @@ export default function StocksDetail() {
           <Chart code={code} />
           <PriceSection />
         </div>
-        <TradeSection code={code} price={stck_prpr} />
+        <TradeSection code={code} data={data} />
       </div>
     </div>
   );

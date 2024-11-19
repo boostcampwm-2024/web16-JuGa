@@ -26,6 +26,8 @@ export type StockDetailType = {
   prdy_ctrt: string;
   hts_avls: string;
   per: string;
+  stck_mxpr: string;
+  stck_llam: string;
 };
 
 export type StockChartUnit = {
