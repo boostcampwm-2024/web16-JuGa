@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { TiemCategory } from 'types';
-import {
-  drawBarChart,
-  drawCandleChart,
-  drawLineChart,
-  drawLowerYLabel,
-  drawUpperYLabel,
-} from 'utils/chart';
+import { Padding, TiemCategory } from 'types';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
+import { drawLineChart } from '../../utils/drawLineChart.ts';
+import { drawCandleChart } from '../../utils/drawCandleChart.ts';
+import { drawBarChart } from '../../utils/drawBarChart.ts';
+import { drawXAxis } from '../../utils/drawXAxis.ts';
+import { drawUpperYAxis } from '../../utils/drawUpperYAxis.ts';
+import { drawLowerYAxis } from '../../utils/drawLowerYAxis.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },
@@ -44,13 +43,15 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     const lowerChartCanvas = lowerChartCanvasRef.current;
     const upperChartYCanvas = upperChartY.current;
     const lowerChartYCanvas = lowerChartY.current;
+    const chartXCanvas = chartX.current;
 
     if (
       !parent ||
       !upperChartCanvas ||
       !lowerChartCanvas ||
       !upperChartYCanvas ||
-      !lowerChartYCanvas
+      !lowerChartYCanvas ||
+      !chartXCanvas
     )
       return;
 
@@ -58,7 +59,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     const displayHeight = parent.clientHeight;
 
     const upperHeight = displayHeight * 0.5;
-    const lowerHeight = displayHeight * 0.25;
+    const lowerHeight = displayHeight * 0.4;
     const chartWidth = displayWidth * 0.92;
     const yAxisWidth = displayWidth * 0.08;
 
@@ -83,16 +84,29 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     lowerChartYCanvas.style.width = `${yAxisWidth}px`;
     lowerChartYCanvas.style.height = `${lowerHeight}px`;
 
+    chartXCanvas.width = chartWidth * 2;
+    chartXCanvas.height = displayHeight * 0.1 * 2;
+    chartXCanvas.style.width = `${chartWidth}px`;
+    chartXCanvas.style.height = `${displayHeight * 0.1}px`;
+
     const UpperChartCtx = upperChartCanvas.getContext('2d');
     const LowerChartCtx = lowerChartCanvas.getContext('2d');
     const UpperYCtx = upperChartYCanvas.getContext('2d');
     const LowerYCtx = lowerChartYCanvas.getContext('2d');
+    const ChartXCtx = chartXCanvas.getContext('2d');
 
-    if (!UpperChartCtx || !LowerChartCtx || !UpperYCtx || !LowerYCtx) return;
+    if (
+      !UpperChartCtx ||
+      !LowerChartCtx ||
+      !UpperYCtx ||
+      !LowerYCtx ||
+      !ChartXCtx
+    )
+      return;
 
-    const padding = {
+    const padding: Padding = {
       top: 20,
-      right: 60,
+      right: 80,
       bottom: 10,
       left: 20,
     };
@@ -105,11 +119,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       lowerChartCanvas.width - padding.left - padding.right;
     const lowerChartHeight = lowerChartCanvas.height;
 
-    const arr = data.map((e) => +e.stck_oprc);
-
     drawLineChart(
       UpperChartCtx,
-      arr,
+      data,
       0,
       0,
       upperChartWidth,
@@ -138,7 +150,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       padding,
     );
 
-    drawUpperYLabel(
+    drawUpperYAxis(
       UpperYCtx,
       data,
       upperChartYCanvas.width - padding.left - padding.right,
@@ -147,17 +159,25 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       0.1,
     );
 
-    drawLowerYLabel(
+    drawLowerYAxis(
       LowerYCtx,
       data,
       lowerChartYCanvas.width - padding.left - padding.right,
       lowerChartYCanvas.height - padding.top - padding.bottom,
       padding,
     );
+
+    drawXAxis(
+      ChartXCtx,
+      data,
+      lowerChartWidth,
+      upperChartCanvas.height / 5,
+      padding,
+    );
   }, [timeCategory, data, isLoading]);
 
   return (
-    <div className='flex h-[260px] flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'>
+    <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-juga-grayscale-50 p-3'>
       <div className='flex h-fit w-full items-center justify-between'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
@@ -172,20 +192,20 @@ export default function Chart({ code }: StocksDeatailChartProps) {
           ))}
         </nav>
       </div>
-      <div ref={containerRef} className='mt-2 flex h-full w-full flex-col'>
+      <div ref={containerRef} className='mt-2 flex h-[208px] w-full flex-col'>
         {/* Upper 차트 영역 */}
-        <div className='flex h-1/2 w-full flex-row items-center'>
-          <canvas ref={upperChartCanvasRef} className='h-full w-[92%]' />
-          <canvas ref={upperChartY} className='h-full w-[8%]' />
+        <div className='flex h-[50%] flex-row items-center'>
+          <canvas ref={upperChartCanvasRef} className='' />
+          <canvas ref={upperChartY} className='' />
         </div>
         {/* Lower 차트 영역 */}
-        <div className='flex h-[25%] w-full flex-row'>
-          <canvas ref={lowerChartCanvasRef} className='h-full w-[92%]' />
-          <canvas ref={lowerChartY} className='h-full w-[8%]' />
+        <div className='flex h-[40%] flex-row'>
+          <canvas ref={lowerChartCanvasRef} className='' />
+          <canvas ref={lowerChartY} className='' />
         </div>
         {/* X축 영역 */}
-        <div className='flex h-[10%] w-full flex-row'>
-          <canvas ref={chartX} className='h-full w-full' />
+        <div className='flex h-[10%] flex-row'>
+          <canvas ref={chartX} className='' />
         </div>
       </div>
     </div>
