@@ -3,51 +3,49 @@ import PriceTableColumn from './PriceTableColumn.tsx';
 import PriceTableLiveCard from './PriceTableLiveCard.tsx';
 import PriceTableDayCard from './PriceTableDayCard.tsx';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
 import { getTradeHistory } from 'service/getTradeHistory.ts';
-// import { createSSEConnection } from './PriceSectionSseHook.ts';
+import { createSSEConnection } from './PriceSectionSseHook.ts';
 
 export default function PriceSection() {
+  const { id } = useParams();
   const [buttonFlag, setButtonFlag] = useState(true);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { id } = useParams();
-  // const [tradeData, setTradeData] = useState<PriceDataType[]>([]);
-  // const queryClient = useQueryClient();
-  const { data: initialData = [], isLoading } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data: tradeData = [], isLoading } = useQuery({
     queryKey: ['detail', id, buttonFlag],
     queryFn: () => getTradeHistory(id as string, buttonFlag),
-    // refetchInterval: 1000,
     cacheTime: 30000,
     staleTime: 1000,
   });
 
-  // const addData = (newData: PriceDataType) => {
-  //   setTradeData((prev) => [...prev, newData]);
-  //
-  //   queryClient.setQueryData(
-  //     ['detail', id, buttonFlag],
-  //     (old: PriceDataType[] = []) => {
-  //       return [...old, newData];
-  //     },
-  //   );
-  // };
+  const addData = (newData: PriceDataType) => {
+    queryClient.setQueryData(
+      ['detail', id, buttonFlag],
+      (old: PriceDataType[] = []) => {
+        return [newData, ...old].slice(0, 30);
+      },
+    );
+  };
 
-  // useEffect(() => {
-  //   const targetWord = buttonFlag ? 'today' : 'daily';
-  //
-  //   const eventSource = createSSEConnection(
-  //     `http://223.130.151.42:3000/api/stocks/trade-history/${id}/${targetWord}-sse`,
-  //     addData,
-  //   );
-  //
-  //   return () => {
-  //     if (eventSource) {
-  //       eventSource.close();
-  //     }
-  //   };
-  // }, [buttonFlag, id]);
+  useEffect(() => {
+    const targetWord = buttonFlag ? 'today' : 'daily';
+
+    const eventSource = createSSEConnection(
+      `http://223.130.151.42:3000/api/stocks/trade-history/${id}/${targetWord}-sse`,
+      addData,
+    );
+
+    return () => {
+      if (eventSource) {
+        console.log('SSE connection close');
+        eventSource.close();
+      }
+    };
+  }, [buttonFlag, id]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;
@@ -59,10 +57,6 @@ export default function PriceSection() {
       indicator.style.width = `${currentButton.offsetWidth}px`;
     }
   }, [buttonFlag]);
-
-  // useEffect(() => {
-  //   setTradeData(initialData);
-  // }, [initialData]);
 
   return (
     <div
@@ -120,26 +114,24 @@ export default function PriceSection() {
                 <tr>
                   <td>Loading...</td>
                 </tr>
-              ) : !initialData ? (
+              ) : !tradeData ? (
                 <tr>
                   <td>No data available</td>
                 </tr>
               ) : buttonFlag ? (
-                initialData.map((eachData: PriceDataType, index: number) => (
+                tradeData.map((eachData: PriceDataType, index: number) => (
                   <PriceTableLiveCard
                     key={`${eachData.stck_cntg_hour}-${index}`}
                     data={eachData}
                   />
                 ))
               ) : (
-                initialData.map(
-                  (eachData: DailyPriceDataType, index: number) => (
-                    <PriceTableDayCard
-                      key={`${eachData.stck_bsop_date}-${index}`}
-                      data={eachData}
-                    />
-                  ),
-                )
+                tradeData.map((eachData: DailyPriceDataType, index: number) => (
+                  <PriceTableDayCard
+                    key={`${eachData.stck_bsop_date}-${index}`}
+                    data={eachData}
+                  />
+                ))
               )}
             </tbody>
           </table>
