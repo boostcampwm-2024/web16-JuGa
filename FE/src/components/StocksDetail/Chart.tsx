@@ -185,7 +185,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
           <canvas ref={lowerChartY} className='h-full w-[10%]' />
         </div>
         {/* X축 영역 */}
-        <div className='flex h-[32px] w-[90%] flex-row'>
+        <div className='flex h-[20%] w-[90%] flex-row'>
           <canvas ref={chartX} className='h-full w-full' />
         </div>
       </div>
