@@ -20,6 +20,7 @@ async function bootstrap() {
     methods: 'GET, HEAD, PUT, PATH, POST, DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,
+    credentials: true,
   });
 
   app.use(cookieParser());
