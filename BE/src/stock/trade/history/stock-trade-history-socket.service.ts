@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Observable, Subject } from 'rxjs';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { SseEvent } from './interface/sse-event';
-import { SocketConnectTokenInterface } from '../../../websocket/interface/socket.interface';
+import { SocketConnectTokenInterface } from '../../../common/websocket/interface/socket.interface';
 import { getFullTestURL } from '../../../util/get-full-URL';
 import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
 

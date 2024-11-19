@@ -5,10 +5,10 @@ import {
   Logger,
   OnModuleInit,
 } from '@nestjs/common';
-import { SocketTokenService } from './socket-token.service';
+import { SocketTokenDomainService } from './socket-token.domain-service';
 
 @Injectable()
-export class BaseSocketService implements OnModuleInit {
+export class BaseSocketDomainService implements OnModuleInit {
   private socket: WebSocket;
   private socketConnectionKey: string;
   private socketOpenHandlers: (() => void | Promise<void>)[] = [];
@@ -18,11 +18,13 @@ export class BaseSocketService implements OnModuleInit {
 
   private readonly logger = new Logger();
 
-  constructor(private readonly socketTokenService: SocketTokenService) {}
+  constructor(
+    private readonly socketTokenDomainService: SocketTokenDomainService,
+  ) {}
 
   async onModuleInit() {
     this.socketConnectionKey =
-      await this.socketTokenService.getSocketConnectionKey();
+      await this.socketTokenDomainService.getSocketConnectionKey();
     this.socket = new WebSocket(process.env.KOREA_INVESTMENT_SOCKET_URL);
 
     this.socket.onopen = () => {
