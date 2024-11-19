@@ -16,6 +16,8 @@ type TradeSectionProps = {
   price: string;
 };
 
+const MyAsset = 10000000;
+
 export default function TradeSection({ code, price }: TradeSectionProps) {
   const upperLimit = Math.floor(+price * 1.3);
   const lowerLimit = Math.floor(+price * 0.7);
@@ -25,6 +27,7 @@ export default function TradeSection({ code, price }: TradeSectionProps) {
   const [currPrice, setCurrPrice] = useState<string>(price);
   const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
+  const [lackAssetFlag, setLackAssetFlag] = useState<boolean>(false);
 
   const [count, setCount] = useState<number>(0);
 
@@ -84,6 +87,17 @@ export default function TradeSection({ code, price }: TradeSectionProps) {
       console.log('accessToken 없음!');
       return;
     }
+
+    const price = +currPrice * count;
+
+    if (price > MyAsset) {
+      setLackAssetFlag(true);
+      timerRef.current = setTimeout(() => {
+        setLackAssetFlag(false);
+      }, 2000);
+      return;
+    }
+
     const res = await buyStock(code, +currPrice, count, accessToken);
     console.log(res);
   };
@@ -165,7 +179,12 @@ export default function TradeSection({ code, price }: TradeSectionProps) {
             </div>
           </div>
 
-          <button className='py-2 mt-10 text-white rounded-lg bg-juga-red-60'>
+          <div className='flex flex-col justify-center h-10'>
+            {lackAssetFlag && (
+              <p className='text-xs text-juga-red-60'>잔액이 부족해요!</p>
+            )}
+          </div>
+          <button className='py-2 text-white rounded-lg bg-juga-red-60'>
             매수하기
           </button>
         </form>
