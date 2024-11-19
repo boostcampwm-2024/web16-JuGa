@@ -8,6 +8,7 @@ import { drawBarChart } from '../../utils/chart/drawBarChart.ts';
 import { drawXAxis } from '../../utils/chart/drawXAxis.ts';
 import { drawUpperYAxis } from '../../utils/chart/drawUpperYAxis.ts';
 import { drawLowerYAxis } from '../../utils/chart/drawLowerYAxis.ts';
+import { useDimensionsHook } from './useDimensionsHook.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },
@@ -15,6 +16,21 @@ const categories: { label: string; value: TiemCategory }[] = [
   { label: '월', value: 'M' },
   { label: '년', value: 'Y' },
 ];
+
+const padding: Padding = {
+  top: 20,
+  right: 80,
+  bottom: 10,
+  left: 20,
+};
+
+const CHART_SIZE_CONFIG = {
+  upperHeight: 0.5,
+  lowerHeight: 0.4,
+  chartWidth: 0.92,
+  yAxisWidth: 0.08,
+  xAxisHeight: 0.1,
+};
 
 type StocksDeatailChartProps = {
   code: string;
@@ -34,6 +50,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     ['stocksChartData', code, timeCategory],
     () => getStocksChartDataByCode(code, timeCategory),
   );
+
+  const dimension = useDimensionsHook(containerRef);
 
   useEffect(() => {
     if (isLoading || !data) return;
@@ -55,39 +73,36 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     )
       return;
 
-    const displayWidth = parent.clientWidth;
-    const displayHeight = parent.clientHeight;
+    upperChartCanvas.width = dimension.width * CHART_SIZE_CONFIG.chartWidth * 2;
+    upperChartCanvas.height =
+      dimension.height * CHART_SIZE_CONFIG.upperHeight * 2;
+    upperChartCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.chartWidth}px`;
+    upperChartCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.upperHeight}px`;
 
-    const upperHeight = displayHeight * 0.5;
-    const lowerHeight = displayHeight * 0.4;
-    const chartWidth = displayWidth * 0.92;
-    const yAxisWidth = displayWidth * 0.08;
+    upperChartYCanvas.width =
+      dimension.width * CHART_SIZE_CONFIG.yAxisWidth * 2;
+    upperChartYCanvas.height =
+      dimension.height * CHART_SIZE_CONFIG.upperHeight * 2;
+    upperChartYCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.yAxisWidth}px`;
+    upperChartYCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.upperHeight}px`;
 
-    // 차트 영역 설정
-    upperChartCanvas.width = chartWidth * 2;
-    upperChartCanvas.height = upperHeight * 2;
-    upperChartCanvas.style.width = `${chartWidth}px`;
-    upperChartCanvas.style.height = `${upperHeight}px`;
+    lowerChartCanvas.width = dimension.width * CHART_SIZE_CONFIG.chartWidth * 2;
+    lowerChartCanvas.height =
+      dimension.height * CHART_SIZE_CONFIG.lowerHeight * 2;
+    lowerChartCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.chartWidth}px`;
+    lowerChartCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.lowerHeight}px`;
 
-    upperChartYCanvas.width = yAxisWidth * 2;
-    upperChartYCanvas.height = upperHeight * 2;
-    upperChartYCanvas.style.width = `${yAxisWidth}px`;
-    upperChartYCanvas.style.height = `${upperHeight}px`;
+    lowerChartYCanvas.width =
+      dimension.width * CHART_SIZE_CONFIG.yAxisWidth * 2;
+    lowerChartYCanvas.height =
+      dimension.height * CHART_SIZE_CONFIG.lowerHeight * 2;
+    lowerChartYCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.yAxisWidth}px`;
+    lowerChartYCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.lowerHeight}px`;
 
-    lowerChartCanvas.width = chartWidth * 2;
-    lowerChartCanvas.height = lowerHeight * 2;
-    lowerChartCanvas.style.width = `${chartWidth}px`;
-    lowerChartCanvas.style.height = `${lowerHeight}px`;
-
-    lowerChartYCanvas.width = yAxisWidth * 2;
-    lowerChartYCanvas.height = lowerHeight * 2;
-    lowerChartYCanvas.style.width = `${yAxisWidth}px`;
-    lowerChartYCanvas.style.height = `${lowerHeight}px`;
-
-    chartXCanvas.width = chartWidth * 2;
-    chartXCanvas.height = displayHeight * 0.1 * 2;
-    chartXCanvas.style.width = `${chartWidth}px`;
-    chartXCanvas.style.height = `${displayHeight * 0.1}px`;
+    chartXCanvas.width = dimension.width * CHART_SIZE_CONFIG.chartWidth * 2;
+    chartXCanvas.height = dimension.height * CHART_SIZE_CONFIG.xAxisHeight * 2;
+    chartXCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.chartWidth}px`;
+    chartXCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.xAxisHeight}px`;
 
     const UpperChartCtx = upperChartCanvas.getContext('2d');
     const LowerChartCtx = lowerChartCanvas.getContext('2d');
@@ -104,28 +119,13 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     )
       return;
 
-    const padding: Padding = {
-      top: 20,
-      right: 80,
-      bottom: 10,
-      left: 20,
-    };
-
-    const upperChartWidth =
-      upperChartCanvas.width - padding.left - padding.right;
-    const upperChartHeight =
-      upperChartCanvas.height - padding.top - padding.bottom;
-    const lowerChartWidth =
-      lowerChartCanvas.width - padding.left - padding.right;
-    const lowerChartHeight = lowerChartCanvas.height;
-
     drawLineChart(
       UpperChartCtx,
       data,
       0,
       0,
-      upperChartWidth,
-      upperChartHeight,
+      upperChartCanvas.width - padding.left - padding.right,
+      upperChartCanvas.height - padding.top - padding.bottom,
       padding,
       0.1,
     );
@@ -135,8 +135,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       data,
       0,
       0,
-      upperChartWidth,
-      upperChartHeight,
+      upperChartCanvas.width - padding.left - padding.right,
+      upperChartCanvas.height - padding.top - padding.bottom,
       padding,
       0.1,
     );
@@ -145,8 +145,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     drawBarChart(
       LowerChartCtx,
       data,
-      lowerChartWidth,
-      lowerChartHeight - padding.top - padding.bottom,
+      lowerChartCanvas.width - padding.left - padding.right,
+      lowerChartCanvas.height - padding.top - padding.bottom,
       padding,
     );
 
@@ -170,8 +170,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     drawXAxis(
       ChartXCtx,
       data,
-      lowerChartWidth,
-      upperChartCanvas.height / 5,
+      chartXCanvas.width - padding.left - padding.right,
+      chartXCanvas.height,
       padding,
     );
   }, [timeCategory, data, isLoading]);
