@@ -79,6 +79,7 @@ export class AssetService {
         await this.assetRepository.update(asset.id, {
           stock_balance: totalPrice,
           total_asset: asset.cash_balance + totalPrice,
+          last_updated: new Date(),
         });
       }),
     );
