@@ -9,7 +9,7 @@ export const createSSEConnection = (
   eventSource.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
-      onMessage(data);
+      onMessage(data.tradeData);
     } catch (error) {
       console.error('Failed to parse SSE message:', error);
     }

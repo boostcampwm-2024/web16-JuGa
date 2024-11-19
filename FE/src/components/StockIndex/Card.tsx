@@ -5,7 +5,7 @@ import {
 } from 'components/TopFive/type';
 import { useEffect, useRef, useState } from 'react';
 import { socket } from 'utils/socket.ts';
-import { drawChart } from 'utils/chart';
+import { drawChart } from 'utils/chart/drawChart.ts';
 
 // const X_LENGTH = 79;
 
