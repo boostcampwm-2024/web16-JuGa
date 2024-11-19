@@ -8,9 +8,10 @@ import {
   useState,
 } from 'react';
 import emptyAnimation from 'assets/emptyAnimation.json';
-import { buyStock } from 'service/stocks';
-import useAuthStore from 'store/authStore';
 import { StockDetailType } from 'types';
+import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import TradeAlertModal from './TradeAlertModal';
+import useAuthStore from 'store/authStore';
 
 type TradeSectionProps = {
   code: string;
@@ -22,13 +23,13 @@ const MyAsset = 10000000;
 export default function TradeSection({ code, data }: TradeSectionProps) {
   const { stck_prpr, stck_mxpr, stck_llam } = data;
 
-  const { accessToken } = useAuthStore();
-
   const [category, setCategory] = useState<'buy' | 'sell'>('buy');
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
   const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
   const [lackAssetFlag, setLackAssetFlag] = useState<boolean>(false);
+  const { isOpen, toggleModal } = useTradeAlertModalStore();
+  const { accessToken } = useAuthStore();
 
   const [count, setCount] = useState<number>(0);
 
@@ -98,108 +99,119 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
       }, 2000);
       return;
     }
-
-    const res = await buyStock(code, +currPrice, count, accessToken);
-    console.log(res);
+    toggleModal();
   };
 
   return (
-    <section className='flex flex-col w-full p-4 ml-2 text-sm rounded-lg min-w-72 bg-juga-grayscale-50'>
-      <h2 className='self-start mb-4 font-semibold'>주문하기</h2>
-      <div className='relative flex w-full rounded-xl bg-gray-200 p-0.5'>
-        <div
-          ref={indicatorRef}
-          className='absolute bottom-0.5 rounded-xl bg-white shadow transition-all duration-300'
-          style={{ height: '28px' }}
-        />
-        <button
-          className={`z-7 relative w-full rounded-lg px-4 py-1 ${
-            category === 'buy' ? 'text-juga-red-60' : 'text-juga-grayscale-400'
-          }`}
-          onClick={() => setCategory('buy')}
-          ref={(el) => (buttonRefs.current[0] = el)}
-        >
-          매수
-        </button>
-        <button
-          className={`z-7 relative w-full rounded-lg ${
-            category === 'sell'
-              ? 'text-juga-blue-50'
-              : 'text-juga-grayscale-400'
-          } z-7 relative w-full rounded-lg px-4 py-1`}
-          onClick={() => setCategory('sell')}
-          ref={(el) => (buttonRefs.current[1] = el)}
-        >
-          매도
-        </button>
-      </div>
-      {category === 'buy' ? (
-        <form className='flex flex-col' onSubmit={handleBuy}>
-          <div className='my-4'>
-            <div className='flex items-center justify-between h-12'>
-              <p className='mr-3 w-14'>매수 가격</p>
-              <input
-                type='text'
-                value={currPrice}
-                onChange={handlePriceChange}
-                onBlur={handlePriceInputBlur}
-                className='flex-1 py-1 rounded-lg'
-              />
-            </div>
-            {lowerLimitFlag && (
-              <div className='text-sm text-juga-red-60'>
-                이 주식의 최소 가격은 {(+stck_llam).toLocaleString()}입니다.
-              </div>
-            )}
-            {upperLimitFlag && (
-              <div className='text-xs text-juga-red-60'>
-                이 주식의 최대 가격은 {(+stck_mxpr).toLocaleString()}입니다.
-              </div>
-            )}
-            <div className='flex items-center justify-between h-12'>
-              <p className='mr-3 w-14'> 수량</p>
-              <input
-                type='number'
-                value={count}
-                onChange={(e) => setCount(+e.target.value)}
-                className='flex-1 py-1 rounded-lg'
-              />
-            </div>
-          </div>
-
-          <div className='my-5 h-[0.5px] w-full bg-juga-grayscale-200'></div>
-
-          <div className='flex flex-col gap-2'>
-            <div className='flex justify-between'>
-              <p>매수 가능 금액</p>
-              <p>0원</p>
-            </div>
-            <div className='flex justify-between'>
-              <p>총 주문 금액</p>
-              <p>{(+currPrice * count).toLocaleString()}원</p>
-            </div>
-          </div>
-
-          <div className='flex flex-col justify-center h-10'>
-            {lackAssetFlag && (
-              <p className='text-xs text-juga-red-60'>잔액이 부족해요!</p>
-            )}
-          </div>
-          <button className='py-2 text-white rounded-lg bg-juga-red-60'>
-            매수하기
-          </button>
-        </form>
-      ) : (
-        <div className='flex flex-col items-center justify-center h-full'>
-          <Lottie
-            animationData={emptyAnimation}
-            className='w-40 h-40'
-            loop={false}
+    <>
+      <section className='flex flex-col w-full p-4 ml-2 text-sm rounded-lg min-w-72 bg-juga-grayscale-50'>
+        <h2 className='self-start mb-4 font-semibold'>주문하기</h2>
+        <div className='relative flex w-full rounded-xl bg-gray-200 p-0.5'>
+          <div
+            ref={indicatorRef}
+            className='absolute bottom-0.5 rounded-xl bg-white shadow transition-all duration-300'
+            style={{ height: '28px' }}
           />
-          <p>매도할 주식이 없어요</p>
+          <button
+            className={`z-7 relative w-full rounded-lg px-4 py-1 ${
+              category === 'buy'
+                ? 'text-juga-red-60'
+                : 'text-juga-grayscale-400'
+            }`}
+            onClick={() => setCategory('buy')}
+            ref={(el) => (buttonRefs.current[0] = el)}
+          >
+            매수
+          </button>
+          <button
+            className={`z-7 relative w-full rounded-lg ${
+              category === 'sell'
+                ? 'text-juga-blue-50'
+                : 'text-juga-grayscale-400'
+            } z-7 relative w-full rounded-lg px-4 py-1`}
+            onClick={() => setCategory('sell')}
+            ref={(el) => (buttonRefs.current[1] = el)}
+          >
+            매도
+          </button>
         </div>
+        {category === 'buy' ? (
+          <form className='flex flex-col' onSubmit={handleBuy}>
+            <div className='my-4'>
+              <div className='flex items-center justify-between h-12'>
+                <p className='mr-3 w-14'>매수 가격</p>
+                <input
+                  type='text'
+                  value={currPrice}
+                  onChange={handlePriceChange}
+                  onBlur={handlePriceInputBlur}
+                  className='flex-1 py-1 rounded-lg'
+                />
+              </div>
+              {lowerLimitFlag && (
+                <div className='text-sm text-juga-red-60'>
+                  이 주식의 최소 가격은 {(+stck_llam).toLocaleString()}입니다.
+                </div>
+              )}
+              {upperLimitFlag && (
+                <div className='text-xs text-juga-red-60'>
+                  이 주식의 최대 가격은 {(+stck_mxpr).toLocaleString()}입니다.
+                </div>
+              )}
+              <div className='flex items-center justify-between h-12'>
+                <p className='mr-3 w-14'> 수량</p>
+                <input
+                  type='number'
+                  value={count}
+                  onChange={(e) => setCount(+e.target.value)}
+                  className='flex-1 py-1 rounded-lg'
+                  min={1}
+                />
+              </div>
+            </div>
+
+            <div className='my-5 h-[0.5px] w-full bg-juga-grayscale-200'></div>
+
+            <div className='flex flex-col gap-2'>
+              <div className='flex justify-between'>
+                <p>매수 가능 금액</p>
+                <p>0원</p>
+              </div>
+              <div className='flex justify-between'>
+                <p>총 주문 금액</p>
+                <p>{(+currPrice * count).toLocaleString()}원</p>
+              </div>
+            </div>
+
+            <div className='flex flex-col justify-center h-10'>
+              {lackAssetFlag && (
+                <p className='text-xs text-juga-red-60'>잔액이 부족해요!</p>
+              )}
+            </div>
+            <button className='py-2 text-white rounded-lg bg-juga-red-60'>
+              매수하기
+            </button>
+          </form>
+        ) : (
+          <div className='flex flex-col items-center justify-center h-full'>
+            <Lottie
+              animationData={emptyAnimation}
+              className='w-40 h-40'
+              loop={false}
+            />
+            <p>매도할 주식이 없어요</p>
+          </div>
+        )}
+      </section>
+      {isOpen && (
+        <TradeAlertModal
+          code={code}
+          stockName={data.hts_kor_isnm}
+          price={currPrice}
+          count={count}
+        />
       )}
-    </section>
+    </>
   );
 }
 
