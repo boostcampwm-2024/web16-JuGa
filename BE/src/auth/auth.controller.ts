@@ -38,6 +38,7 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.loginUser(authCredentialsDto);
 
+    res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
     return res.status(200).json({ accessToken });
