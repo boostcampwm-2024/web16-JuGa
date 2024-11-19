@@ -22,3 +22,23 @@ export async function getStocksChartDataByCode(
     }),
   }).then((res) => res.json());
 }
+
+export async function buyStock(
+  code: string,
+  price: number,
+  amount: number,
+  token: string,
+) {
+  return fetch(`${import.meta.env.VITE_API_URL}/stocks/trade/buy`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      stock_code: code,
+      price,
+      amount,
+    }),
+  });
+}

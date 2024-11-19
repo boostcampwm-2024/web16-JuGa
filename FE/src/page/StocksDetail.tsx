@@ -30,7 +30,7 @@ export default function StocksDetail() {
           <Chart code={code} />
           <PriceSection />
         </div>
-        <TradeSection price={stck_prpr} />
+        <TradeSection code={code} price={stck_prpr} />
       </div>
     </div>
   );

@@ -1,14 +1,25 @@
 import Lottie from 'lottie-react';
-import { ChangeEvent, FocusEvent, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FocusEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import emptyAnimation from 'assets/emptyAnimation.json';
+import { buyStock } from 'service/stocks';
+import useAuthStore from 'store/authStore';
 
 type TradeSectionProps = {
+  code: string;
   price: string;
 };
 
-export default function TradeSection({ price }: TradeSectionProps) {
+export default function TradeSection({ code, price }: TradeSectionProps) {
   const upperLimit = Math.floor(+price * 1.3);
   const lowerLimit = Math.floor(+price * 0.7);
+  const { accessToken } = useAuthStore();
 
   const [category, setCategory] = useState<'buy' | 'sell'>('buy');
   const [currPrice, setCurrPrice] = useState<string>(price);
@@ -67,6 +78,16 @@ export default function TradeSection({ price }: TradeSectionProps) {
     }
   };
 
+  const handleBuy = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!accessToken) {
+      console.log('accessToken 없음!');
+      return;
+    }
+    const res = await buyStock(code, +currPrice, count, accessToken);
+    console.log(res);
+  };
+
   return (
     <section className='flex flex-col w-full p-4 ml-2 text-sm rounded-lg min-w-72 bg-juga-grayscale-50'>
       <h2 className='self-start mb-4 font-semibold'>주문하기</h2>
@@ -98,7 +119,7 @@ export default function TradeSection({ price }: TradeSectionProps) {
         </button>
       </div>
       {category === 'buy' ? (
-        <form className='flex flex-col'>
+        <form className='flex flex-col' onSubmit={handleBuy}>
           <div className='my-4'>
             <div className='flex items-center justify-between h-12'>
               <p className='mr-3 w-14'>매수 가격</p>
