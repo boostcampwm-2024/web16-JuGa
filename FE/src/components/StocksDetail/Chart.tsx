@@ -194,17 +194,17 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       </div>
       <div ref={containerRef} className='mt-2 flex h-[208px] w-full flex-col'>
         {/* Upper 차트 영역 */}
-        <div className='flex h-[50%] flex-row items-center'>
+        <div className='flex flex-row items-center'>
           <canvas ref={upperChartCanvasRef} className='' />
           <canvas ref={upperChartY} className='' />
         </div>
         {/* Lower 차트 영역 */}
-        <div className='flex h-[40%] flex-row'>
+        <div className='flex flex-row'>
           <canvas ref={lowerChartCanvasRef} className='' />
           <canvas ref={lowerChartY} className='' />
         </div>
         {/* X축 영역 */}
-        <div className='flex h-[10%] flex-row'>
+        <div className='flex flex-row'>
           <canvas ref={chartX} className='' />
         </div>
       </div>
