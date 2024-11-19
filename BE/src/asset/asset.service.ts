@@ -21,6 +21,6 @@ export class AssetService {
   async getCashBalance(userId: number) {
     const asset = await this.assetRepository.findOneBy({ user_id: userId });
 
-    return { cash_balance: asset ? asset.cash_balance : 0 };
+    return { cash_balance: asset.cash_balance };
   }
 }
