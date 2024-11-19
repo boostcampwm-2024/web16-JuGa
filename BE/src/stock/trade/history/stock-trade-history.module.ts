@@ -3,7 +3,7 @@ import { KoreaInvestmentModule } from '../../../common/koreaInvestment/korea-inv
 import { StockTradeHistoryController } from './stock-trade-history.controller';
 import { StockTradeHistoryService } from './stock-trade-history.service';
 import { StockTradeHistorySocketService } from './stock-trade-history-socket.service';
-import { SocketModule } from '../../../websocket/socket.module';
+import { SocketModule } from '../../../common/websocket/socket.module';
 
 @Module({
   imports: [KoreaInvestmentModule, SocketModule],
