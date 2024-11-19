@@ -94,12 +94,25 @@ export function drawCandleChart(
 
   const n = data.length;
 
-  const arr = data.map((d) =>
-    Math.max(+d.stck_clpr, +d.stck_oprc, +d.stck_hgpr, +d.stck_lwpr),
-  );
+  const values = data
+    .map((d) => [+d.stck_hgpr, +d.stck_lwpr, +d.stck_clpr, +d.stck_oprc])
+    .flat();
+  const yMax = Math.round(Math.max(...values) * (1 + weight));
+  const yMin = Math.round(Math.min(...values) * (1 - weight));
 
-  const yMax = Math.round(Math.max(...arr) * (1 + weight));
-  const yMin = Math.round(Math.min(...arr) * (1 - weight));
+  const labels = makeYLabels(yMax, yMin);
+
+  ctx.beginPath();
+  labels.forEach((label) => {
+    const yPos =
+      padding.top + height - ((label - yMin) / (yMax - yMin)) * height;
+
+    ctx.moveTo(0, yPos);
+    ctx.lineTo(width + padding.left + padding.right, yPos);
+  });
+  ctx.strokeStyle = '#D2DAE0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
 
   data.forEach((e, i) => {
     ctx.beginPath();
@@ -236,7 +249,6 @@ export const drawUpperYLabel = (
   const values = data
     .map((d) => [+d.stck_hgpr, +d.stck_lwpr, +d.stck_clpr, +d.stck_oprc])
     .flat();
-
   const yMax = Math.round(Math.max(...values) * (1 + weight));
   const yMin = Math.round(Math.min(...values) * (1 - weight));
 
@@ -247,30 +259,24 @@ export const drawUpperYLabel = (
     height + padding.top + padding.bottom,
   );
 
-  // 라벨 갯수
-  const step = Math.ceil((yMax - yMin) / 3);
-  const labels = [];
-  for (let value = yMin; value <= yMax; value += step) {
-    labels.push(Math.round(value));
-  }
-  if (!labels.includes(yMax)) {
-    labels.push(yMax);
-  }
+  const labels = makeYLabels(yMax, yMin);
 
   ctx.font = '24px sans-serif';
   ctx.fillStyle = '#000';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
+  ctx.beginPath();
 
   labels.forEach((label) => {
     const yPos =
       padding.top + height - ((label - yMin) / (yMax - yMin)) * height;
 
     const formattedValue = label.toLocaleString();
+    ctx.moveTo(0, yPos);
+    ctx.lineTo(padding.left, yPos);
     ctx.fillText(formattedValue, width / 2, yPos);
   });
 
-  ctx.beginPath();
   ctx.moveTo(padding.left, 0);
   ctx.lineTo(padding.left, height + padding.top + padding.bottom);
   ctx.strokeStyle = '#D2DAE0';
@@ -304,4 +310,18 @@ export const drawLowerYLabel = (
   ctx.moveTo(0, height + padding.top + 4);
   ctx.lineTo(padding.left, height + padding.top + 4);
   ctx.stroke();
+};
+
+const makeYLabels = (yMax: number, yMin: number) => {
+  const labels = [];
+  const rawTickInterval = Math.ceil((yMax - yMin) / 3);
+  const magnitude = 10 ** (String(rawTickInterval).length - 1);
+  const tickInterval = Math.floor(rawTickInterval / magnitude) * magnitude;
+  const startValue = Math.ceil(yMin / tickInterval) * tickInterval;
+
+  for (let value = startValue; value <= yMax; value += tickInterval) {
+    labels.push(Math.round(value));
+  }
+
+  return labels;
 };
