@@ -10,7 +10,7 @@ type ListProps = {
 
 export default function List({ listTitle, data, isLoading }: ListProps) {
   return (
-    <div className='w-full px-1 bg-white rounded-lg'>
+    <div className='w-full rounded-lg bg-white px-1'>
       <div className={'my-5 flex text-xl font-bold'}>{listTitle}</div>
       <div className='flex flex-row items-center justify-between py-3 text-sm font-medium text-gray-600'>
         <div className='w-[200px] text-start'>종목</div>
@@ -29,6 +29,7 @@ export default function List({ listTitle, data, isLoading }: ListProps) {
                 className='transition-colors hover:bg-gray-50'
               >
                 <Card
+                  code={stock.stck_shrn_iscd}
                   name={stock.hts_kor_isnm}
                   price={stock.stck_prpr}
                   changePercentage={stock.prdy_ctrt}
