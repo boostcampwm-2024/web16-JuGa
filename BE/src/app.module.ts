@@ -17,6 +17,7 @@ import { StockListModule } from './stock/list/stock-list.module';
 import { StockTradeHistoryModule } from './stock/trade/history/stock-trade-history.module';
 import { RedisModule } from './common/redis/redis.module';
 import { HTTPExceptionFilter } from './common/filters/http-exception.filter';
+import { RankingModule } from './ranking/ranking.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { HTTPExceptionFilter } from './common/filters/http-exception.filter';
     StockListModule,
     StockTradeHistoryModule,
     RedisModule,
+    RankingModule,
   ],
   controllers: [AppController],
   providers: [
