@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Ranking } from './ranking.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { Ranking } from './ranking.entity';
 
 @Injectable()
 export class RankingRepository extends Repository<Ranking> {
@@ -9,7 +9,7 @@ export class RankingRepository extends Repository<Ranking> {
     super(Ranking, dataSource.createEntityManager());
   }
 
-  async getRanking() {
+  async getRanking(): Promise<Ranking[]> {
     const ranking = await this.createQueryBuilder('ranking')
       .select([
         'ranking.id',
@@ -23,8 +23,8 @@ export class RankingRepository extends Repository<Ranking> {
     return ranking;
   }
 
-  async clearRanking() {
-    this.createQueryBuilder().delete().from(Ranking).execute;
+  async clearRanking(): Promise<void> {
+    await this.createQueryBuilder().delete().from(Ranking).execute();
   }
 
   async setRanking(
@@ -38,6 +38,6 @@ export class RankingRepository extends Repository<Ranking> {
       })),
     );
 
-    return await this.save(rankings);
+    return this.save(rankings);
   }
 }

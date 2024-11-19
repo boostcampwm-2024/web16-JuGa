@@ -10,6 +10,6 @@ export class AssetRepository extends Repository<Asset> {
   }
 
   async getAssets() {
-    return await this.find();
+    return this.find();
   }
 }

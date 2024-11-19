@@ -51,6 +51,10 @@ export class RedisDomainService {
     return this.redis.zrevrange(key, start, stop);
   }
 
+  async zrevrank(key: string, member: string): Promise<number | null> {
+    return this.redis.zrevrank(key, member);
+  }
+
   async zrem(key: string, member: string): Promise<number> {
     return this.redis.zrem(key, member);
   }
