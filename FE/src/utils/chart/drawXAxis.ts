@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../types.ts';
+import { Padding, StockChartUnit } from '../../types.ts';
 import { makeXLabels } from './makeLabels.ts';
 
 export const drawXAxis = (

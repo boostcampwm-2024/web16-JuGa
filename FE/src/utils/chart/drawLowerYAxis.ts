@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../types.ts';
+import { Padding, StockChartUnit } from '../../types.ts';
 import { makeYLabels } from './makeLabels.ts';
 
 export const drawLowerYAxis = (
@@ -50,7 +50,7 @@ export const drawLowerYAxis = (
   ctx.stroke();
 };
 
-export const formatNumber = (value: number) => {
+const formatNumber = (value: number) => {
   const absValue = Math.abs(value);
 
   if (absValue >= 1_000_000_000) {

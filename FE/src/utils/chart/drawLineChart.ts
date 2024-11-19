@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../types.ts';
+import { Padding, StockChartUnit } from '../../types.ts';
 
 export function drawLineChart(
   ctx: CanvasRenderingContext2D,
@@ -8,7 +8,7 @@ export function drawLineChart(
   width: number,
   height: number,
   padding: Padding,
-  weight: number = 0, // 0~1 y축 범위 가중치
+  weight: number = 0,
   lineWidth: number = 1,
 ) {
   if (data.length === 0) return;

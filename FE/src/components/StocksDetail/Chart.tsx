@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Padding, TiemCategory } from 'types';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
-import { drawLineChart } from '../../utils/drawLineChart.ts';
-import { drawCandleChart } from '../../utils/drawCandleChart.ts';
-import { drawBarChart } from '../../utils/drawBarChart.ts';
-import { drawXAxis } from '../../utils/drawXAxis.ts';
-import { drawUpperYAxis } from '../../utils/drawUpperYAxis.ts';
-import { drawLowerYAxis } from '../../utils/drawLowerYAxis.ts';
+import { drawLineChart } from '../../utils/chart/drawLineChart.ts';
+import { drawCandleChart } from '../../utils/chart/drawCandleChart.ts';
+import { drawBarChart } from '../../utils/chart/drawBarChart.ts';
+import { drawXAxis } from '../../utils/chart/drawXAxis.ts';
+import { drawUpperYAxis } from '../../utils/chart/drawUpperYAxis.ts';
+import { drawLowerYAxis } from '../../utils/chart/drawLowerYAxis.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },

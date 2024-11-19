@@ -1,4 +1,4 @@
-import { StockChartUnit } from '../types.ts';
+import { StockChartUnit } from '../../types.ts';
 
 export const makeYLabels = (
   yMax: number,
@@ -19,18 +19,18 @@ export const makeYLabels = (
 };
 
 export const makeXLabels = (data: StockChartUnit[]) => {
-  const totalDays = data.length;
+  const totalData = data.length;
 
   // 데이터 양에 따른 표시 간격 결정
   let interval: number;
-  if (totalDays <= 10) {
-    interval = 1; // 모든 날짜 표시
-  } else if (totalDays <= 20) {
-    interval = 2; // 2일 간격
-  } else if (totalDays <= 30) {
-    interval = 5; // 5일 간격
+  if (totalData <= 10) {
+    interval = 1;
+  } else if (totalData <= 20) {
+    interval = 2;
+  } else if (totalData <= 30) {
+    interval = 5;
   } else {
-    interval = Math.ceil(totalDays / 10); // 약 10개의 라벨 표시
+    interval = 6;
   }
 
   // 선택된 날짜만 라벨로 반환

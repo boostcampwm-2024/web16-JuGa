@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../types.ts';
+import { Padding, StockChartUnit } from '../../types.ts';
 import { makeYLabels } from './makeLabels.ts';
 
 export function drawCandleChart(
@@ -9,7 +9,7 @@ export function drawCandleChart(
   width: number,
   height: number,
   padding: Padding,
-  weight: number = 0, // 0~1 y축 범위 가중치
+  weight: number = 0,
 ) {
   ctx.beginPath();
 
