@@ -39,3 +39,5 @@ export type StockChartUnit = {
   acml_vol: string;
   prdy_vrss_sign: string;
 };
+
+export type MypageSectionType = 'account' | 'info';
