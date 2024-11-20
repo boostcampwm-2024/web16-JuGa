@@ -38,16 +38,10 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.loginUser(authCredentialsDto);
 
+    res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
     return res.status(200).json({ accessToken });
-  }
-
-  @ApiOperation({ summary: 'Token 인증 테스트 API' })
-  @Get('/test')
-  @UseGuards(AuthGuard('jwt'))
-  test(@Req() req: Request) {
-    return req;
   }
 
   @ApiOperation({ summary: 'Kakao 로그인 API' })
