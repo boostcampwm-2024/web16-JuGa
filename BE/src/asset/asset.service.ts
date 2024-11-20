@@ -90,6 +90,7 @@ export class AssetService {
       stock_balance: totalPrice,
       total_asset: asset.cash_balance + totalPrice,
       last_updated: new Date(),
+      prev_total_asset: asset.total_asset,
     };
     return this.assetRepository.save(updatedAsset);
   }
