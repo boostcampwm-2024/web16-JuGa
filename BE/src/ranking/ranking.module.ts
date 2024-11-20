@@ -14,7 +14,6 @@ import { RankingController } from './ranking.controller';
   providers: [
     RankingService,
     RedisDomainService,
-    RedisDomainService,
     RankingRepository,
     AssetRepository,
   ],
