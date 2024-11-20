@@ -5,6 +5,7 @@ import { Order } from './stock-order.entity';
 import { StatusType } from './enum/status-type';
 import { Asset } from '../../asset/asset.entity';
 import { UserStock } from '../../asset/user-stock.entity';
+import { StockOrderRawInterface } from './interface/stock-order-raw.interface';
 
 @Injectable()
 export class StockOrderRepository extends Repository<Order> {
@@ -108,5 +109,12 @@ export class StockOrderRepository extends Repository<Order> {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async findAllPendingOrdersByUserId(userId: number) {
+    return this.createQueryBuilder('o')
+      .leftJoinAndSelect('stocks', 's', 's.code = o.stock_code')
+      .where({ user_id: userId, status: StatusType.PENDING })
+      .getRawMany<StockOrderRawInterface>();
   }
 }
