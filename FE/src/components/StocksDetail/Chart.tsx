@@ -126,7 +126,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, handleMouseDown, handleMouseUp]);
+  }, [isDragging, handleMouseDown, handleMouseUp, handleMouseMove]);
   const setCanvasSize = useCallback(
     (canvas: HTMLCanvasElement, widthConfig: number, heightConfig: number) => {
       if (!containerRef.current) return;
@@ -139,99 +139,113 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     [containerRef],
   );
 
-  const renderChart = (
-    upperChartCanvas: HTMLCanvasElement,
-    lowerChartCanvas: HTMLCanvasElement,
-    upperChartYCanvas: HTMLCanvasElement,
-    lowerChartYCanvas: HTMLCanvasElement,
-    chartXCanvas: HTMLCanvasElement,
-    chartData: StockChartUnit[],
-  ) => {
-    const UpperChartCtx = upperChartCanvas.getContext('2d');
-    const LowerChartCtx = lowerChartCanvas.getContext('2d');
-    const UpperYCtx = upperChartYCanvas.getContext('2d');
-    const LowerYCtx = lowerChartYCanvas.getContext('2d');
-    const ChartXCtx = chartXCanvas.getContext('2d');
+  const renderChart = useCallback(
+    (
+      upperChartCanvas: HTMLCanvasElement,
+      lowerChartCanvas: HTMLCanvasElement,
+      upperChartYCanvas: HTMLCanvasElement,
+      lowerChartYCanvas: HTMLCanvasElement,
+      chartXCanvas: HTMLCanvasElement,
+      chartData: StockChartUnit[],
+    ) => {
+      const UpperChartCtx = upperChartCanvas.getContext('2d');
+      const LowerChartCtx = lowerChartCanvas.getContext('2d');
+      const UpperYCtx = upperChartYCanvas.getContext('2d');
+      const LowerYCtx = lowerChartYCanvas.getContext('2d');
+      const ChartXCtx = chartXCanvas.getContext('2d');
 
-    if (
-      !UpperChartCtx ||
-      !LowerChartCtx ||
-      !UpperYCtx ||
-      !LowerYCtx ||
-      !ChartXCtx
-    )
-      return;
+      if (
+        !UpperChartCtx ||
+        !LowerChartCtx ||
+        !UpperYCtx ||
+        !LowerYCtx ||
+        !ChartXCtx
+      )
+        return;
 
-    drawChartGrid(
-      UpperChartCtx,
-      upperChartCanvas.width - padding.left - padding.right,
-      upperChartCanvas.height - padding.top - padding.bottom,
+      drawChartGrid(
+        UpperChartCtx,
+        upperChartCanvas.width - padding.left - padding.right,
+        upperChartCanvas.height - padding.top - padding.bottom,
+        upperLabelNum,
+        LowerChartCtx,
+        lowerChartCanvas.width - padding.left - padding.right,
+        lowerChartCanvas.height - padding.top - padding.bottom,
+        lowerLabelNum,
+        chartData,
+        padding,
+      );
+
+      drawLineChart(
+        UpperChartCtx,
+        chartData,
+        0,
+        0,
+        upperChartCanvas.width - padding.left - padding.right,
+        upperChartCanvas.height - padding.top - padding.bottom,
+        padding,
+        0.1,
+      );
+
+      drawCandleChart(
+        UpperChartCtx,
+        chartData,
+        0,
+        0,
+        upperChartCanvas.width - padding.left - padding.right,
+        upperChartCanvas.height - padding.top - padding.bottom,
+        padding,
+        0.1,
+      );
+
+      drawBarChart(
+        LowerChartCtx,
+        chartData,
+        lowerChartCanvas.width - padding.left - padding.right,
+        lowerChartCanvas.height - padding.top - padding.bottom,
+        padding,
+      );
+
+      drawUpperYAxis(
+        UpperYCtx,
+        chartData,
+        upperChartYCanvas.width - padding.left - padding.right,
+        upperChartYCanvas.height - padding.top - padding.bottom,
+        upperLabelNum,
+        padding,
+        0.1,
+      );
+
+      drawLowerYAxis(
+        LowerYCtx,
+        chartData,
+        lowerChartYCanvas.width - padding.left - padding.right,
+        lowerChartYCanvas.height - padding.top - padding.bottom,
+        lowerLabelNum,
+        padding,
+      );
+
+      drawXAxis(
+        ChartXCtx,
+        chartData,
+        chartXCanvas.width - padding.left - padding.right,
+        chartXCanvas.height,
+        padding,
+      );
+    },
+    [
+      padding,
       upperLabelNum,
-      LowerChartCtx,
-      lowerChartCanvas.width - padding.left - padding.right,
-      lowerChartCanvas.height - padding.top - padding.bottom,
       lowerLabelNum,
-      chartData,
-      padding,
-    );
-
-    drawLineChart(
-      UpperChartCtx,
-      chartData,
-      0,
-      0,
-      upperChartCanvas.width - padding.left - padding.right,
-      upperChartCanvas.height - padding.top - padding.bottom,
-      padding,
-      0.1,
-    );
-
-    drawCandleChart(
-      UpperChartCtx,
-      chartData,
-      0,
-      0,
-      upperChartCanvas.width - padding.left - padding.right,
-      upperChartCanvas.height - padding.top - padding.bottom,
-      padding,
-      0.1,
-    );
-
-    drawBarChart(
-      LowerChartCtx,
-      chartData,
-      lowerChartCanvas.width - padding.left - padding.right,
-      lowerChartCanvas.height - padding.top - padding.bottom,
-      padding,
-    );
-
-    drawUpperYAxis(
-      UpperYCtx,
-      chartData,
-      upperChartYCanvas.width - padding.left - padding.right,
-      upperChartYCanvas.height - padding.top - padding.bottom,
-      upperLabelNum,
-      padding,
-      0.1,
-    );
-
-    drawLowerYAxis(
-      LowerYCtx,
-      chartData,
-      lowerChartYCanvas.width - padding.left - padding.right,
-      lowerChartYCanvas.height - padding.top - padding.bottom,
-      lowerLabelNum,
-      padding,
-    );
-
-    drawXAxis(
-      ChartXCtx,
-      chartData,
-      chartXCanvas.width - padding.left - padding.right,
-      chartXCanvas.height,
-      padding,
-    );
-  };
+      drawChartGrid,
+      drawLineChart,
+      drawCandleChart,
+      drawBarChart,
+      drawUpperYAxis,
+      drawLowerYAxis,
+      drawXAxis,
+    ],
+  );
 
   useEffect(() => {
     if (isLoading || !data) return;
