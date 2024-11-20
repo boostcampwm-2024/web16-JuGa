@@ -13,7 +13,6 @@ import { drawBarChart } from 'utils/chart/drawBarChart.ts';
 import { drawXAxis } from 'utils/chart/drawXAxis.ts';
 import { drawUpperYAxis } from 'utils/chart/drawUpperYAxis.ts';
 import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
-import { useDimensionsHook } from './useDimensionsHook.ts';
 import { drawChartGrid } from 'utils/chart/drawChartGrid.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
@@ -51,7 +50,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     xAxisHeight: 0.1,
   });
   const [isDragging, setIsDragging] = useState(false);
-  const dimension = useDimensionsHook(containerRef);
+  const [upperLabelNum, setUpperLabelNum] = useState(3);
+  const [lowerLabelNum, setLowerLabelNum] = useState(3);
 
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
@@ -68,13 +68,17 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     const minHeight = 0.2;
     const containerRect = containerRef.current.getBoundingClientRect();
     const mouseY = e.clientY - containerRect.top;
-
-    let ratio = mouseY / dimension.height;
-
+    let ratio = mouseY / containerRef.current.clientHeight;
     const maxHeight = 0.9 - minHeight;
-
     const upperRatio = Math.min(maxHeight, Math.max(minHeight, ratio));
     const lowerRatio = 0.9 - upperRatio;
+
+    const calculateLabelNum = (ratio: number) => {
+      if (ratio <= 0.2) return 1;
+      if (ratio <= 0.35) return 2;
+      if (ratio <= 0.55) return 3;
+      return 4;
+    };
 
     if (lowerRatio >= minHeight && upperRatio >= minHeight) {
       setChartSizeConfig((prev) => ({
@@ -82,6 +86,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         upperHeight: upperRatio,
         lowerHeight: lowerRatio,
       }));
+
+      setUpperLabelNum(calculateLabelNum(upperRatio));
+      setLowerLabelNum(calculateLabelNum(lowerRatio));
     }
   };
 
@@ -105,11 +112,12 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     widthConfig: number,
     heightConfig: number,
   ) => {
-    canvas.width = dimension.width * widthConfig * 2;
-    canvas.height = dimension.height * heightConfig * 2;
+    if (!containerRef.current) return;
+    canvas.width = containerRef.current.clientWidth * widthConfig * 2;
+    canvas.height = containerRef.current.clientHeight * heightConfig * 2;
 
-    canvas.style.width = `${dimension.width * widthConfig}px`;
-    canvas.style.height = `${dimension.height * heightConfig}px`;
+    canvas.style.width = `${containerRef.current.clientWidth * widthConfig}px`;
+    canvas.style.height = `${containerRef.current.clientHeight * heightConfig}px`;
   };
 
   const renderChart = (
@@ -139,11 +147,11 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       UpperChartCtx,
       upperChartCanvas.width - padding.left - padding.right,
       upperChartCanvas.height - padding.top - padding.bottom,
-      3,
+      upperLabelNum,
       LowerChartCtx,
       lowerChartCanvas.width - padding.left - padding.right,
       lowerChartCanvas.height - padding.top - padding.bottom,
-      2,
+      lowerLabelNum,
       chartData,
       padding,
     );
@@ -183,7 +191,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       chartData,
       upperChartYCanvas.width - padding.left - padding.right,
       upperChartYCanvas.height - padding.top - padding.bottom,
-      3,
+      upperLabelNum,
       padding,
       0.1,
     );
@@ -193,7 +201,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       chartData,
       lowerChartYCanvas.width - padding.left - padding.right,
       lowerChartYCanvas.height - padding.top - padding.bottom,
-      2,
+      lowerLabelNum,
       padding,
     );
 
