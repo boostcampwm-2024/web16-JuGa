@@ -96,6 +96,17 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     setIsDragging(false);
   };
 
+  // const getCanvasMousePosition = (e: MouseEvent) => {
+  //   if (!containerRef.current) return;
+  //   const rect = containerRef.current.getBoundingClientRect();
+  //   const tmp = {
+  //     x:e.clientX - rect.left,
+  //     y: e.clientY - rect.top,
+  //   };
+  //   console.log(tmp);
+  //   return tmp;
+  // };
+
   useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
@@ -288,7 +299,11 @@ export default function Chart({ code }: StocksDeatailChartProps) {
           ))}
         </nav>
       </div>
-      <div ref={containerRef} className='mt-2 flex h-[200px] w-full flex-col'>
+      <div
+        ref={containerRef}
+        className='mt-2 flex h-[200px] w-full flex-col'
+        // onMouseMove={getCanvasMousePosition}
+      >
         {/* Upper 차트 영역 */}
         <div className='flex flex-row'>
           <canvas ref={upperChartCanvasRef} />
