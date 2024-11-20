@@ -15,7 +15,7 @@ export class RankingRepository extends Repository<Ranking> {
         'ranking.id',
         'ranking.totalAsset',
         'ranking.profitRate',
-        'user.email',
+        'user.nickname',
       ])
       .leftJoin('ranking.user', 'user')
       .orderBy(`ranking.${sortBy}`, 'DESC')
@@ -28,12 +28,12 @@ export class RankingRepository extends Repository<Ranking> {
   }
 
   async setRanking(
-    rankingData: { userId: number; profit: number; profitRate: number }[],
+    rankingData: { userId: number; totalAsset: number; profitRate: number }[],
   ) {
     const rankings = this.create(
       rankingData.map((data) => ({
         user: { id: data.userId },
-        profit: data.profit,
+        totalAsset: data.totalAsset,
         profitRate: data.profitRate,
       })),
     );

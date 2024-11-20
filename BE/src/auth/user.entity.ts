@@ -15,6 +15,9 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
+  @Column({ default: '' })
+  nickname: string;
+
   @Column({ default: false })
   tutorial: boolean;
 

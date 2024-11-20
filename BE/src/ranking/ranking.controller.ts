@@ -22,8 +22,8 @@ export class RankingController {
   @ApiQuery({
     name: 'sortBy',
     required: false,
-    description: 'profitRate: 수익률순, asset: 자산순',
-    enum: ['profitRate', 'asset'],
+    description: 'profitRate: 수익률순, totalAsset: 자산순',
+    enum: ['profitRate', 'totalAsset'],
   })
   async getRanking(
     @Req() req: Request,
@@ -33,7 +33,7 @@ export class RankingController {
       return this.rankingService.getRanking(sortBy);
     }
 
-    const { email } = req.user;
-    return this.rankingService.getRankingAuthUser(email, sortBy);
+    const { nickname } = req.user;
+    return this.rankingService.getRankingAuthUser(nickname, sortBy);
   }
 }
