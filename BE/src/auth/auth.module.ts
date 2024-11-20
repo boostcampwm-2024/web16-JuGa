@@ -10,6 +10,8 @@ import { UserRepository } from './user.repository';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { KakaoStrategy } from './strategy/kakao.strategy';
 import { AssetModule } from '../asset/asset.module';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
 
 @Module({
   imports: [
@@ -28,8 +30,14 @@ import { AssetModule } from '../asset/asset.module';
     }),
     AssetModule,
   ],
-  controllers: [AuthController],
-  providers: [AuthService, UserRepository, JwtStrategy, KakaoStrategy],
+  controllers: [AuthController, UserController],
+  providers: [
+    AuthService,
+    UserRepository,
+    JwtStrategy,
+    KakaoStrategy,
+    UserService,
+  ],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
