@@ -14,6 +14,7 @@ import { drawXAxis } from 'utils/chart/drawXAxis.ts';
 import { drawUpperYAxis } from 'utils/chart/drawUpperYAxis.ts';
 import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
 import { useDimensionsHook } from './useDimensionsHook.ts';
+import { drawChartGrid } from 'utils/chart/drawChartGrid.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },
@@ -134,6 +135,19 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     )
       return;
 
+    drawChartGrid(
+      UpperChartCtx,
+      upperChartCanvas.width - padding.left - padding.right,
+      upperChartCanvas.height - padding.top - padding.bottom,
+      3,
+      LowerChartCtx,
+      lowerChartCanvas.width - padding.left - padding.right,
+      lowerChartCanvas.height - padding.top - padding.bottom,
+      2,
+      chartData,
+      padding,
+    );
+
     drawLineChart(
       UpperChartCtx,
       chartData,
@@ -156,7 +170,6 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       0.1,
     );
 
-    // Lower 차트 그리기
     drawBarChart(
       LowerChartCtx,
       chartData,
@@ -170,6 +183,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       chartData,
       upperChartYCanvas.width - padding.left - padding.right,
       upperChartYCanvas.height - padding.top - padding.bottom,
+      3,
       padding,
       0.1,
     );
@@ -179,6 +193,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       chartData,
       lowerChartYCanvas.width - padding.left - padding.right,
       lowerChartYCanvas.height - padding.top - padding.bottom,
+      2,
       padding,
     );
 

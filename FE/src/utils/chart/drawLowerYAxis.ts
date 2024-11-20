@@ -6,6 +6,7 @@ export const drawLowerYAxis = (
   data: StockChartUnit[],
   width: number,
   height: number,
+  labelsNum: number,
   padding: Padding,
 ) => {
   ctx.clearRect(
@@ -15,22 +16,10 @@ export const drawLowerYAxis = (
     height + padding.top + padding.bottom,
   );
 
-  ctx.beginPath();
-  ctx.moveTo(padding.left, 0);
-  ctx.lineTo(padding.left, height + padding.top);
-  ctx.strokeStyle = '#D2DAE0';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(0, height + padding.top);
-  ctx.lineTo(padding.left, height + padding.top);
-  ctx.stroke();
-
   const yMax = Math.round(Math.max(...data.map((d) => +d.acml_vol)) * 1.2);
   const yMin = Math.round(Math.min(...data.map((d) => +d.acml_vol)) * 0.8);
 
-  const labels = makeYLabels(yMax, yMin, 2);
+  const labels = makeYLabels(yMax, yMin, labelsNum);
   ctx.font = '24px sans-serif';
   ctx.fillStyle = '#000';
   ctx.textAlign = 'left';
@@ -41,13 +30,8 @@ export const drawLowerYAxis = (
     const valueRatio = (label - yMin) / (yMax - yMin);
     const yPos = height - valueRatio * height;
     const formattedValue = formatNumber(label);
-    ctx.moveTo(0, yPos + padding.top);
-    ctx.lineTo(padding.left, yPos + padding.top);
     ctx.fillText(formattedValue, width / 2 + padding.left, yPos + padding.top);
   });
-  ctx.strokeStyle = '#D2DAE0';
-  ctx.lineWidth = 2;
-  ctx.stroke();
 };
 
 const formatNumber = (value: number) => {
