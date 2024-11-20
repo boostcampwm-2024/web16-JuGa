@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {
   ChartSizeConfigType,
   Padding,
@@ -58,43 +58,52 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     () => getStocksChartDataByCode(code, timeCategory),
   );
 
-  const handleMouseDown = (e: MouseEvent) => {
+  const handleMouseDown = useCallback((e: MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
-  };
+  }, []);
 
-  const handleMouseMove = (e: globalThis.MouseEvent) => {
-    if (!isDragging || !containerRef.current) return;
-    const minHeight = 0.2;
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const mouseY = e.clientY - containerRect.top;
-    let ratio = mouseY / containerRef.current.clientHeight;
-    const maxHeight = 0.9 - minHeight;
-    const upperRatio = Math.min(maxHeight, Math.max(minHeight, ratio));
-    const lowerRatio = 0.9 - upperRatio;
+  const handleMouseMove = useCallback(
+    (e: globalThis.MouseEvent) => {
+      if (!isDragging || !containerRef.current) return;
+      const minHeight = 0.2;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const mouseY = e.clientY - containerRect.top;
+      const ratio = mouseY / containerRef.current.clientHeight;
+      const maxHeight = 0.9 - minHeight;
+      const upperRatio = Math.min(maxHeight, Math.max(minHeight, ratio));
+      const lowerRatio = 0.9 - upperRatio;
 
-    const calculateLabelNum = (ratio: number) => {
-      if (ratio <= 0.2) return 1;
-      if (ratio <= 0.35) return 2;
-      if (ratio <= 0.55) return 3;
-      return 4;
-    };
+      const calculateLabelNum = (ratio: number) => {
+        if (ratio <= 0.2) return 1;
+        if (ratio <= 0.35) return 2;
+        if (ratio <= 0.55) return 3;
+        return 4;
+      };
 
-    if (lowerRatio >= minHeight && upperRatio >= minHeight) {
-      setChartSizeConfig((prev) => ({
-        ...prev,
-        upperHeight: upperRatio,
-        lowerHeight: lowerRatio,
-      }));
+      if (lowerRatio >= minHeight && upperRatio >= minHeight) {
+        setChartSizeConfig((prev) => ({
+          ...prev,
+          upperHeight: upperRatio,
+          lowerHeight: lowerRatio,
+        }));
 
-      setUpperLabelNum(calculateLabelNum(upperRatio));
-      setLowerLabelNum(calculateLabelNum(lowerRatio));
-    }
-  };
+        setUpperLabelNum(calculateLabelNum(upperRatio));
+        setLowerLabelNum(calculateLabelNum(lowerRatio));
+      }
+    },
+    [
+      isDragging,
+      containerRef,
+      setChartSizeConfig,
+      setUpperLabelNum,
+      setLowerLabelNum,
+    ],
+  );
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
   // const getCanvasMousePosition = (e: MouseEvent) => {
   //   if (!containerRef.current) return;
@@ -117,19 +126,18 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging]);
-  const setCanvasSize = (
-    canvas: HTMLCanvasElement,
-    widthConfig: number,
-    heightConfig: number,
-  ) => {
-    if (!containerRef.current) return;
-    canvas.width = containerRef.current.clientWidth * widthConfig * 2;
-    canvas.height = containerRef.current.clientHeight * heightConfig * 2;
+  }, [isDragging, handleMouseDown, handleMouseUp]);
+  const setCanvasSize = useCallback(
+    (canvas: HTMLCanvasElement, widthConfig: number, heightConfig: number) => {
+      if (!containerRef.current) return;
 
-    canvas.style.width = `${containerRef.current.clientWidth * widthConfig}px`;
-    canvas.style.height = `${containerRef.current.clientHeight * heightConfig}px`;
-  };
+      canvas.width = containerRef.current.clientWidth * widthConfig * 2;
+      canvas.height = containerRef.current.clientHeight * heightConfig * 2;
+      canvas.style.width = `${containerRef.current.clientWidth * widthConfig}px`;
+      canvas.style.height = `${containerRef.current.clientHeight * heightConfig}px`;
+    },
+    [containerRef],
+  );
 
   const renderChart = (
     upperChartCanvas: HTMLCanvasElement,
