@@ -3,7 +3,7 @@ import Nav from './Nav';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MarketType } from './type.ts';
-import { getTopFiveStocks } from '../../service/getTopFiveStocks.ts';
+import { getTopFiveStocks } from 'service/getTopFiveStocks.ts';
 
 const paramsMap = {
   전체: 'ALL',

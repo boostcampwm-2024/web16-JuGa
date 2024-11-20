@@ -1,5 +1,6 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { Padding, StockChartUnit } from 'types.ts';
 import { makeXLabels } from './makeLabels.ts';
+import { formatTime } from '../formatTime.ts';
 
 export const drawXAxis = (
   ctx: CanvasRenderingContext2D,
@@ -25,7 +26,7 @@ export const drawXAxis = (
   data.forEach((item, i) => {
     if (labels.includes(item.stck_bsop_date) || i === data.length - 1) {
       ctx.fillText(
-        item.stck_bsop_date,
+        formatTime(item.stck_bsop_date),
         padding.left + (width * i) / (data.length - 1) + barWidth / 2,
         height / 2,
       );

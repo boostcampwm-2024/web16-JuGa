@@ -40,6 +40,7 @@ export type StockChartUnit = {
   prdy_vrss_sign: string;
 };
 
+
 export type MypageSectionType = 'account' | 'info';
 
 export type Asset = {
@@ -60,4 +61,11 @@ export type MyStockListUnit = {
 export type AssetsResponse = {
   asset: Asset;
   stocks: MyStockListUnit[];
+};
+export type ChartSizeConfigType = {
+  upperHeight: number;
+  lowerHeight: number;
+  chartWidth: number;
+  yAxisWidth: number;
+  xAxisHeight: number;
 };

@@ -1,5 +1,4 @@
 import { Padding, StockChartUnit } from '../../types.ts';
-import { makeYLabels } from './makeLabels.ts';
 
 export function drawCandleChart(
   ctx: CanvasRenderingContext2D,
@@ -11,8 +10,6 @@ export function drawCandleChart(
   padding: Padding,
   weight: number = 0,
 ) {
-  ctx.beginPath();
-
   const n = data.length;
 
   const values = data
@@ -20,20 +17,6 @@ export function drawCandleChart(
     .flat();
   const yMax = Math.round(Math.max(...values) * (1 + weight));
   const yMin = Math.round(Math.min(...values) * (1 - weight));
-
-  const labels = makeYLabels(yMax, yMin, 3);
-
-  ctx.beginPath();
-  labels.forEach((label) => {
-    const yPos =
-      padding.top + height - ((label - yMin) / (yMax - yMin)) * height;
-
-    ctx.moveTo(0, yPos);
-    ctx.lineTo(width + padding.left + padding.right, yPos);
-  });
-  ctx.strokeStyle = '#D2DAE0';
-  ctx.lineWidth = 2;
-  ctx.stroke();
 
   data.forEach((e, i) => {
     ctx.beginPath();

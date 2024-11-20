@@ -11,6 +11,7 @@ import Header from 'components/Header';
 import Login from 'components/Login';
 import SearchModal from './components/Search';
 import MyPage from 'page/MyPage';
+import Rank from 'page/Rank.tsx';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path='stocks/:id' element={<StocksDetail />} />
           <Route path='mypage' element={<MyPage />} />
+          <Route path='rank' element={<Rank />} />
         </Route>
       </Routes>
     </Router>

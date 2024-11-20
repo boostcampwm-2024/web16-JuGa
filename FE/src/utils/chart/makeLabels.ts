@@ -8,7 +8,7 @@ export const makeYLabels = (
   const labels = [];
   const rawTickInterval = Math.ceil((yMax - yMin) / divideNumber);
   const magnitude = 10 ** (String(rawTickInterval).length - 1);
-  const tickInterval = Math.floor(rawTickInterval / magnitude) * magnitude;
+  const tickInterval = Math.round(rawTickInterval / magnitude) * magnitude;
   const startValue = Math.ceil(yMin / tickInterval) * tickInterval;
 
   for (let value = startValue; value <= yMax; value += tickInterval) {
