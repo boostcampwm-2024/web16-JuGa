@@ -6,6 +6,7 @@ import { StockElementResponseDto } from './dto/stock-element-response.dto';
 import { AssetResponseDto } from './dto/asset-response.dto';
 import { StockDetailService } from '../stock/detail/stock-detail.service';
 import { UserStock } from './user-stock.entity';
+import { Asset } from './asset.entity';
 
 @Injectable()
 export class AssetService {
@@ -34,6 +35,10 @@ export class AssetService {
     const userStocks =
       await this.userStockRepository.findUserStockWithNameByUserId(userId);
     const asset = await this.assetRepository.findOneBy({ user_id: userId });
+    const newAsset = await this.updateMyAsset(
+      asset,
+      await this.getCurrPrices(),
+    );
 
     const myStocks = userStocks.map((userStock) => {
       return new StockElementResponseDto(
@@ -45,11 +50,11 @@ export class AssetService {
     });
 
     const myAsset = new AssetResponseDto(
-      asset.cash_balance,
-      asset.stock_balance,
-      asset.total_asset,
-      asset.total_profit,
-      asset.total_profit_rate,
+      newAsset.cash_balance,
+      newAsset.stock_balance,
+      newAsset.total_asset,
+      newAsset.total_profit,
+      newAsset.total_profit_rate,
     );
 
     const response = new MypageResponseDto();
@@ -64,25 +69,29 @@ export class AssetService {
     const assets = await this.assetRepository.find();
 
     await Promise.allSettled(
-      assets.map(async (asset) => {
-        const userId = asset.user_id;
-        const userStocks = await this.userStockRepository.find({
-          where: { user_id: userId },
-        });
-
-        const totalPrice = userStocks.reduce(
-          (sum, userStock) =>
-            sum + userStock.quantity * currPrices[userStock.stock_code],
-          0,
-        );
-
-        await this.assetRepository.update(asset.id, {
-          stock_balance: totalPrice,
-          total_asset: asset.cash_balance + totalPrice,
-          last_updated: new Date(),
-        });
-      }),
+      assets.map((asset) => this.updateMyAsset(asset, currPrices)),
     );
+  }
+
+  private async updateMyAsset(asset: Asset, currPrices) {
+    const userId = asset.user_id;
+    const userStocks = await this.userStockRepository.find({
+      where: { user_id: userId },
+    });
+
+    const totalPrice = userStocks.reduce(
+      (sum, userStock) =>
+        sum + userStock.quantity * currPrices[userStock.stock_code],
+      0,
+    );
+
+    const updatedAsset = {
+      ...asset,
+      stock_balance: totalPrice,
+      total_asset: asset.cash_balance + totalPrice,
+      last_updated: new Date(),
+    };
+    return this.assetRepository.save(updatedAsset);
   }
 
   private async getCurrPrices() {

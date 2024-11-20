@@ -29,7 +29,6 @@ export class StockOrderRepository extends Repository<Order> {
         { id: order.id },
         { status: StatusType.COMPLETE, completed_at: new Date() },
       );
-      // TODO: stock_balance와 total_asset은 실시간 주가에 따라 변동하도록 따로 구현해야 함
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
@@ -78,7 +77,6 @@ export class StockOrderRepository extends Repository<Order> {
         { id: order.id },
         { status: StatusType.COMPLETE, completed_at: new Date() },
       );
-      // TODO: stock_balance와 total_asset은 실시간 주가에 따라 변동하도록 따로 구현해야 함
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
