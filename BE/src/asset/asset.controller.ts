@@ -69,7 +69,7 @@ export class AssetController {
     return this.assetService.getMyPage(parseInt(request.user.userId, 10));
   }
 
-  @Cron('*/1 9-16 * * 1-5')
+  @Cron('*/10 9-16 * * 1-5')
   async updateStockBalance() {
     await this.assetService.updateStockBalance();
   }
