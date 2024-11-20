@@ -33,6 +33,22 @@ export default function Login() {
     toggleModal();
   };
 
+  const handleKakaoBtnClick = async () => {
+    if (import.meta.env.DEV) {
+      const res = await login('jindding', '1234');
+
+      if ('error' in res) {
+        setErrorCode(res.statusCode);
+        return;
+      }
+
+      document.cookie = `accessToken=${res.accessToken}; path=/;`;
+      return;
+    }
+
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/kakao`;
+  };
+
   return (
     <>
       <Overay onClick={() => toggleModal()} />
@@ -67,11 +83,12 @@ export default function Login() {
             로그인
           </button>
         </form>
-        <button className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'>
+        <button
+          className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'
+          onClick={handleKakaoBtnClick}
+        >
           <ChatBubbleOvalLeftIcon className='size-5' />
-          <a href={`${import.meta.env.VITE_API_URL}/auth/kakao`}>
-            카카오 계정으로 로그인
-          </a>
+          카카오 계정으로 로그인
         </button>
       </section>
     </>

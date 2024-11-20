@@ -1,6 +1,6 @@
 import Overay from 'components/ModalOveray';
 import { buyStock } from 'service/stocks';
-import useAuthStore from 'store/authStore';
+// import useAuthStore from 'store/authStore';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 
 type TradeAlertModalProps = {
@@ -17,17 +17,17 @@ export default function TradeAlertModal({
   count,
 }: TradeAlertModalProps) {
   const { toggleModal } = useTradeAlertModalStore();
-  const { accessToken } = useAuthStore();
+  // const { accessToken } = useAuthStore();
 
-  if (!accessToken) {
-    console.log('accessToken 없음!');
-    return;
-  }
+  // if (!accessToken) {
+  //   console.log('accessToken 없음!');
+  //   return;
+  // }
 
   const charge = 55; // 수수료 임시
 
   const handleBuy = async () => {
-    const res = await buyStock(code, +price, count, accessToken);
+    const res = await buyStock(code, +price, count);
     if (res.ok) toggleModal();
   };
 

@@ -11,7 +11,6 @@ import emptyAnimation from 'assets/emptyAnimation.json';
 import { StockDetailType } from 'types';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 import TradeAlertModal from './TradeAlertModal';
-import useAuthStore from 'store/authStore';
 
 type TradeSectionProps = {
   code: string;
@@ -29,7 +28,6 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
   const [lackAssetFlag, setLackAssetFlag] = useState<boolean>(false);
   const { isOpen, toggleModal } = useTradeAlertModalStore();
-  const { accessToken } = useAuthStore();
 
   const [count, setCount] = useState<number>(0);
 
@@ -63,7 +61,7 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
       setCurrPrice(stck_mxpr);
 
       setUpperLimitFlag(true);
-      timerRef.current = setTimeout(() => {
+      timerRef.current = window.setTimeout(() => {
         setUpperLimitFlag(false);
       }, 2000);
       return;
@@ -76,7 +74,7 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
       setCurrPrice(stck_llam);
 
       setLowerLimitFlag(true);
-      timerRef.current = setTimeout(() => {
+      timerRef.current = window.setTimeout(() => {
         setLowerLimitFlag(false);
       }, 2000);
       return;
@@ -85,16 +83,12 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
 
   const handleBuy = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!accessToken) {
-      console.log('accessToken 없음!');
-      return;
-    }
 
     const price = +currPrice * count;
 
     if (price > MyAsset) {
       setLackAssetFlag(true);
-      timerRef.current = setTimeout(() => {
+      timerRef.current = window.setTimeout(() => {
         setLackAssetFlag(false);
       }, 2000);
       return;
