@@ -17,8 +17,9 @@ export default function Nav() {
 
   return (
     <div className='flex flex-col w-48 rounded-lg h-fit'>
-      {sections.map((e) => (
+      {sections.map((e, idx) => (
         <button
+          key={`assetNav${idx}`}
           onClick={() => handleClick(e)}
           className={`h-20 rounded-xl font-semibold ${currentSection === e ? 'bg-gray-100' : 'transition hover:bg-gray-50'}`}
         >
