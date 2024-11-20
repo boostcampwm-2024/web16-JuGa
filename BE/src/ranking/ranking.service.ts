@@ -26,7 +26,7 @@ export class RankingService {
     const ranking = await this.calculateRanking(sortBy);
 
     await Promise.all(
-      ranking.map((rank) =>
+      ranking.map((rank: Ranking) =>
         this.redisDomainService.zadd(
           key,
           this.getSortScore(rank, sortBy),
@@ -61,7 +61,7 @@ export class RankingService {
 
     const ranking = await this.calculateRanking(sortBy);
     await Promise.all(
-      ranking.map((rank) =>
+      ranking.map((rank: Ranking) =>
         this.redisDomainService.zadd(
           key,
           this.getSortScore(rank, sortBy),
@@ -96,7 +96,7 @@ export class RankingService {
 
     await Promise.all([
       Promise.all(
-        profitRateRanking.map((rank) =>
+        profitRateRanking.map((rank: Ranking) =>
           this.redisDomainService.zadd(
             profitRateKey,
             rank.profitRate,
@@ -105,7 +105,7 @@ export class RankingService {
         ),
       ),
       Promise.all(
-        assetRanking.map((rank) =>
+        assetRanking.map((rank: Ranking) =>
           this.redisDomainService.zadd(
             assetKey,
             rank.totalAsset,
@@ -130,7 +130,7 @@ export class RankingService {
           100,
       }))
       .sort((a, b) =>
-        sortBy === 'profitRate'
+        sortBy === SortType.PROFIT_RATE
           ? b.profitRate - a.profitRate
           : b.totalAsset - a.totalAsset,
       );
