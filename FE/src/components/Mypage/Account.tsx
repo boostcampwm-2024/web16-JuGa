@@ -1,6 +1,8 @@
+import MyStocksList from './MyStocksList';
+
 export default function Account() {
   return (
-    <div>
+    <div className='flex flex-col gap-3'>
       <div className='flex text-xl font-semibold rounded-xl bg-gray-50'>
         <div className='flex flex-col flex-1 gap-10 p-10'>
           <div className='flex justify-between'>
@@ -23,7 +25,7 @@ export default function Account() {
           </div>
         </div>
       </div>
-      <div>list</div>
+      <MyStocksList />
     </div>
   );
 }
