@@ -81,7 +81,7 @@ export class RankingService {
     };
   }
 
-  @Cron('0 35 3 * * *')
+  @Cron('0 16 * * 1-5')
   async updateRanking() {
     const assets = await this.assetRepository.getAssets();
     const ranking = assets
