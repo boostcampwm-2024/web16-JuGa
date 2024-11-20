@@ -39,3 +39,11 @@ export type StockChartUnit = {
   acml_vol: string;
   prdy_vrss_sign: string;
 };
+
+export type ChartSizeConfigType = {
+  upperHeight: number;
+  lowerHeight: number;
+  chartWidth: number;
+  yAxisWidth: number;
+  xAxisHeight: number;
+};

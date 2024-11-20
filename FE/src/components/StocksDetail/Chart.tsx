@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Padding, TiemCategory } from 'types';
+import {
+  ChartSizeConfigType,
+  Padding,
+  StockChartUnit,
+  TiemCategory,
+} from 'types';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
 import { drawLineChart } from '../../utils/chart/drawLineChart.ts';
@@ -24,14 +29,6 @@ const padding: Padding = {
   left: 20,
 };
 
-const CHART_SIZE_CONFIG = {
-  upperHeight: 0.5,
-  lowerHeight: 0.4,
-  chartWidth: 0.92,
-  yAxisWidth: 0.08,
-  xAxisHeight: 0.1,
-};
-
 type StocksDeatailChartProps = {
   code: string;
 };
@@ -45,6 +42,13 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   const chartX = useRef<HTMLCanvasElement>(null);
 
   const [timeCategory, setTimeCategory] = useState<TiemCategory>('D');
+  const [charSizeConfig, setChartSizeConfig] = useState<ChartSizeConfigType>({
+    upperHeight: 0.5,
+    lowerHeight: 0.4,
+    chartWidth: 0.92,
+    yAxisWidth: 0.08,
+    xAxisHeight: 0.1,
+  });
 
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
@@ -53,57 +57,27 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
   const dimension = useDimensionsHook(containerRef);
 
-  useEffect(() => {
-    if (isLoading || !data) return;
+  const setCanvasSize = (
+    canvas: HTMLCanvasElement,
+    widthConfig: number,
+    heightConfig: number,
+  ) => {
+    canvas.width = dimension.width * widthConfig * 2;
+    canvas.height = dimension.height * heightConfig * 2;
 
-    const parent = containerRef.current;
-    const upperChartCanvas = upperChartCanvasRef.current;
-    const lowerChartCanvas = lowerChartCanvasRef.current;
-    const upperChartYCanvas = upperChartY.current;
-    const lowerChartYCanvas = lowerChartY.current;
-    const chartXCanvas = chartX.current;
+    // 스타일 크기 (실제 표시되는 크기)
+    canvas.style.width = `${dimension.width * widthConfig}px`;
+    canvas.style.height = `${dimension.height * heightConfig}px`;
+  };
 
-    if (
-      !parent ||
-      !upperChartCanvas ||
-      !lowerChartCanvas ||
-      !upperChartYCanvas ||
-      !lowerChartYCanvas ||
-      !chartXCanvas
-    )
-      return;
-
-    upperChartCanvas.width = dimension.width * CHART_SIZE_CONFIG.chartWidth * 2;
-    upperChartCanvas.height =
-      dimension.height * CHART_SIZE_CONFIG.upperHeight * 2;
-    upperChartCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.chartWidth}px`;
-    upperChartCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.upperHeight}px`;
-
-    upperChartYCanvas.width =
-      dimension.width * CHART_SIZE_CONFIG.yAxisWidth * 2;
-    upperChartYCanvas.height =
-      dimension.height * CHART_SIZE_CONFIG.upperHeight * 2;
-    upperChartYCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.yAxisWidth}px`;
-    upperChartYCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.upperHeight}px`;
-
-    lowerChartCanvas.width = dimension.width * CHART_SIZE_CONFIG.chartWidth * 2;
-    lowerChartCanvas.height =
-      dimension.height * CHART_SIZE_CONFIG.lowerHeight * 2;
-    lowerChartCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.chartWidth}px`;
-    lowerChartCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.lowerHeight}px`;
-
-    lowerChartYCanvas.width =
-      dimension.width * CHART_SIZE_CONFIG.yAxisWidth * 2;
-    lowerChartYCanvas.height =
-      dimension.height * CHART_SIZE_CONFIG.lowerHeight * 2;
-    lowerChartYCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.yAxisWidth}px`;
-    lowerChartYCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.lowerHeight}px`;
-
-    chartXCanvas.width = dimension.width * CHART_SIZE_CONFIG.chartWidth * 2;
-    chartXCanvas.height = dimension.height * CHART_SIZE_CONFIG.xAxisHeight * 2;
-    chartXCanvas.style.width = `${dimension.width * CHART_SIZE_CONFIG.chartWidth}px`;
-    chartXCanvas.style.height = `${dimension.height * CHART_SIZE_CONFIG.xAxisHeight}px`;
-
+  const renderChart = (
+    upperChartCanvas: HTMLCanvasElement,
+    lowerChartCanvas: HTMLCanvasElement,
+    upperChartYCanvas: HTMLCanvasElement,
+    lowerChartYCanvas: HTMLCanvasElement,
+    chartXCanvas: HTMLCanvasElement,
+    chartData: StockChartUnit[],
+  ) => {
     const UpperChartCtx = upperChartCanvas.getContext('2d');
     const LowerChartCtx = lowerChartCanvas.getContext('2d');
     const UpperYCtx = upperChartYCanvas.getContext('2d');
@@ -121,7 +95,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     drawLineChart(
       UpperChartCtx,
-      data,
+      chartData,
       0,
       0,
       upperChartCanvas.width - padding.left - padding.right,
@@ -132,7 +106,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     drawCandleChart(
       UpperChartCtx,
-      data,
+      chartData,
       0,
       0,
       upperChartCanvas.width - padding.left - padding.right,
@@ -144,7 +118,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     // Lower 차트 그리기
     drawBarChart(
       LowerChartCtx,
-      data,
+      chartData,
       lowerChartCanvas.width - padding.left - padding.right,
       lowerChartCanvas.height - padding.top - padding.bottom,
       padding,
@@ -152,7 +126,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     drawUpperYAxis(
       UpperYCtx,
-      data,
+      chartData,
       upperChartYCanvas.width - padding.left - padding.right,
       upperChartYCanvas.height - padding.top - padding.bottom,
       padding,
@@ -161,7 +135,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     drawLowerYAxis(
       LowerYCtx,
-      data,
+      chartData,
       lowerChartYCanvas.width - padding.left - padding.right,
       lowerChartYCanvas.height - padding.top - padding.bottom,
       padding,
@@ -169,12 +143,70 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
     drawXAxis(
       ChartXCtx,
-      data,
+      chartData,
       chartXCanvas.width - padding.left - padding.right,
       chartXCanvas.height,
       padding,
     );
-  }, [timeCategory, data, isLoading]);
+  };
+
+  useEffect(() => {
+    if (isLoading || !data) return;
+
+    if (
+      !upperChartCanvasRef.current ||
+      !lowerChartCanvasRef.current ||
+      !upperChartY.current ||
+      !lowerChartY.current ||
+      !chartX.current
+    )
+      return;
+    setCanvasSize(
+      upperChartCanvasRef.current,
+      charSizeConfig.chartWidth,
+      charSizeConfig.upperHeight,
+    );
+
+    setCanvasSize(
+      upperChartY.current,
+      charSizeConfig.yAxisWidth,
+      charSizeConfig.upperHeight,
+    );
+
+    setCanvasSize(
+      lowerChartCanvasRef.current,
+      charSizeConfig.chartWidth,
+      charSizeConfig.lowerHeight,
+    );
+
+    setCanvasSize(
+      lowerChartY.current,
+      charSizeConfig.yAxisWidth,
+      charSizeConfig.lowerHeight,
+    );
+
+    setCanvasSize(
+      chartX.current,
+      charSizeConfig.chartWidth,
+      charSizeConfig.xAxisHeight,
+    );
+
+    renderChart(
+      upperChartCanvasRef.current,
+      lowerChartCanvasRef.current,
+      upperChartY.current,
+      lowerChartY.current,
+      chartX.current,
+      data,
+    );
+  }, [
+    timeCategory,
+    data,
+    isLoading,
+    setCanvasSize,
+    renderChart,
+    charSizeConfig,
+  ]);
 
   return (
     <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-white p-3'>
