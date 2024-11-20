@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { MouseEvent, useEffect, useRef, useState } from 'react';
 import {
   ChartSizeConfigType,
   Padding,
@@ -49,14 +49,56 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     yAxisWidth: 0.08,
     xAxisHeight: 0.1,
   });
+  const [isDragging, setIsDragging] = useState(false);
+  const dimension = useDimensionsHook(containerRef);
 
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
     () => getStocksChartDataByCode(code, timeCategory),
   );
 
-  const dimension = useDimensionsHook(containerRef);
+  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
+  const handleMouseMove = (e: globalThis.MouseEvent) => {
+    if (!isDragging || !containerRef.current) return;
+    const minHeight = 0.2;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const mouseY = e.clientY - containerRect.top;
+
+    let ratio = mouseY / dimension.height;
+
+    const maxHeight = 0.9 - minHeight;
+
+    const upperRatio = Math.min(maxHeight, Math.max(minHeight, ratio));
+    const lowerRatio = 0.9 - upperRatio;
+
+    if (lowerRatio >= minHeight && upperRatio >= minHeight) {
+      setChartSizeConfig((prev) => ({
+        ...prev,
+        upperHeight: upperRatio,
+        lowerHeight: lowerRatio,
+      }));
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
   const setCanvasSize = (
     canvas: HTMLCanvasElement,
     widthConfig: number,
@@ -231,7 +273,10 @@ export default function Chart({ code }: StocksDeatailChartProps) {
           <canvas ref={upperChartY} />
         </div>
         <div className='group flex h-[1px] w-full cursor-row-resize items-center justify-center bg-juga-grayscale-100'>
-          <div className='z-[6] h-2 w-full hover:bg-juga-grayscale-100/50'></div>
+          <div
+            className='z-[6] h-2 w-full hover:bg-juga-grayscale-100/50'
+            onMouseDown={handleMouseDown}
+          ></div>
         </div>
         {/* Lower 차트 영역 */}
         <div className='flex flex-row'>
