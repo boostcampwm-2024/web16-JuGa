@@ -10,6 +10,9 @@ export class AssetRepository extends Repository<Asset> {
   }
 
   async getAssets() {
-    return this.find();
+    return this.createQueryBuilder('asset')
+      .leftJoin('user', 'user', 'asset.user_id = user.id')
+      .select(['asset.* ', 'user.nickname as nickname'])
+      .getRawMany();
   }
 }

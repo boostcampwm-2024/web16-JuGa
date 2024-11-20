@@ -2,14 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { RedisDomainService } from 'src/common/redis/redis.domain-service';
 import { AssetRepository } from 'src/asset/asset.repository';
 import { Cron } from '@nestjs/schedule';
-import { RankingRepository } from './ranking.repository';
 import { SortType } from './enum/sort-type.enum';
-import { Ranking } from './ranking.entity';
+import { Ranking } from './interface/ranking.interface';
 
 @Injectable()
 export class RankingService {
   constructor(
-    private readonly rankingRepository: RankingRepository,
     private readonly assetRepository: AssetRepository,
     private readonly redisDomainService: RedisDomainService,
   ) {}
@@ -25,14 +23,14 @@ export class RankingService {
       };
     }
 
-    const ranking = await this.rankingRepository.getRanking(sortBy);
+    const ranking = await this.calculateRanking(sortBy);
 
     await Promise.all(
       ranking.map((rank) =>
         this.redisDomainService.zadd(
           key,
           this.getSortScore(rank, sortBy),
-          rank.user.nickname,
+          rank.nickname,
         ),
       ),
     );
@@ -61,14 +59,13 @@ export class RankingService {
       };
     }
 
-    const ranking = await this.rankingRepository.getRanking(sortBy);
-
+    const ranking = await this.calculateRanking(sortBy);
     await Promise.all(
       ranking.map((rank) =>
         this.redisDomainService.zadd(
           key,
           this.getSortScore(rank, sortBy),
-          rank.user.nickname,
+          rank.nickname,
         ),
       ),
     );
@@ -83,20 +80,62 @@ export class RankingService {
 
   @Cron('0 16 * * 1-5')
   async updateRanking() {
+    const [profitRateRanking, assetRanking] = await Promise.all([
+      this.calculateRanking(SortType.PROFIT_RATE),
+      this.calculateRanking(SortType.ASSET),
+    ]);
+
+    const date = new Date().toISOString().slice(0, 10);
+    const profitRateKey = `ranking:${date}:${SortType.PROFIT_RATE}`;
+    const assetKey = `ranking:${date}:${SortType.ASSET}`;
+
+    await Promise.all([
+      this.redisDomainService.del(profitRateKey),
+      this.redisDomainService.del(assetKey),
+    ]);
+
+    await Promise.all([
+      Promise.all(
+        profitRateRanking.map((rank) =>
+          this.redisDomainService.zadd(
+            profitRateKey,
+            rank.profitRate,
+            rank.nickname,
+          ),
+        ),
+      ),
+      Promise.all(
+        assetRanking.map((rank) =>
+          this.redisDomainService.zadd(
+            assetKey,
+            rank.totalAsset,
+            rank.nickname,
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  async calculateRanking(sortBy: SortType) {
     const assets = await this.assetRepository.getAssets();
     const ranking = assets
       .map((asset) => ({
+        id: asset.id,
         userId: asset.user_id,
+        nickname: asset.nickname,
         totalAsset: asset.total_asset,
         profitRate:
           ((asset.total_asset - asset.prev_total_asset) /
             asset.prev_total_asset) *
           100,
       }))
-      .sort((a, b) => b.profitRate - a.profitRate);
+      .sort((a, b) =>
+        sortBy === 'profitRate'
+          ? b.profitRate - a.profitRate
+          : b.totalAsset - a.totalAsset,
+      );
 
-    await this.rankingRepository.clearRanking();
-    await this.rankingRepository.setRanking(ranking);
+    return ranking;
   }
 
   private getSortScore(rank: Ranking, sortBy: SortType) {
