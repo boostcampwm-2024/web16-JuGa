@@ -30,7 +30,12 @@ export class StockTradeHistoryController {
     type: TodayStockTradeHistoryDataDto,
   })
   getTodayStockTradeHistory(@Param('stockCode') stockCode: string) {
-    return this.stockTradeHistoryService.getTodayStockTradeHistory(stockCode);
+    const data =
+      this.stockTradeHistoryService.getTodayStockTradeHistory(stockCode);
+
+    this.stockTradeHistorySocketService.subscribeByCode(stockCode);
+
+    return data;
   }
 
   @Get(':stockCode/daily')
