@@ -28,7 +28,7 @@ export default function Nav() {
       indicator.style.left = `${currentButton.offsetLeft}px`;
       indicator.style.width = `${currentButton.offsetWidth}px`;
     }
-  }, [currentMarket, markets]);
+  }, [currentMarket]);
 
   return (
     <div className='relative flex gap-1 text-xl font-bold'>

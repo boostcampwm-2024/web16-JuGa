@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import PriceTableColumn from './PriceTableColumn.tsx';
 import PriceTableLiveCard from './PriceTableLiveCard.tsx';
 import PriceTableDayCard from './PriceTableDayCard.tsx';
@@ -22,14 +22,17 @@ export default function PriceSection() {
     staleTime: 1000,
   });
 
-  const addData = (newData: PriceDataType) => {
-    queryClient.setQueryData(
-      ['detail', id, buttonFlag],
-      (old: PriceDataType[] = []) => {
-        return [newData, ...old].slice(0, 30);
-      },
-    );
-  };
+  const addData = useCallback(
+    (newData: PriceDataType) => {
+      queryClient.setQueryData(
+        ['detail', id, buttonFlag],
+        (old: PriceDataType[] = []) => {
+          return [newData, ...old].slice(0, 30);
+        },
+      );
+    },
+    [id, buttonFlag],
+  );
 
   useEffect(() => {
     if (!buttonFlag) return;
@@ -44,7 +47,7 @@ export default function PriceSection() {
         eventSource.close();
       }
     };
-  }, [buttonFlag, id]);
+  }, [buttonFlag, id, addData()]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;
