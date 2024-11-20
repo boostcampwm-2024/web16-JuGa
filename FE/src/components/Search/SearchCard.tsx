@@ -1,7 +1,7 @@
 import { SearchDataType } from './searchDataType.ts';
 import { useNavigate } from 'react-router-dom';
-import useSearchModalStore from '../../store/useSearchModalStore.ts';
-import useSearchInputStore from '../../store/useSearchInputStore.ts';
+import useSearchModalStore from 'store/useSearchModalStore.ts';
+import useSearchInputStore from 'store/useSearchInputStore.ts';
 import { SearchCardHighLight } from './SearchCardHighlight.tsx';
 
 type SearchCardProps = {

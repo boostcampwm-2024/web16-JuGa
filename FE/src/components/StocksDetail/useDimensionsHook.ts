@@ -22,7 +22,7 @@ export const useDimensionsHook = (containerRef: RefObject<HTMLDivElement>) => {
 
   useEffect(() => {
     updateDimensions();
-  }, [updateDimensions]);
+  }, [updateDimensions, containerRef]);
 
   return dimensions;
 };

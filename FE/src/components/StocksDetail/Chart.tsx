@@ -7,12 +7,12 @@ import {
 } from 'types';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
-import { drawLineChart } from '../../utils/chart/drawLineChart.ts';
-import { drawCandleChart } from '../../utils/chart/drawCandleChart.ts';
-import { drawBarChart } from '../../utils/chart/drawBarChart.ts';
-import { drawXAxis } from '../../utils/chart/drawXAxis.ts';
-import { drawUpperYAxis } from '../../utils/chart/drawUpperYAxis.ts';
-import { drawLowerYAxis } from '../../utils/chart/drawLowerYAxis.ts';
+import { drawLineChart } from 'utils/chart/drawLineChart.ts';
+import { drawCandleChart } from 'utils/chart/drawCandleChart.ts';
+import { drawBarChart } from 'utils/chart/drawBarChart.ts';
+import { drawXAxis } from 'utils/chart/drawXAxis.ts';
+import { drawUpperYAxis } from 'utils/chart/drawUpperYAxis.ts';
+import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
 import { useDimensionsHook } from './useDimensionsHook.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
@@ -57,7 +57,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     () => getStocksChartDataByCode(code, timeCategory),
   );
 
-  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = (e: MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
   };
@@ -107,7 +107,6 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     canvas.width = dimension.width * widthConfig * 2;
     canvas.height = dimension.height * heightConfig * 2;
 
-    // 스타일 크기 (실제 표시되는 크기)
     canvas.style.width = `${dimension.width * widthConfig}px`;
     canvas.style.height = `${dimension.height * heightConfig}px`;
   };

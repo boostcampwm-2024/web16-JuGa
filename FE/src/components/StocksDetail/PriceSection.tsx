@@ -34,7 +34,7 @@ export default function PriceSection() {
   useEffect(() => {
     if (!buttonFlag) return;
     const eventSource = createSSEConnection(
-      `http://223.130.151.42:3000/api/stocks/trade-history/${id}/today-sse`,
+      `${import.meta.env.VITE_API_URL}/stocks/trade-history/${id}/today-sse`,
       addData,
     );
 
