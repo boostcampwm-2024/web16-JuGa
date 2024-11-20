@@ -85,4 +85,21 @@ export class StockTradeHistoryController {
       };
     });
   }
+
+  @Get(':stockCode/unsubscribe')
+  @ApiOperation({ summary: '페이지를 벗어날 때 구독을 취소하기 위한 API' })
+  @ApiParam({
+    name: 'stockCode',
+    required: true,
+    description:
+      '종목 코드\n\n' +
+      '(ex) 005930 삼성전자 / 005380 현대차 / 001500 현대차증권',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '구독 취소 성공',
+  })
+  unsubscribeCode(@Param('stockCode') stockCode: string) {
+    this.stockTradeHistorySocketService.unsubscribeByCode(stockCode);
+  }
 }
