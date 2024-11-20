@@ -21,9 +21,9 @@ export default function Header() {
 
         <div className='flex items-center gap-8'>
           <nav className='flex items-center gap-6 text-sm font-bold text-juga-grayscale-500'>
-            <button className='px-0.5 py-2'>홈</button>
+            <Link to={'/'}>홈</Link>
             <button className='px-0.5 py-2'>랭킹</button>
-            <button className='px-0.5 py-2'>마이페이지</button>
+            <Link to={'/mypage'}>마이페이지</Link>
           </nav>
           <div className='relative'>
             <input

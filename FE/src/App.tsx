@@ -10,6 +10,7 @@ import StocksDetail from 'page/StocksDetail';
 import Header from 'components/Header';
 import Login from 'components/Login';
 import SearchModal from './components/Search';
+import MyPage from 'page/MyPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path='/' element={<Layout />}>
           <Route index element={<Home />} />
           <Route path='stocks/:id' element={<StocksDetail />} />
+          <Route path='mypage' element={<MyPage />} />
         </Route>
       </Routes>
     </Router>
