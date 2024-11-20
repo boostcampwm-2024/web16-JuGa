@@ -10,7 +10,8 @@ import StocksDetail from 'page/StocksDetail';
 import Header from 'components/Header';
 import Login from 'components/Login';
 import SearchModal from './components/Search';
-import Rank from './page/Rank.tsx';
+import MyPage from 'page/MyPage';
+import Rank from 'page/Rank.tsx';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path='/' element={<Layout />}>
           <Route index element={<Home />} />
           <Route path='stocks/:id' element={<StocksDetail />} />
+          <Route path='mypage' element={<MyPage />} />
           <Route path='rank' element={<Rank />} />
         </Route>
       </Routes>

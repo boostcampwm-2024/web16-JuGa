@@ -46,6 +46,7 @@ export default function Login() {
       }
 
       document.cookie = `accessToken=${res.accessToken}; path=/;`;
+      toggleModal();
       return;
     }
 
