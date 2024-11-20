@@ -12,7 +12,7 @@ export default function Header() {
   const { searchInput } = useSearchInputStore();
 
   return (
-    <header className='fixed left-0 top-0 h-[60px] w-full'>
+    <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
         <Link to={'/'} className='flex items-center gap-2'>
           <img src={logo} className={'h-[32px]'} />
