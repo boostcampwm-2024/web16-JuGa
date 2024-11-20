@@ -47,7 +47,7 @@ export default function PriceSection() {
         eventSource.close();
       }
     };
-  }, [buttonFlag, id, addData()]);
+  }, [buttonFlag, id, addData]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;
