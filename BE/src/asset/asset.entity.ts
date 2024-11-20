@@ -28,6 +28,6 @@ export class Asset {
   @Column({ nullable: true })
   last_updated?: Date;
 
-  @Column({ nullable: true })
+  @Column({ default: INIT_ASSET })
   prev_total_asset?: number;
 }
