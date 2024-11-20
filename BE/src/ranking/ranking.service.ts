@@ -16,7 +16,14 @@ export class RankingService {
 
   async getRanking(sortBy: SortType = SortType.PROFIT_RATE) {
     const date = new Date().toISOString().slice(0, 10);
-    const key = `ranking:${date}`;
+    const key = `ranking:${date}:${sortBy}`;
+
+    if (await this.redisDomainService.exists(key)) {
+      return {
+        topRank: await this.redisDomainService.zrevrange(key, 0, 9),
+        userRank: null,
+      };
+    }
 
     const ranking = await this.rankingRepository.getRanking(sortBy);
 
@@ -41,7 +48,18 @@ export class RankingService {
     sortBy: SortType = SortType.PROFIT_RATE,
   ) {
     const date = new Date().toISOString().slice(0, 10);
-    const key = `ranking:${date}`;
+    const key = `ranking:${date}:${sortBy}`;
+
+    let userRank = null;
+
+    if (await this.redisDomainService.exists(key)) {
+      userRank = this.redisDomainService.zrevrank(key, email);
+
+      return {
+        topRank: await this.redisDomainService.zrevrange(key, 0, 9),
+        userRank: userRank ? userRank + 1 : null,
+      };
+    }
 
     const ranking = await this.rankingRepository.getRanking(sortBy);
 
@@ -55,7 +73,7 @@ export class RankingService {
       ),
     );
 
-    const userRank = await this.redisDomainService.zrevrank(key, email);
+    userRank = await this.redisDomainService.zrevrank(key, email);
 
     return {
       topRank: await this.redisDomainService.zrevrange(key, 0, 9),
