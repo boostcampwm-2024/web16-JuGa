@@ -35,7 +35,10 @@ export default function Login() {
 
   const handleKakaoBtnClick = async () => {
     if (import.meta.env.DEV) {
-      const res = await login('jindding', '1234');
+      const res = await login(
+        import.meta.env.VITE_TEST_ID,
+        import.meta.env.VITE_TEST_PW,
+      );
 
       if ('error' in res) {
         setErrorCode(res.statusCode);
