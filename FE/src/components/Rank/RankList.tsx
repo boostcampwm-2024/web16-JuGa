@@ -28,7 +28,7 @@ export default function RankList({ title, data }: Props) {
           ))}
         </div>
       </div>
-      {!isLogin && userRank !== null && typeof userRank.rank === 'number' ? (
+      {isLogin && userRank !== null && typeof userRank.rank === 'number' ? (
         <div className={'w-full rounded-lg bg-white px-2 pb-1 pt-2 shadow-lg'}>
           <div className='border-b'>
             <h3 className='text-base font-bold text-gray-800'>{`내 ${title} 순위`}</h3>
