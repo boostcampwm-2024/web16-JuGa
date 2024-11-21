@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { SocketConnectTokenInterface } from './interface/socket.interface';
-import { getFullURL } from '../util/get-full-URL';
+import { getFullURL } from '../../util/get-full-URL';
 
-export class SocketTokenService {
+export class SocketTokenDomainService {
   private approvalKey: string;
 
   async getSocketConnectionKey() {

@@ -1,8 +1,5 @@
-import axios from 'axios';
-import { Injectable, Logger } from '@nestjs/common';
-import { KoreaInvestmentService } from '../../koreaInvestment/korea-investment.service';
-import { getHeader } from '../../util/get-header';
-import { getFullURL } from '../../util/get-full-URL';
+import { Injectable } from '@nestjs/common';
+import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea-investment.domain-service';
 import { InquirePriceChartApiResponse } from './interface/stock-detail-chart.interface';
 import { InquirePriceChartDataDto } from './dto/stock-detail-chart-data.dto';
 import {
@@ -14,10 +11,8 @@ import { StockDetailRepository } from './stock-detail.repository';
 
 @Injectable()
 export class StockDetailService {
-  private readonly logger = new Logger();
-
   constructor(
-    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
     private readonly stockDetailRepository: StockDetailRepository,
   ) {}
 
@@ -29,29 +24,18 @@ export class StockDetailService {
    * @author uuuo3o
    */
   async getInquirePrice(stockCode: string) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+    };
 
-      const response = await this.requestApi<InquirePriceApiResponse>(
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquirePriceApiResponse>(
         'FHKST01010100',
         '/uapi/domestic-stock/v1/quotations/inquire-price',
         queryParams,
       );
-
-      return await this.formatStockData(response.output);
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    return this.formatStockData(response.output);
   }
 
   /**
@@ -77,6 +61,8 @@ export class StockDetailService {
       prdy_ctrt: stock.prdy_ctrt,
       hts_avls: stock.hts_avls,
       per: stock.per,
+      stck_mxpr: stock.stck_mxpr,
+      stck_llam: stock.stck_llam,
     };
   }
 
@@ -96,33 +82,23 @@ export class StockDetailService {
     date2: string,
     periodDivCode: string,
   ) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-        fid_input_date_1: date1,
-        fid_input_date_2: date2,
-        fid_period_div_code: periodDivCode,
-        fid_org_adj_prc: '0',
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+      fid_input_date_1: date1,
+      fid_input_date_2: date2,
+      fid_period_div_code: periodDivCode,
+      fid_org_adj_prc: '0',
+    };
 
-      const response = await this.requestApi<InquirePriceChartApiResponse>(
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquirePriceChartApiResponse>(
         'FHKST03010100',
         '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
         queryParams,
       );
 
-      return this.formatStockInquirePriceData(response).slice().reverse();
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    return this.formatStockInquirePriceData(response).slice().reverse();
   }
 
   /**
@@ -157,42 +133,5 @@ export class StockDetailService {
 
       return stockData;
     });
-  }
-
-  /**
-   * @private 한국투자 Open API - API 호출용 공통 함수
-   * @param {string} trId - API 호출에 사용할 tr_id
-   * @param {string} apiURL - API 호출에 사용할 URL
-   * @param {Record<string, string>} params - API 요청 시 필요한 쿼리 파라미터 DTO
-   * @returns - API 호출에 대한 응답 데이터
-   *
-   * @author uuuo3o
-   */
-  private async requestApi<T>(
-    trId: string,
-    apiURL: string,
-    params: Record<string, string>,
-  ): Promise<T> {
-    try {
-      const accessToken = await this.koreaInvestmentService.getAccessToken();
-      const headers = getHeader(accessToken, trId);
-      const url = getFullURL(apiURL);
-
-      const response = await axios.get<T>(url, {
-        headers,
-        params,
-      });
-
-      return response.data;
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers,
-        message: error.message,
-      });
-      throw error;
-    }
   }
 }

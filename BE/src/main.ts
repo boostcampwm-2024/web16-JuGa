@@ -18,9 +18,10 @@ async function bootstrap() {
       'http://223.130.151.42:5173',
       'http://223.130.151.42:3000',
     ],
-    methods: 'GET, HEAD, PUT, PATH, POST, DELETE',
+    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
     preflightContinue: false,
     optionsSuccessStatus: 204,
+    credentials: true,
   });
 
   app.use(cookieParser());
