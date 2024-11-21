@@ -92,4 +92,14 @@ export class AuthController {
   check() {
     return { isLogin: true };
   }
+
+  @ApiOperation({ summary: '로그아웃 API' })
+  @Get('/logout')
+  @UseGuards(AuthGuard('jwt'))
+  async logout(@Res() res: Response) {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    res.clearCookie('isRefreshToken');
+    return res.status(200).json({ message: '로그아웃 성공' });
+  }
 }
