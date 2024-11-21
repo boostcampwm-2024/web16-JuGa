@@ -60,19 +60,23 @@ export class RankingService {
       );
     }
 
+    const findUserRank = async () => {
+      if (!options.nickname) return null;
+
+      const members = await this.redisDomainService.zrange(key, 0, -1);
+      const userMember = members.find((member) => {
+        const parsed = JSON.parse(member);
+        return parsed.nickname === options.nickname;
+      });
+
+      return userMember
+        ? this.redisDomainService.zrevrank(key, userMember)
+        : null;
+    };
+
     const [topRank, userRank] = await Promise.all([
       this.redisDomainService.zrevrange(key, 0, 9),
-      options.nickname !== null
-        ? this.redisDomainService.zrevrank(
-            key,
-            JSON.stringify({
-              nickname: options.nickname,
-              ...(sortBy === SortType.PROFIT_RATE
-                ? { profitRate: 0 }
-                : { totalAsset: 0 }),
-            }),
-          )
-        : null,
+      findUserRank(),
     ]);
 
     const parsedTopRank: RankingDataDto[] = topRank.map((rank) =>
