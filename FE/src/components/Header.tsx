@@ -24,6 +24,11 @@ export default function Header() {
     check();
   }, [setIsLogin]);
 
+  const handleLogout = () => {
+    setIsLogin(false);
+    deleteCookie('accessToken');
+  };
+
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
@@ -52,10 +57,7 @@ export default function Header() {
           {isLogin ? (
             <button
               className='px-4 py-2 text-sm text-juga-grayscale-500'
-              onClick={() => {
-                setIsLogin(false);
-                deleteCookie('accessToken');
-              }}
+              onClick={handleLogout}
             >
               로그아웃
             </button>
