@@ -1,25 +1,53 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import PriceTableColumn from './PriceTableColumn.tsx';
 import PriceTableLiveCard from './PriceTableLiveCard.tsx';
 import PriceTableDayCard from './PriceTableDayCard.tsx';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
 import { getTradeHistory } from 'service/getTradeHistory.ts';
+import { createSSEConnection } from './PriceSectionSseHook.ts';
 
 export default function PriceSection() {
+  const { id } = useParams();
   const [buttonFlag, setButtonFlag] = useState(true);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { id } = useParams();
+  const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data: tradeData = [], isLoading } = useQuery({
     queryKey: ['detail', id, buttonFlag],
     queryFn: () => getTradeHistory(id as string, buttonFlag),
-    refetchInterval: 1000,
     cacheTime: 30000,
     staleTime: 1000,
   });
+
+  const addData = useCallback(
+    (newData: PriceDataType) => {
+      queryClient.setQueryData(
+        ['detail', id, buttonFlag],
+        (old: PriceDataType[] = []) => {
+          return [newData, ...old].slice(0, 30);
+        },
+      );
+    },
+    [id, buttonFlag],
+  );
+
+  useEffect(() => {
+    if (!buttonFlag) return;
+    const eventSource = createSSEConnection(
+      `${import.meta.env.VITE_API_URL}/stocks/trade-history/${id}/today-sse`,
+      addData,
+    );
+
+    return () => {
+      if (eventSource) {
+        console.log('SSE connection close');
+        eventSource.close();
+      }
+    };
+  }, [buttonFlag, id, addData]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;
@@ -88,19 +116,19 @@ export default function PriceSection() {
                 <tr>
                   <td>Loading...</td>
                 </tr>
-              ) : !data ? (
+              ) : !tradeData ? (
                 <tr>
                   <td>No data available</td>
                 </tr>
               ) : buttonFlag ? (
-                data.map((eachData: PriceDataType, index: number) => (
+                tradeData.map((eachData: PriceDataType, index: number) => (
                   <PriceTableLiveCard
                     key={`${eachData.stck_cntg_hour}-${index}`}
                     data={eachData}
                   />
                 ))
               ) : (
-                data.map((eachData: DailyPriceDataType, index: number) => (
+                tradeData.map((eachData: DailyPriceDataType, index: number) => (
                   <PriceTableDayCard
                     key={`${eachData.stck_bsop_date}-${index}`}
                     data={eachData}

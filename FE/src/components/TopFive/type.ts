@@ -1,4 +1,5 @@
 export type StockData = {
+  stck_shrn_iscd: string;
   hts_kor_isnm: string;
   stck_prpr: string;
   prdy_vrss: string;
