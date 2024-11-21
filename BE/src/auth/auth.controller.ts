@@ -80,4 +80,11 @@ export class AuthController {
     res.cookie('isRefreshToken', true, { httpOnly: true });
     return res.redirect(this.configService.get<string>('FRONTEND_URL'));
   }
+
+  @ApiOperation({ summary: '로그인 상태 확인 API' })
+  @Get('/check')
+  @UseGuards(AuthGuard('jwt'))
+  check() {
+    return { isLogin: true };
+  }
 }
