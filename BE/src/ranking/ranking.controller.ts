@@ -1,10 +1,9 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { OptionalAuthGuard } from 'src/auth/optional-auth-guard';
 import { RankingService } from './ranking.service';
 import { RankingResponseDto } from './dto/ranking-response.dto';
-import { SortType } from './enum/sort-type.enum';
 
 @Controller('/api/ranking')
 @ApiTags('랭킹 API')
@@ -19,21 +18,12 @@ export class RankingController {
   })
   @Get()
   @UseGuards(OptionalAuthGuard)
-  @ApiQuery({
-    name: 'sortBy',
-    required: false,
-    description: 'profitRate: 수익률순, totalAsset: 자산순',
-    enum: ['profitRate', 'totalAsset'],
-  })
-  async getRanking(
-    @Req() req: Request,
-    @Query('sortBy') sortBy: SortType = SortType.PROFIT_RATE,
-  ): Promise<RankingResponseDto> {
+  async getRanking(@Req() req: Request): Promise<RankingResponseDto> {
     if (!req.user) {
-      return this.rankingService.getRanking(sortBy);
+      return this.rankingService.getRanking();
     }
 
     const { nickname } = req.user;
-    return this.rankingService.getRankingAuthUser(nickname, sortBy);
+    return this.rankingService.getRankingAuthUser(nickname);
   }
 }

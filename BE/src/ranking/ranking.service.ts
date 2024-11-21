@@ -4,6 +4,9 @@ import { AssetRepository } from 'src/asset/asset.repository';
 import { Cron } from '@nestjs/schedule';
 import { SortType } from './enum/sort-type.enum';
 import { Ranking } from './interface/ranking.interface';
+import { RankingResponseDto } from './dto/ranking-response.dto';
+import { RankingResultDto } from './dto/ranking-result.dto';
+import { RankingDataDto } from './dto/ranking-data.dto';
 
 @Injectable()
 export class RankingService {
@@ -12,69 +15,78 @@ export class RankingService {
     private readonly redisDomainService: RedisDomainService,
   ) {}
 
-  async getRanking(sortBy: SortType = SortType.PROFIT_RATE) {
-    const date = new Date().toISOString().slice(0, 10);
-    const key = `ranking:${date}:${sortBy}`;
+  async getRanking(): Promise<RankingResponseDto> {
+    const profitRateRanking = await this.getRankingData(SortType.PROFIT_RATE);
+    const assetRanking = await this.getRankingData(SortType.ASSET);
 
-    if (await this.redisDomainService.exists(key)) {
-      return {
-        topRank: await this.redisDomainService.zrevrange(key, 0, 9),
-        userRank: null,
-      };
-    }
-
-    const ranking = await this.calculateRanking(sortBy);
-
-    await Promise.all(
-      ranking.map((rank: Ranking) =>
-        this.redisDomainService.zadd(
-          key,
-          this.getSortScore(rank, sortBy),
-          rank.nickname,
-        ),
-      ),
-    );
-
-    return {
-      topRank: await this.redisDomainService.zrevrange(key, 0, 9),
-      userRank: null,
-    };
+    return { profitRateRanking, assetRanking };
   }
 
-  async getRankingAuthUser(
-    nickname: string,
-    sortBy: SortType = SortType.PROFIT_RATE,
-  ) {
+  async getRankingAuthUser(nickname: string): Promise<RankingResponseDto> {
+    const profitRateRanking = await this.getRankingData(SortType.PROFIT_RATE, {
+      nickname,
+    });
+    const assetRanking = await this.getRankingData(SortType.ASSET, {
+      nickname,
+    });
+    return { profitRateRanking, assetRanking };
+  }
+
+  private async getRankingData(
+    sortBy: SortType,
+    options: { nickname?: string } = { nickname: null },
+  ): Promise<RankingResultDto> {
     const date = new Date().toISOString().slice(0, 10);
     const key = `ranking:${date}:${sortBy}`;
 
-    let userRank = null;
-
-    if (await this.redisDomainService.exists(key)) {
-      userRank = await this.redisDomainService.zrevrank(key, nickname);
-
-      return {
-        topRank: await this.redisDomainService.zrevrange(key, 0, 9),
-        userRank: userRank !== null ? userRank + 1 : null,
-      };
+    if (!(await this.redisDomainService.exists(key))) {
+      const ranking = await this.calculateRanking(sortBy);
+      await Promise.all(
+        ranking.map((rank: Ranking) =>
+          this.redisDomainService.zadd(
+            key,
+            this.getSortScore(rank, sortBy),
+            sortBy === SortType.PROFIT_RATE
+              ? JSON.stringify({
+                  nickname: rank.nickname,
+                  profitRate: rank.profitRate,
+                })
+              : JSON.stringify({
+                  nickname: rank.nickname,
+                  totalAsset: rank.totalAsset,
+                }),
+          ),
+        ),
+      );
     }
 
-    const ranking = await this.calculateRanking(sortBy);
-    await Promise.all(
-      ranking.map((rank: Ranking) =>
-        this.redisDomainService.zadd(
-          key,
-          this.getSortScore(rank, sortBy),
-          rank.nickname,
-        ),
-      ),
+    const findUserRank = async () => {
+      if (!options.nickname) return null;
+
+      const members = await this.redisDomainService.zrange(key, 0, -1);
+      const userMember = members.find((member) => {
+        const parsed = JSON.parse(member);
+        return parsed.nickname === options.nickname;
+      });
+
+      return userMember
+        ? this.redisDomainService.zrevrank(key, userMember)
+        : null;
+    };
+
+    const [topRank, userRank] = await Promise.all([
+      this.redisDomainService.zrevrange(key, 0, 9),
+      findUserRank(),
+    ]);
+
+    const parsedTopRank: RankingDataDto[] = topRank.map((rank) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      JSON.parse(rank),
     );
 
-    userRank = await this.redisDomainService.zrevrank(key, nickname);
-
     return {
-      topRank: await this.redisDomainService.zrevrange(key, 0, 9),
-      userRank: userRank ? userRank + 1 : null,
+      topRank: parsedTopRank,
+      userRank: userRank !== null ? userRank + 1 : null,
     };
   }
 
@@ -100,7 +112,10 @@ export class RankingService {
           this.redisDomainService.zadd(
             profitRateKey,
             rank.profitRate,
-            rank.nickname,
+            JSON.stringify({
+              nickname: rank.nickname,
+              profitRate: rank.profitRate,
+            }),
           ),
         ),
       ),
@@ -109,7 +124,10 @@ export class RankingService {
           this.redisDomainService.zadd(
             assetKey,
             rank.totalAsset,
-            rank.nickname,
+            JSON.stringify({
+              nickname: rank.nickname,
+              totalAsset: rank.totalAsset,
+            }),
           ),
         ),
       ),
