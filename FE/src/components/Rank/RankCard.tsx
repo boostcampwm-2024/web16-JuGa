@@ -1,14 +1,20 @@
-import { TmpDataType } from './RankType.ts';
+import { AssetRankItemType, ProfitRankItemType } from './bummyData.ts';
 
 type Props = {
-  item: TmpDataType;
+  item: ProfitRankItemType | AssetRankItemType;
   ranking: number;
   type: '수익률순' | '자산순';
 };
+
 export default function RankCard({ item, ranking, type }: Props) {
+  const isProfitRankItem = (
+    item: ProfitRankItemType | AssetRankItemType,
+  ): item is ProfitRankItemType => {
+    return 'profitRate' in item;
+  };
+
   return (
     <div
-      key={item.nickname}
       className={`flex items-center justify-between rounded p-2 transition-colors`}
     >
       <div className='flex items-center gap-2'>
@@ -30,11 +36,13 @@ export default function RankCard({ item, ranking, type }: Props) {
       <div className='text-right'>
         <span className='text-sm font-bold text-gray-700'>
           {type === '수익률순'
-            ? `${item.value}%`
+            ? isProfitRankItem(item)
+              ? `${item.profitRate}%`
+              : '0%'
             : new Intl.NumberFormat('ko-KR', {
                 notation: 'compact',
                 maximumFractionDigits: 1,
-              }).format(item.value) + '원'}
+              }).format((item as AssetRankItemType).totalAsset) + '원'}
         </span>
       </div>
     </div>
