@@ -26,6 +26,7 @@ export class AssetController {
   @ApiResponse({
     status: 200,
     description: '매도 가능 주식 개수 조회 성공',
+    example: { quantity: 0 },
   })
   async getUserStockByCode(
     @Req() request: Request,
@@ -48,6 +49,7 @@ export class AssetController {
   @ApiResponse({
     status: 200,
     description: '매수 가능 금액 조회 성공',
+    example: { cash_balance: 0 },
   })
   async getCashBalance(@Req() request: Request) {
     return this.assetService.getCashBalance(parseInt(request.user.userId, 10));

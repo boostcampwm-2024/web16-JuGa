@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
@@ -84,6 +84,11 @@ export class AuthController {
   @ApiOperation({ summary: '로그인 상태 확인 API' })
   @Get('/check')
   @UseGuards(AuthGuard('jwt'))
+  @ApiResponse({
+    status: 200,
+    description: '로그인 상태 조회 성공',
+    example: { isLogin: true },
+  })
   check() {
     return { isLogin: true };
   }

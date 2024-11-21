@@ -22,6 +22,11 @@ export class StockListController {
     description: '모든 주식 종목 리스트를 조회한다.',
   })
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: '주식 종목 리스트 조회 성공',
+    type: [StockListResponseDto],
+  })
   async findAll(): Promise<StockListResponseDto[]> {
     return this.stockListService.findAll();
   }
