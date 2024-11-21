@@ -20,6 +20,13 @@ async function bootstrap() {
       'http://175.45.204.158',
       'http://175.45.204.158:3000',
       'http://juga.kro.kr',
+      // https
+      'https://175.45.204.158',
+      'https://175.45.204.158:5173',
+      'https://175.45.204.158:3000',
+      'https://juga.kro.kr',
+      'https://juga.kro.kr:3000',
+      'https://juga.kro.kr:5173',
     ],
     methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
     preflightContinue: false,
