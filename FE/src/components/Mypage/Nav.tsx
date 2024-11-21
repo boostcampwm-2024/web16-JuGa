@@ -3,9 +3,10 @@ import { MypageSectionType } from 'types';
 
 const mapping = {
   account: '보유 자산 현황',
+  order: '주문 요청 현황',
   info: '내 정보',
 };
-const sections: MypageSectionType[] = ['account', 'info'];
+const sections: MypageSectionType[] = ['account', 'order', 'info'];
 
 export default function Nav() {
   const [searchParams, setSearchParams] = useSearchParams();

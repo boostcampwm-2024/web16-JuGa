@@ -1,6 +1,5 @@
 import Overay from 'components/ModalOveray';
-import { buyStock } from 'service/stocks';
-// import useAuthStore from 'store/authStore';
+import { orderBuyStock } from 'service/orders';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 
 type TradeAlertModalProps = {
@@ -17,17 +16,11 @@ export default function TradeAlertModal({
   count,
 }: TradeAlertModalProps) {
   const { toggleModal } = useTradeAlertModalStore();
-  // const { accessToken } = useAuthStore();
-
-  // if (!accessToken) {
-  //   console.log('accessToken 없음!');
-  //   return;
-  // }
 
   const charge = 55; // 수수료 임시
 
   const handleBuy = async () => {
-    const res = await buyStock(code, +price, count);
+    const res = await orderBuyStock(code, +price, count);
     if (res.ok) toggleModal();
   };
 
@@ -46,7 +39,7 @@ export default function TradeAlertModal({
           <div className='flex justify-between'>
             <p>예상 수수료</p>
             <p>{charge}원</p>
-          </div>{' '}
+          </div>
           <div className='flex justify-between'>
             <p>총 주문 금액</p>
             <p>{(+price + charge).toLocaleString()}원</p>

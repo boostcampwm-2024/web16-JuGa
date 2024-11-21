@@ -40,8 +40,7 @@ export type StockChartUnit = {
   prdy_vrss_sign: string;
 };
 
-
-export type MypageSectionType = 'account' | 'info';
+export type MypageSectionType = 'account' | 'order' | 'info';
 
 export type Asset = {
   cash_balance: string;
@@ -49,6 +48,7 @@ export type Asset = {
   total_asset: string;
   total_profit: string;
   total_profit_rate: string;
+  is_positive: boolean;
 };
 
 export type MyStockListUnit = {
@@ -62,6 +62,17 @@ export type AssetsResponse = {
   asset: Asset;
   stocks: MyStockListUnit[];
 };
+
+export type Order = {
+  id: number;
+  stock_code: string;
+  stock_name: string;
+  amount: number;
+  price: number;
+  trade_type: 'BUY' | 'SELL';
+  created_at: string;
+};
+
 export type ChartSizeConfigType = {
   upperHeight: number;
   lowerHeight: number;

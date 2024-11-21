@@ -4,12 +4,25 @@ import useLoginModalStore from 'store/useLoginModalStore';
 import useSearchModalStore from '../store/useSearchModalStore.ts';
 import useSearchInputStore from '../store/useSearchInputStore.ts';
 import logo from 'assets/Logo.png';
+import { deleteCookie } from 'utils/common.ts';
+import { checkAuth } from 'service/auth.ts';
+import { useEffect } from 'react';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
-  const { isLogin, resetToken } = useAuthStore();
+  const { isLogin, setIsLogin } = useAuthStore();
   const { toggleSearchModal } = useSearchModalStore();
   const { searchInput } = useSearchInputStore();
+
+  useEffect(() => {
+    const check = async () => {
+      const res = await checkAuth();
+      if (res.ok) setIsLogin(true);
+      else setIsLogin(false);
+    };
+
+    check();
+  }, [setIsLogin]);
 
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
@@ -24,7 +37,6 @@ export default function Header() {
             <Link to={'/'}>홈</Link>
             <Link to={'/rank'}>랭킹</Link>
             <Link to={'/mypage'}>마이페이지</Link>
-
           </nav>
           <div className='relative'>
             <input
@@ -40,7 +52,10 @@ export default function Header() {
           {isLogin ? (
             <button
               className='px-4 py-2 text-sm text-juga-grayscale-500'
-              onClick={resetToken}
+              onClick={() => {
+                setIsLogin(false);
+                deleteCookie('accessToken');
+              }}
             >
               로그아웃
             </button>
