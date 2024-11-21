@@ -61,6 +61,16 @@ export type AssetsResponse = {
   asset: Asset;
   stocks: MyStockListUnit[];
 };
+
+export type Order = {
+  stock_code: string;
+  stock_name: string;
+  amount: number;
+  price: number;
+  trade_type: string;
+  created_at: string;
+};
+
 export type ChartSizeConfigType = {
   upperHeight: number;
   lowerHeight: number;
