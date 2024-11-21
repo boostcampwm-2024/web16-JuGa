@@ -7,6 +7,7 @@ import { SocketConnectTokenInterface } from '../../../common/websocket/interface
 import { getFullTestURL } from '../../../util/get-full-URL';
 import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
 import { SocketGateway } from '../../../common/websocket/socket.gateway';
+import { StockDetailSocketDataDto } from './dto/stock-detail-socket-data.dto';
 
 @Injectable()
 export class StockTradeHistorySocketService implements OnModuleInit {
@@ -53,6 +54,13 @@ export class StockTradeHistorySocketService implements OnModuleInit {
         prdy_ctrt: dataList[5],
       };
 
+      const detailData: StockDetailSocketDataDto = {
+        stck_prpr: dataList[2],
+        prdy_vrss_sign: dataList[3],
+        prdy_vrss: dataList[4],
+        prdy_ctrt: dataList[5],
+      };
+
       this.eventSubject.next({
         data: JSON.stringify({
           tradeData,
@@ -62,6 +70,11 @@ export class StockTradeHistorySocketService implements OnModuleInit {
       this.socketGateway.sendStockTradeHistoryValueToClient(
         `trade-history/${dataList[0]}`,
         tradeData,
+      );
+
+      this.socketGateway.sendStockIndexValueToClient(
+        `detail/${dataList[0]}`,
+        detailData,
       );
     };
 
