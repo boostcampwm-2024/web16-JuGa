@@ -29,12 +29,12 @@ const dummyTwo = [
 
 export default function Rank() {
   return (
-    <div className='h-[500px] rounded-xl px-4'>
-      <div className='mb-3'>
+    <div className='rounded-xl px-4'>
+      <div className='mb-2'>
         <Nav />
       </div>
 
-      <div className='grid h-[400px] grid-cols-1 gap-4 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         <RankList title='수익률순' data={dummyOne} />
         <RankList title='자산순' data={dummyTwo} />
       </div>
