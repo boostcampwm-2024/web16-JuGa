@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { RankingResultDto } from './ranking-result.dto';
 
 export class RankingResponseDto {
   @ApiProperty({
-    description: 'top 10 유저 랭킹',
+    description: '수익률 랭킹',
   })
-  topRank: string[];
+  profitRateRanking: RankingResultDto;
 
   @ApiProperty({
-    description: '로그인 한 유저의 랭킹',
+    description: '자산 랭킹',
   })
-  userRank?: number | null;
+  assetRanking: RankingResultDto;
 }
