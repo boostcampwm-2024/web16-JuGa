@@ -6,6 +6,7 @@ import { SseEvent } from './interface/sse-event';
 import { SocketConnectTokenInterface } from '../../../common/websocket/interface/socket.interface';
 import { getFullTestURL } from '../../../util/get-full-URL';
 import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
+import { SocketGateway } from '../../../common/websocket/socket.gateway';
 
 @Injectable()
 export class StockTradeHistorySocketService implements OnModuleInit {
@@ -15,6 +16,8 @@ export class StockTradeHistorySocketService implements OnModuleInit {
   private subscribedStocks = new Set<string>();
   private TR_ID = 'H0STCNT0';
   private eventSubject = new Subject<SseEvent>();
+
+  constructor(private readonly socketGateway: SocketGateway) {}
 
   async onModuleInit() {
     this.socketConnectionKey = await this.getSocketConnectionKey();
@@ -52,10 +55,14 @@ export class StockTradeHistorySocketService implements OnModuleInit {
 
       this.eventSubject.next({
         data: JSON.stringify({
-          stockCode: data[1],
           tradeData,
         }),
       });
+
+      this.socketGateway.sendStockTradeHistoryValueToClient(
+        `trade-history/${dataList[0]}`,
+        tradeData,
+      );
     };
 
     this.socket.onclose = () => {
