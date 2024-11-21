@@ -8,6 +8,6 @@ export class UserService {
 
   async getProfile(userId: number) {
     const user = await this.userRepository.findOneBy({ id: userId });
-    return new ProfileResponseDto(user.name, user.email);
+    return new ProfileResponseDto(user.nickname, user.email);
   }
 }
