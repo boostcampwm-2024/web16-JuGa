@@ -4,8 +4,7 @@ import useLoginModalStore from 'store/useLoginModalStore';
 import useSearchModalStore from '../store/useSearchModalStore.ts';
 import useSearchInputStore from '../store/useSearchInputStore.ts';
 import logo from 'assets/Logo.png';
-import { deleteCookie } from 'utils/common.ts';
-import { checkAuth } from 'service/auth.ts';
+import { checkAuth, logout } from 'service/auth.ts';
 import { useEffect } from 'react';
 
 export default function Header() {
@@ -25,8 +24,9 @@ export default function Header() {
   }, [setIsLogin]);
 
   const handleLogout = () => {
-    setIsLogin(false);
-    deleteCookie('accessToken');
+    logout().then(() => {
+      setIsLogin(false);
+    });
   };
 
   return (
