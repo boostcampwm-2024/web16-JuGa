@@ -13,6 +13,7 @@ import { StockOrderSocketService } from './stock-order-socket.service';
 import { UserStockRepository } from '../../asset/user-stock.repository';
 import { AssetRepository } from '../../asset/asset.repository';
 import { StockOrderElementResponseDto } from './dto/stock-order-element-response.dto';
+import { Order } from './stock-order.entity';
 
 @Injectable()
 export class StockOrderService {
@@ -104,5 +105,18 @@ export class StockOrderService {
         stockOrderRaw.o_created_at,
       );
     });
+  }
+
+  async removePendingOrders() {
+    const orders: Order[] =
+      await this.stockOrderRepository.findAllCodeByStatus();
+
+    await Promise.all(
+      orders.map((order) =>
+        this.stockOrderSocketService.unsubscribeByCode(order.stock_code),
+      ),
+    );
+
+    await this.stockOrderRepository.delete({ status: StatusType.PENDING });
   }
 }

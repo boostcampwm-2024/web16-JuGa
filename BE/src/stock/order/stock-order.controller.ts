@@ -16,6 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
+import { Cron } from '@nestjs/schedule';
 import { StockOrderService } from './stock-order.service';
 import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth-guard';
@@ -102,5 +103,10 @@ export class StockOrderController {
     return this.stockOrderService.getPendingListByUserId(
       parseInt(request.user.userId, 10),
     );
+  }
+
+  @Cron('0 6 * * *')
+  async cronRemovePendingOrders() {
+    await this.stockOrderService.removePendingOrders();
   }
 }
