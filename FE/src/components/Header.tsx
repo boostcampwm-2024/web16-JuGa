@@ -5,12 +5,24 @@ import useSearchModalStore from '../store/useSearchModalStore.ts';
 import useSearchInputStore from '../store/useSearchInputStore.ts';
 import logo from 'assets/Logo.png';
 import { deleteCookie } from 'utils/common.ts';
+import { checkAuth } from 'service/auth.ts';
+import { useEffect } from 'react';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
   const { isLogin, setIsLogin } = useAuthStore();
   const { toggleSearchModal } = useSearchModalStore();
   const { searchInput } = useSearchInputStore();
+
+  useEffect(() => {
+    const check = async () => {
+      const res = await checkAuth();
+      if (res.ok) setIsLogin(true);
+      else setIsLogin(false);
+    };
+
+    check();
+  }, [setIsLogin]);
 
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
