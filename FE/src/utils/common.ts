@@ -20,3 +20,7 @@ export function parseTimestamp(timestamp: string) {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export function isNumericString(str: string) {
+  return str.length === 0 || /^[0-9]+$/.test(str);
+}
