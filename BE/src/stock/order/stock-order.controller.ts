@@ -105,7 +105,7 @@ export class StockOrderController {
     );
   }
 
-  @Cron('0 6 * * *')
+  @Cron('0 18 * * *')
   async cronRemovePendingOrders() {
     await this.stockOrderService.removePendingOrders();
   }
