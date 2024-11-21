@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { StockDetailType } from 'types';
 import SellSection from './SellSection';
-import BuySection from './buySection';
+import BuySection from './BuySection';
 
 type TradeSectionProps = {
   code: string;
