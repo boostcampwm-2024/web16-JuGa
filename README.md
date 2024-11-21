@@ -33,5 +33,7 @@
 
 ## 🗂️ 기술 스택
 <div align="center">
-  <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/3ca54910-ee13-43bb-a1e5-684c3d07fc54">
+  <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/d58700ea-8bfe-459f-8b67-d0864bf76693">
 </div>
+
+
