@@ -38,12 +38,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     email: string;
     tutorial: boolean;
     kakaoId: string | null;
+    nickname: string;
   }> {
     const { email } = payload;
     const user: User = await this.userRepository.findOne({ where: { email } });
     if (!user) throw new UnauthorizedException();
 
     return {
+      nickname: user.nickname,
       userId: user.id,
       email: user.email,
       tutorial: user.tutorial,

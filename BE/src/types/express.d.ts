@@ -7,6 +7,7 @@ declare module 'express' {
       kakaoId?: string;
       userId?: UUID;
       email?: string;
+      nickname?: string;
     };
   }
 }
