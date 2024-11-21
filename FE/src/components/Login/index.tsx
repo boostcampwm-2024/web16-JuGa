@@ -10,7 +10,7 @@ export default function Login() {
   const { isOpen, toggleModal } = useLoginModalStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { setAccessToken } = useAuthStore();
+  const { setIsLogin } = useAuthStore();
   const [errorCode, setErrorCode] = useState<number>(200);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function Login() {
       return;
     }
 
-    setAccessToken(res.accessToken);
+    setIsLogin(true);
     toggleModal();
   };
 
@@ -46,6 +46,7 @@ export default function Login() {
       }
 
       document.cookie = `accessToken=${res.accessToken}; path=/;`;
+      setIsLogin(true);
       toggleModal();
       return;
     }
