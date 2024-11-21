@@ -25,8 +25,8 @@ export async function orderBuyStock(
 
 export async function getOrders(): Promise<Order[]> {
   const url = import.meta.env.PROD
-    ? `${import.meta.env.VITE_API_URL}/stocks/trade/list`
-    : '/api/stocks/trade/list';
+    ? `${import.meta.env.VITE_API_URL}/stocks/order/list`
+    : '/api/stocks/order/list';
 
   return fetch(url, {
     credentials: 'include',
