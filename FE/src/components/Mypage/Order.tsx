@@ -1,4 +1,5 @@
 import useOrders from 'hooks/useOrder';
+import { parseTimestamp } from 'utils/common';
 
 export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
@@ -47,7 +48,9 @@ export default function Order() {
               </p>
               <p className='w-1/4 text-center truncate'>{amount}</p>
               <p className='w-1/4 text-center'>{price.toLocaleString()}원</p>
-              <p className='w-1/4 text-right truncate'>{created_at}</p>
+              <p className='w-1/4 text-right truncate'>
+                {parseTimestamp(created_at)}
+              </p>
               <p className='w-1/6 text-right'>
                 <button
                   onClick={() => handleCancelOrder(id)}
