@@ -15,7 +15,9 @@ export default function RankCard({ item, ranking, type }: Props) {
 
   return (
     <div
-      className={`flex items-center justify-between rounded p-2 transition-colors`}
+      className={
+        'flex items-center justify-between rounded p-2 transition-colors'
+      }
     >
       <div className='flex items-center gap-2'>
         <div
