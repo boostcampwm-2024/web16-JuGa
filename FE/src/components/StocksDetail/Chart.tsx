@@ -14,6 +14,7 @@ import { drawXAxis } from 'utils/chart/drawXAxis.ts';
 import { drawUpperYAxis } from 'utils/chart/drawUpperYAxis.ts';
 import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
 import { drawChartGrid } from 'utils/chart/drawChartGrid.ts';
+import { drawMouseGrid } from '../../utils/chart/drawMouseGrid.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },
@@ -31,6 +32,11 @@ const padding: Padding = {
 
 type StocksDeatailChartProps = {
   code: string;
+};
+
+export type MousePositionType = {
+  x: number;
+  y: number;
 };
 
 export default function Chart({ code }: StocksDeatailChartProps) {
@@ -52,6 +58,10 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [upperLabelNum, setUpperLabelNum] = useState(3);
   const [lowerLabelNum, setLowerLabelNum] = useState(3);
+  const [mousePosition, setMousePosition] = useState<MousePositionType>({
+    x: 0,
+    y: 0,
+  });
 
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
@@ -105,16 +115,14 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     setIsDragging(false);
   }, []);
 
-  // const getCanvasMousePosition = (e: MouseEvent) => {
-  //   if (!containerRef.current) return;
-  //   const rect = containerRef.current.getBoundingClientRect();
-  //   const tmp = {
-  //     x:e.clientX - rect.left,
-  //     y: e.clientY - rect.top,
-  //   };
-  //   console.log(tmp);
-  //   return tmp;
-  // };
+  const getCanvasMousePosition = (e: MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePosition({
+      x: (e.clientX - rect.left) * 2,
+      y: (e.clientY - rect.top) * 2,
+    });
+  };
 
   useEffect(() => {
     if (isDragging) {
@@ -147,6 +155,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       lowerChartYCanvas: HTMLCanvasElement,
       chartXCanvas: HTMLCanvasElement,
       chartData: StockChartUnit[],
+      mousePosition: MousePositionType,
     ) => {
       const UpperChartCtx = upperChartCanvas.getContext('2d');
       const LowerChartCtx = lowerChartCanvas.getContext('2d');
@@ -232,6 +241,24 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         chartXCanvas.height,
         padding,
       );
+
+      if (
+        mousePosition.x > padding.left &&
+        mousePosition.x < upperChartCanvas.width &&
+        mousePosition.y > padding.top &&
+        mousePosition.y < upperChartCanvas.height + lowerChartCanvas.height
+      ) {
+        drawMouseGrid(
+          UpperChartCtx,
+          upperChartCanvas.width - padding.left - padding.right,
+          upperChartCanvas.height - padding.top - padding.bottom,
+          LowerChartCtx,
+          lowerChartCanvas.width - padding.left - padding.right,
+          lowerChartCanvas.height - padding.top - padding.bottom,
+          padding,
+          mousePosition,
+        );
+      }
     },
     [
       padding,
@@ -295,6 +322,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       lowerChartY.current,
       chartX.current,
       data,
+      mousePosition,
     );
   }, [
     timeCategory,
@@ -303,6 +331,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     setCanvasSize,
     renderChart,
     charSizeConfig,
+    mousePosition,
   ]);
 
   return (
@@ -324,7 +353,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       <div
         ref={containerRef}
         className='mt-2 flex h-[200px] w-full flex-col'
-        // onMouseMove={getCanvasMousePosition}
+        onMouseMove={getCanvasMousePosition}
       >
         {/* Upper 차트 영역 */}
         <div className='flex flex-row'>
