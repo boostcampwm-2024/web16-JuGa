@@ -96,7 +96,7 @@ export class AuthController {
   @ApiOperation({ summary: '로그아웃 API' })
   @Get('/logout')
   @UseGuards(AuthGuard('jwt'))
-  async logout(@Res() res: Response) {
+  logout(@Res() res: Response) {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.clearCookie('isRefreshToken');
