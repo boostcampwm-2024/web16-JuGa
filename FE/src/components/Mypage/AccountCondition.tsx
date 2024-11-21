@@ -42,7 +42,7 @@ export default function AccountCondition({ asset }: AccountConditionProps) {
         <div className='flex justify-between mb-6'>
           <p className='text-juga-grayscale-500'>투자 손익</p>
           <p
-            className={`${is_positive ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+            className={`${is_positive ? 'text-juga-red-60' : 'text-juga-blue-50'}`}
           >
             {stringToLocaleString(total_profit)}원
           </p>
@@ -50,7 +50,7 @@ export default function AccountCondition({ asset }: AccountConditionProps) {
         <div className='flex justify-between'>
           <p className='text-juga-grayscale-500'>수익률</p>
           <p
-            className={`${is_positive ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+            className={`${is_positive ? 'text-juga-red-60' : 'text-juga-blue-50'}`}
           >
             {total_profit_rate}%
           </p>
