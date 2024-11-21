@@ -12,6 +12,7 @@ export default function AccountCondition({ asset }: AccountConditionProps) {
     total_asset,
     total_profit,
     total_profit_rate,
+    is_positive,
   } = asset;
 
   return (
@@ -19,17 +20,17 @@ export default function AccountCondition({ asset }: AccountConditionProps) {
       <div className='flex min-w-[250px] flex-1 flex-col rounded-lg bg-white p-6 shadow-sm'>
         <h3 className='mb-4 text-xl text-center text-gray-700'>자산 현황</h3>
         <div className='flex justify-between mb-6'>
-          <p className='text-gray-600'>총 자산</p>
+          <p className='text-juga-grayscale-500'>총 자산</p>
           <p className='text-gray-900'>{stringToLocaleString(total_asset)}원</p>
         </div>
         <div className='flex justify-between mb-2'>
-          <p className='text-gray-600'>가용 자산</p>
+          <p className='text-juga-grayscale-500'>가용 자산</p>
           <p className='text-gray-900'>
             {stringToLocaleString(cash_balance)}원
           </p>
         </div>
         <div className='flex justify-between'>
-          <p className='text-gray-600'>주식 자산</p>
+          <p className='text-juga-grayscale-500'>주식 자산</p>
           <p className='text-gray-900'>
             {stringToLocaleString(stock_balance)}원
           </p>
@@ -39,12 +40,20 @@ export default function AccountCondition({ asset }: AccountConditionProps) {
       <div className='flex min-w-[250px] flex-1 flex-col rounded-lg bg-white p-6 shadow-sm'>
         <h3 className='mb-4 text-xl text-center text-gray-700'>투자 성과</h3>
         <div className='flex justify-between mb-6'>
-          <p className='text-gray-600'>투자 손익</p>
-          <p className='text-red-600'>{stringToLocaleString(total_profit)}원</p>
+          <p className='text-juga-grayscale-500'>투자 손익</p>
+          <p
+            className={`${is_positive ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+          >
+            {stringToLocaleString(total_profit)}원
+          </p>
         </div>
         <div className='flex justify-between'>
-          <p className='text-gray-600'>수익률</p>
-          <p className='text-red-600'>{total_profit_rate}%</p>
+          <p className='text-juga-grayscale-500'>수익률</p>
+          <p
+            className={`${is_positive ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+          >
+            {total_profit_rate}%
+          </p>
         </div>
       </div>
     </div>

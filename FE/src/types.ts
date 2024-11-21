@@ -48,6 +48,7 @@ export type Asset = {
   total_asset: string;
   total_profit: string;
   total_profit_rate: string;
+  is_positive: boolean;
 };
 
 export type MyStockListUnit = {
