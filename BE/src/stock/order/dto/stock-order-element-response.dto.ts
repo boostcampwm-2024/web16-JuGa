@@ -3,6 +3,7 @@ import { TradeType } from '../enum/trade-type';
 
 export class StockOrderElementResponseDto {
   constructor(
+    id: number,
     stock_code: string,
     stock_name: string,
     amount: number,
@@ -10,6 +11,7 @@ export class StockOrderElementResponseDto {
     trade_type: TradeType,
     created_at: Date,
   ) {
+    this.id = id;
     this.stock_code = stock_code;
     this.stock_name = stock_name;
     this.amount = amount;
@@ -17,6 +19,9 @@ export class StockOrderElementResponseDto {
     this.trade_type = trade_type;
     this.created_at = created_at;
   }
+
+  @ApiProperty({ description: '주문 id' })
+  id: number;
 
   @ApiProperty({ description: '종목 코드' })
   stock_code: string;

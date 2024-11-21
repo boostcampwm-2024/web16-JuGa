@@ -16,12 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
+import { Cron } from '@nestjs/schedule';
 import { StockOrderService } from './stock-order.service';
 import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth-guard';
 import { StockOrderElementResponseDto } from './dto/stock-order-element-response.dto';
 
-@Controller('/api/stocks/trade')
+@Controller('/api/stocks/order')
 @ApiTags('주식 매수/매도 API')
 export class StockOrderController {
   constructor(private readonly stockOrderService: StockOrderService) {}
@@ -102,5 +103,10 @@ export class StockOrderController {
     return this.stockOrderService.getPendingListByUserId(
       parseInt(request.user.userId, 10),
     );
+  }
+
+  @Cron('0 18 * * *')
+  async cronRemovePendingOrders() {
+    await this.stockOrderService.removePendingOrders();
   }
 }

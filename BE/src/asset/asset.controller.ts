@@ -70,7 +70,7 @@ export class AssetController {
   }
 
   @Cron('*/10 9-16 * * 1-5')
-  async updateStockBalance() {
-    await this.assetService.updateStockBalance();
+  async updateAllAssets() {
+    await this.assetService.updateAllAssets();
   }
 }

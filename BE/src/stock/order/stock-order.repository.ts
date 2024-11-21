@@ -35,9 +35,6 @@ export class StockOrderRepository extends Repository<Order> {
         .update(Asset)
         .set({
           cash_balance: () => `cash_balance - :realPrice`,
-          total_asset: () => `total_asset - :realPrice`,
-          total_profit: () => `total_profit - :realPrice`,
-          total_profit_rate: () => `total_profit / 10000000`,
           last_updated: new Date(),
         })
         .where({ user_id: order.user_id })
@@ -83,9 +80,6 @@ export class StockOrderRepository extends Repository<Order> {
         .update(Asset)
         .set({
           cash_balance: () => `cash_balance + :realPrice`,
-          total_asset: () => `total_asset + :realPrice`,
-          total_profit: () => `total_profit + :realPrice`,
-          total_profit_rate: () => `total_profit / 10000000`,
           last_updated: new Date(),
         })
         .where({ user_id: order.user_id })
