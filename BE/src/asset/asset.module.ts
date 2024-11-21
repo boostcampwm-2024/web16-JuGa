@@ -6,9 +6,10 @@ import { AssetRepository } from './asset.repository';
 import { Asset } from './asset.entity';
 import { UserStock } from './user-stock.entity';
 import { UserStockRepository } from './user-stock.repository';
+import { StockDetailModule } from '../stock/detail/stock-detail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Asset, UserStock])],
+  imports: [TypeOrmModule.forFeature([Asset, UserStock]), StockDetailModule],
   controllers: [AssetController],
   providers: [AssetService, AssetRepository, UserStockRepository],
   exports: [AssetRepository, UserStockRepository],

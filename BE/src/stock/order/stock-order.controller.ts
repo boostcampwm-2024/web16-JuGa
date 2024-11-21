@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Req,
@@ -18,6 +19,7 @@ import { Request } from 'express';
 import { StockOrderService } from './stock-order.service';
 import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth-guard';
+import { StockOrderElementResponseDto } from './dto/stock-order-element-response.dto';
 
 @Controller('/api/stocks/trade')
 @ApiTags('주식 매수/매도 API')
@@ -81,6 +83,24 @@ export class StockOrderController {
     await this.stockOrderService.cancel(
       parseInt(request.user.userId, 10),
       orderId,
+    );
+  }
+
+  @Get('/list')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '미체결 주문 리스트 조회 API',
+    description: '미체결 주문 취소를 위해, 미체결된 주문 리스트를 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '미체결 주문 리스트 조회 성공',
+    type: [StockOrderElementResponseDto],
+  })
+  async getPendingList(@Req() request: Request) {
+    return this.stockOrderService.getPendingListByUserId(
+      parseInt(request.user.userId, 10),
     );
   }
 }

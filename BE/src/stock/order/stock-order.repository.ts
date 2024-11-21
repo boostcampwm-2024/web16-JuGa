@@ -5,6 +5,7 @@ import { Order } from './stock-order.entity';
 import { StatusType } from './enum/status-type';
 import { Asset } from '../../asset/asset.entity';
 import { UserStock } from '../../asset/user-stock.entity';
+import { StockOrderRawInterface } from './interface/stock-order-raw.interface';
 
 @Injectable()
 export class StockOrderRepository extends Repository<Order> {
@@ -29,7 +30,6 @@ export class StockOrderRepository extends Repository<Order> {
         { id: order.id },
         { status: StatusType.COMPLETE, completed_at: new Date() },
       );
-      // TODO: stock_balance와 total_asset은 실시간 주가에 따라 변동하도록 따로 구현해야 함
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
@@ -78,7 +78,6 @@ export class StockOrderRepository extends Repository<Order> {
         { id: order.id },
         { status: StatusType.COMPLETE, completed_at: new Date() },
       );
-      // TODO: stock_balance와 total_asset은 실시간 주가에 따라 변동하도록 따로 구현해야 함
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
@@ -110,5 +109,12 @@ export class StockOrderRepository extends Repository<Order> {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async findAllPendingOrdersByUserId(userId: number) {
+    return this.createQueryBuilder('o')
+      .leftJoinAndSelect('stocks', 's', 's.code = o.stock_code')
+      .where({ user_id: userId, status: StatusType.PENDING })
+      .getRawMany<StockOrderRawInterface>();
   }
 }
