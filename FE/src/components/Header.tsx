@@ -36,7 +36,7 @@ export default function Header() {
           <nav className='flex items-center gap-6 text-sm font-bold text-juga-grayscale-500'>
             <Link to={'/'}>홈</Link>
             <Link to={'/rank'}>랭킹</Link>
-            <Link to={'/mypage'}>마이페이지</Link>
+            {isLogin && <Link to={'/mypage'}>마이페이지</Link>}
           </nav>
           <div className='relative'>
             <input

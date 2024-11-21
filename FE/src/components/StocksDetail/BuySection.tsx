@@ -3,6 +3,7 @@ import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 import { StockDetailType } from 'types';
 import { isNumericString } from 'utils/common';
 import TradeAlertModal from './TradeAlertModal';
+import useAuthStore from 'store/authStore';
 const MyAsset = 10000000;
 
 type BuySectionProps = {
@@ -14,6 +15,7 @@ export default function BuySection({ code, data }: BuySectionProps) {
   const { stck_prpr, stck_mxpr, stck_llam } = data;
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
+  const { isLogin } = useAuthStore();
 
   const { isOpen, toggleModal } = useTradeAlertModalStore();
 
@@ -128,7 +130,12 @@ export default function BuySection({ code, data }: BuySectionProps) {
             <p className='text-xs text-juga-red-60'>잔액이 부족해요!</p>
           )}
         </div>
-        <button className='py-2 text-white rounded-lg bg-juga-red-60'>
+        <button
+          className={
+            'rounded-lg bg-juga-red-60 py-2 text-white disabled:bg-juga-grayscale-100'
+          }
+          disabled={!isLogin}
+        >
           매수하기
         </button>
       </form>
