@@ -1,5 +1,5 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { OptionalAuthGuard } from 'src/auth/optional-auth-guard';
 import { RankingService } from './ranking.service';
@@ -18,10 +18,6 @@ export class RankingController {
   })
   @Get()
   @UseGuards(OptionalAuthGuard)
-  @ApiQuery({
-    name: 'sortBy',
-    required: false,
-  })
   async getRanking(@Req() req: Request): Promise<RankingResponseDto> {
     if (!req.user) {
       return this.rankingService.getRanking();
