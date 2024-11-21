@@ -30,7 +30,7 @@ export const drawMouseGrid = (
     lowerChartCtx.beginPath();
     lowerChartCtx.setLineDash([10, 10]);
     lowerChartCtx.moveTo(mousePosition.x, 0);
-    lowerChartCtx.lineTo(mousePosition.x, lowerChartHeight + padding.bottom);
+    lowerChartCtx.lineTo(mousePosition.x, lowerChartHeight + padding.top);
 
     lowerChartCtx.strokeStyle = '#6E8091';
     lowerChartCtx.lineWidth = 1;
