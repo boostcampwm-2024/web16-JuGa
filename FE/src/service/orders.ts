@@ -35,3 +35,17 @@ export async function getOrders(): Promise<Order[]> {
     },
   }).then((res) => res.json());
 }
+
+export async function deleteOrder(id: number) {
+  const url = import.meta.env.PROD
+    ? `${import.meta.env.VITE_API_URL}/stocks/order/${id}`
+    : `/api/stocks/order/${id}`;
+
+  return fetch(url, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}

@@ -1,14 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
-import { getOrders } from 'service/orders';
+import useOrders from 'hooks/useOrder';
 
 export default function Order() {
-  const { data, isLoading, isError } = useQuery(['account', 'order'], () =>
-    getOrders(),
-  );
+  const { orderQuery, removeOrder } = useOrders();
+
+  const { data, isLoading, isError } = orderQuery;
 
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
   if (isError) return <div>error</div>;
+
+  const handleCancelOrder = (id: number) => {
+    removeOrder.mutate(id);
+  };
 
   return (
     <div className='flex flex-col w-full p-4 mx-auto bg-white rounded-md shadow-md'>
@@ -24,6 +27,7 @@ export default function Order() {
       <ul className='flex flex-col text-sm divide-y min-h-48'>
         {data.map((order) => {
           const {
+            id,
             stock_code,
             stock_name,
             price,
@@ -32,12 +36,8 @@ export default function Order() {
             created_at,
           } = order;
 
-          const handleCancelOrder = () => {
-            console.log(`Canceling order for ${stock_code}`);
-          };
-
           return (
-            <li className='flex py-2' key={stock_code}>
+            <li className='flex py-2' key={id}>
               <div className='flex w-1/3 gap-2 text-left truncate'>
                 <p className='font-semibold'>{stock_name}</p>
                 <p className='text-gray-500'>{stock_code}</p>
@@ -50,7 +50,7 @@ export default function Order() {
               <p className='w-1/4 text-right truncate'>{created_at}</p>
               <p className='w-1/6 text-right'>
                 <button
-                  onClick={handleCancelOrder}
+                  onClick={() => handleCancelOrder(id)}
                   className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-red-60 hover:bg-red-600'
                 >
                   취소

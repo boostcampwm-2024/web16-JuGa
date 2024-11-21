@@ -64,6 +64,7 @@ export type AssetsResponse = {
 };
 
 export type Order = {
+  id: number;
   stock_code: string;
   stock_name: string;
   amount: number;
