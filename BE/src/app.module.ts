@@ -8,8 +8,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { StockIndexModule } from './stock/index/stock-index.module';
 import { StockTopfiveModule } from './stock/topfive/stock-topfive.module';
-import { KoreaInvestmentModule } from './koreaInvestment/korea-investment.module';
-import { SocketModule } from './websocket/socket.module';
+import { KoreaInvestmentModule } from './common/koreaInvestment/korea-investment.module';
+import { SocketModule } from './common/websocket/socket.module';
 import { StockOrderModule } from './stock/order/stock-order.module';
 import { StockDetailModule } from './stock/detail/stock-detail.module';
 import { typeOrmConfig } from './configs/typeorm.config';
@@ -17,6 +17,7 @@ import { StockListModule } from './stock/list/stock-list.module';
 import { StockTradeHistoryModule } from './stock/trade/history/stock-trade-history.module';
 import { RedisModule } from './common/redis/redis.module';
 import { HTTPExceptionFilter } from './common/filters/http-exception.filter';
+import { RankingModule } from './ranking/ranking.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { HTTPExceptionFilter } from './common/filters/http-exception.filter';
     StockListModule,
     StockTradeHistoryModule,
     RedisModule,
+    RankingModule,
   ],
   controllers: [AppController],
   providers: [

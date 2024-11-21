@@ -21,9 +21,10 @@ async function bootstrap() {
       'http://175.45.204.158:3000',
       'http://juga.kro.kr',
     ],
-    methods: 'GET, HEAD, PUT, PATH, POST, DELETE',
+    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
     preflightContinue: false,
     optionsSuccessStatus: 204,
+    credentials: true,
   });
 
   app.use(cookieParser());

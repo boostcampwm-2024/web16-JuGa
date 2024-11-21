@@ -10,7 +10,10 @@ import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
 import { StockOrderSocketService } from './stock-order-socket.service';
-import { UserStockRepository } from '../../userStock/user-stock.repository';
+import { UserStockRepository } from '../../asset/user-stock.repository';
+import { AssetRepository } from '../../asset/asset.repository';
+import { StockOrderElementResponseDto } from './dto/stock-order-element-response.dto';
+import { Order } from './stock-order.entity';
 
 @Injectable()
 export class StockOrderService {
@@ -18,9 +21,18 @@ export class StockOrderService {
     private readonly stockOrderRepository: StockOrderRepository,
     private readonly stockOrderSocketService: StockOrderSocketService,
     private readonly userStockRepository: UserStockRepository,
+    private readonly assetRepository: AssetRepository,
   ) {}
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
+    const asset = await this.assetRepository.findOneBy({ user_id: userId });
+
+    if (
+      asset &&
+      asset.cash_balance < stockOrderRequest.amount * stockOrderRequest.price
+    )
+      throw new BadRequestException('가용 자산이 충분하지 않습니다.');
+
     const order = this.stockOrderRepository.create({
       user_id: userId,
       stock_code: stockOrderRequest.stock_code,
@@ -40,7 +52,7 @@ export class StockOrderService {
       stock_code: stockOrderRequest.stock_code,
     });
 
-    if (!userStock || userStock.quantity === 0)
+    if (!userStock || userStock.quantity < stockOrderRequest.amount)
       throw new BadRequestException('주식을 매도 수만큼 가지고 있지 않습니다.');
 
     const order = this.stockOrderRepository.create({
@@ -76,5 +88,35 @@ export class StockOrderService {
       }))
     )
       this.stockOrderSocketService.unsubscribeByCode(order.stock_code);
+  }
+
+  async getPendingListByUserId(userId: number) {
+    const stockOrderRaws =
+      await this.stockOrderRepository.findAllPendingOrdersByUserId(userId);
+
+    return stockOrderRaws.map((stockOrderRaw) => {
+      return new StockOrderElementResponseDto(
+        stockOrderRaw.o_id,
+        stockOrderRaw.o_stock_code,
+        stockOrderRaw.s_name,
+        stockOrderRaw.o_amount,
+        stockOrderRaw.o_price,
+        stockOrderRaw.o_trade_type,
+        stockOrderRaw.o_created_at,
+      );
+    });
+  }
+
+  async removePendingOrders() {
+    const orders: Order[] =
+      await this.stockOrderRepository.findAllCodeByStatus();
+
+    await Promise.all(
+      orders.map((order) =>
+        this.stockOrderSocketService.unsubscribeByCode(order.stock_code),
+      ),
+    );
+
+    await this.stockOrderRepository.delete({ status: StatusType.PENDING });
   }
 }

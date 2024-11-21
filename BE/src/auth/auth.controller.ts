@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
@@ -38,16 +38,10 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.loginUser(authCredentialsDto);
 
+    res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
     return res.status(200).json({ accessToken });
-  }
-
-  @ApiOperation({ summary: 'Token 인증 테스트 API' })
-  @Get('/test')
-  @UseGuards(AuthGuard('jwt'))
-  test(@Req() req: Request) {
-    return req;
   }
 
   @ApiOperation({ summary: 'Kakao 로그인 API' })
@@ -85,5 +79,17 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     res.cookie('isRefreshToken', true, { httpOnly: true });
     return res.redirect(this.configService.get<string>('FRONTEND_URL'));
+  }
+
+  @ApiOperation({ summary: '로그인 상태 확인 API' })
+  @Get('/check')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiResponse({
+    status: 200,
+    description: '로그인 상태 조회 성공',
+    example: { isLogin: true },
+  })
+  check() {
+    return { isLogin: true };
   }
 }

@@ -20,4 +20,8 @@ export class SocketGateway {
 
     this.server.emit(event, stockIndexValue);
   }
+
+  sendStockTradeHistoryValueToClient(event, historyData) {
+    this.server.emit(event, historyData);
+  }
 }
