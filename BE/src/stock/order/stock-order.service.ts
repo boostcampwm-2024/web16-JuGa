@@ -95,6 +95,7 @@ export class StockOrderService {
 
     return stockOrderRaws.map((stockOrderRaw) => {
       return new StockOrderElementResponseDto(
+        stockOrderRaw.o_id,
         stockOrderRaw.o_stock_code,
         stockOrderRaw.s_name,
         stockOrderRaw.o_amount,
