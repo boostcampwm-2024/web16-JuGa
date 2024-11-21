@@ -55,6 +55,7 @@ export class AssetService {
       newAsset.total_asset,
       newAsset.total_profit,
       newAsset.total_profit_rate,
+      newAsset.total_profit_rate >= 0,
     );
 
     const response = new MypageResponseDto();
@@ -64,7 +65,7 @@ export class AssetService {
     return response;
   }
 
-  async updateStockBalance() {
+  async updateAllAssets() {
     const currPrices = await this.getCurrPrices();
     const assets = await this.assetRepository.find();
 
@@ -89,6 +90,8 @@ export class AssetService {
       ...asset,
       stock_balance: totalPrice,
       total_asset: asset.cash_balance + totalPrice,
+      total_profit: asset.cash_balance + totalPrice - 10000000,
+      total_profit_rate: (asset.cash_balance + totalPrice - 10000000) / 100000,
       last_updated: new Date(),
       prev_total_asset: asset.total_asset,
     };
