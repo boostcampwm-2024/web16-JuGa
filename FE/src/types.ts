@@ -69,7 +69,7 @@ export type Order = {
   stock_name: string;
   amount: number;
   price: number;
-  trade_type: string;
+  trade_type: 'BUY' | 'SELL';
   created_at: string;
 };
 
