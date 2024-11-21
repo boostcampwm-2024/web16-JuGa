@@ -12,6 +12,7 @@ import { StatusType } from './enum/status-type';
 import { StockOrderSocketService } from './stock-order-socket.service';
 import { UserStockRepository } from '../../asset/user-stock.repository';
 import { AssetRepository } from '../../asset/asset.repository';
+import { StockOrderElementResponseDto } from './dto/stock-order-element-response.dto';
 
 @Injectable()
 export class StockOrderService {
@@ -86,5 +87,21 @@ export class StockOrderService {
       }))
     )
       this.stockOrderSocketService.unsubscribeByCode(order.stock_code);
+  }
+
+  async getPendingListByUserId(userId: number) {
+    const stockOrderRaws =
+      await this.stockOrderRepository.findAllPendingOrdersByUserId(userId);
+
+    return stockOrderRaws.map((stockOrderRaw) => {
+      return new StockOrderElementResponseDto(
+        stockOrderRaw.o_stock_code,
+        stockOrderRaw.s_name,
+        stockOrderRaw.o_amount,
+        stockOrderRaw.o_price,
+        stockOrderRaw.o_trade_type,
+        stockOrderRaw.o_created_at,
+      );
+    });
   }
 }
