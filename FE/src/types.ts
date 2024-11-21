@@ -40,8 +40,7 @@ export type StockChartUnit = {
   prdy_vrss_sign: string;
 };
 
-
-export type MypageSectionType = 'account' | 'info';
+export type MypageSectionType = 'account' | 'order' | 'info';
 
 export type Asset = {
   cash_balance: string;
