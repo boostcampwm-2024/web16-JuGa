@@ -76,7 +76,7 @@ export class StockTradeHistoryController {
 
     return new Observable<SseEvent>((subscriber) => {
       const subscription = this.stockTradeHistorySocketService
-        .getTradeDataStream()
+        .getTradeDataStream(stockCode)
         .subscribe(subscriber);
 
       return () => {

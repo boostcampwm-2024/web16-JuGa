@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TodayStockTradeHistoryDataDto {
   @ApiProperty({ description: '주식 체결 시간' })
+  stck_shrn_iscd: string;
+
+  @ApiProperty({ description: '주식 체결 시간' })
   stck_cntg_hour: string;
 
   @ApiProperty({ description: '주식 현재가' })

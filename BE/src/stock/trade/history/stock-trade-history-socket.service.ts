@@ -1,6 +1,6 @@
 import { WebSocket } from 'ws';
 import axios from 'axios';
-import { Observable, Subject } from 'rxjs';
+import { filter, map, Observable, Subject } from 'rxjs';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { SseEvent } from './interface/sse-event';
 import { SocketConnectTokenInterface } from '../../../common/websocket/interface/socket.interface';
@@ -47,6 +47,7 @@ export class StockTradeHistorySocketService implements OnModuleInit {
       const dataList = data[3].split('^');
 
       const tradeData: TodayStockTradeHistoryDataDto = {
+        stck_shrn_iscd: dataList[0],
         stck_cntg_hour: dataList[1],
         stck_prpr: dataList[2],
         prdy_vrss_sign: dataList[3],
@@ -83,8 +84,14 @@ export class StockTradeHistorySocketService implements OnModuleInit {
     };
   }
 
-  getTradeDataStream(): Observable<SseEvent> {
-    return this.eventSubject.asObservable();
+  getTradeDataStream(targetStockCode: string): Observable<SseEvent> {
+    return this.eventSubject.pipe(
+      filter((event: SseEvent) => {
+        const parsed = JSON.parse(event.data);
+        return parsed.tradeData.stck_shrn_iscd === targetStockCode;
+      }),
+      map((event: SseEvent) => event),
+    );
   }
 
   subscribeByCode(stockCode: string) {
