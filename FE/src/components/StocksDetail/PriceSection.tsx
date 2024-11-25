@@ -34,8 +34,6 @@ export default function PriceSection() {
     [id, buttonFlag],
   );
 
-  if (isLoading) return;
-
   // useEffect(() => {
   //   // 이벤트 리스너 등록
   //   const handleTradeHistory = (chartData: PriceDataType) => {
