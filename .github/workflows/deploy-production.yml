@@ -142,7 +142,7 @@ jobs:
           script: |
             docker system prune -af
 
-            echo "${{ secrets[matrix.app.env] }}" > .env-${{ matrix.app.name }}
+            echo "${{ secrets[matrix.app.env] }}" > ${{matrix.app.name}}.env
             docker network create juga-network || true
 
             if [ "${{ matrix.app.name }}" = "be-1" ]; then
@@ -161,8 +161,10 @@ jobs:
               --name ${{ matrix.app.container }} \
               --network juga-network \
               -p ${{ matrix.app.port }}:${{ matrix.app.port }} \
-              --env-file .env-${{matrix.app.name}} \
+              --env-file ${{matrix.app.name}}.env \
               ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
+
+            rm ${{matrix.app.name}}.env
 
       - name: Remove Github Action Ip to Security group
         run: |
