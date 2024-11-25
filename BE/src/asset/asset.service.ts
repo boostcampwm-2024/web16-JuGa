@@ -9,9 +9,7 @@ import { UserStock } from './user-stock.entity';
 import { Asset } from './asset.entity';
 import { InquirePriceResponseDto } from '../stock/detail/dto/stock-detail-response.dto';
 import { StockTradeHistorySocketService } from '../stock/trade/history/stock-trade-history-socket.service';
-import { StatusType } from '../stock/order/enum/status-type';
 import { TradeType } from '../stock/order/enum/trade-type';
-import { Order } from '../stock/order/stock-order.entity';
 
 @Injectable()
 export class AssetService {
@@ -27,17 +25,27 @@ export class AssetService {
       user_id: userId,
       stock_code: stockCode,
     });
+    const pendingOrders = await this.assetRepository.findAllPendingOrders(
+      userId,
+      TradeType.SELL,
+    );
+    const totalPendingCount = pendingOrders.reduce(
+      (sum, pendingOrder) => sum + pendingOrder.amount,
+      0,
+    );
 
     return {
-      quantity: userStock ? userStock.quantity : 0,
+      quantity: userStock ? userStock.quantity - totalPendingCount : 0,
       avg_price: userStock ? userStock.avg_price : 0,
     };
   }
 
   async getCashBalance(userId: number) {
     const asset = await this.assetRepository.findOneBy({ user_id: userId });
-    const pendingOrders =
-      await this.assetRepository.findAllPendingOrders(userId);
+    const pendingOrders = await this.assetRepository.findAllPendingOrders(
+      userId,
+      TradeType.BUY,
+    );
     const totalPendingPrice = pendingOrders.reduce(
       (sum, pendingOrder) => sum + pendingOrder.price * pendingOrder.amount,
       0,

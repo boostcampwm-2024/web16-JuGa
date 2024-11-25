@@ -19,13 +19,13 @@ export class AssetRepository extends Repository<Asset> {
       .getRawMany();
   }
 
-  async findAllPendingOrders(userId: number) {
+  async findAllPendingOrders(userId: number, tradeType: TradeType) {
     const queryRunner = this.dataSource.createQueryRunner();
     return queryRunner.manager.find<Order>(Order, {
       where: {
         user_id: userId,
         status: StatusType.PENDING,
-        trade_type: TradeType.BUY,
+        trade_type: tradeType,
       },
     });
   }
