@@ -71,6 +71,19 @@ export class AssetController {
     return this.assetService.getMyPage(parseInt(request.user.userId, 10));
   }
 
+  @Get('/unsubscribe')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '마이페이지 내 주식 소켓 연결 취소 API',
+    description: '마이페이지에서 나갈 때 소켓 연결 취소를 위한 API',
+  })
+  async unsubscribeMyStocks(@Req() request: Request) {
+    await this.assetService.unsubscribeMyStocks(
+      parseInt(request.user.userId, 10),
+    );
+  }
+
   @Cron('*/10 9-16 * * 1-5')
   async updateAllAssets() {
     await this.assetService.updateAllAssets();

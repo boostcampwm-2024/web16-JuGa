@@ -21,10 +21,13 @@ export class UserStockRepository extends Repository<UserStock> {
       .getRawMany<UserStockInterface>();
   }
 
-  findAllDistinctCode() {
-    return this.createQueryBuilder('user_stocks')
+  findAllDistinctCode(userId?: number) {
+    const queryBuilder = this.createQueryBuilder('user_stocks')
       .select('DISTINCT user_stocks.stock_code')
-      .where({ quantity: MoreThan(0) })
-      .getRawMany();
+      .where({ quantity: MoreThan(0) });
+
+    if (userId) queryBuilder.andWhere({ user_id: userId });
+
+    return queryBuilder.getRawMany();
   }
 }
