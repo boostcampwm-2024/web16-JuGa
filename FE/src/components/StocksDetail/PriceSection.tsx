@@ -34,6 +34,30 @@ export default function PriceSection() {
     [id, buttonFlag],
   );
 
+  // useEffect(() => {
+  //   // 이벤트 리스너 등록
+  //   const handleTradeHistory = (chartData: PriceDataType) => {
+  //     addData(chartData);
+  //   };
+  //
+  //   // 소켓 이벤트 구독
+  //   socket.on(`trade-history/${id}`, handleTradeHistory);
+  //
+  //   return () => {
+  //     console.log('socket unSub!');
+  //     socket.off(`trade-history/${id}`, handleTradeHistory);
+  //
+  //     fetch(`/api/stocks/trade-history/${id}/unsubscribe`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     }).catch((error) => {
+  //       console.error('Failed to unsubscribe:', error);
+  //     });
+  //   };
+  // }, [id, addData]);
+
   useEffect(() => {
     if (!buttonFlag) return;
     const eventSource = createSSEConnection(

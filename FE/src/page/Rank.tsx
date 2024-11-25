@@ -1,15 +1,16 @@
 import Nav from 'components/Rank/Nav.tsx';
 import RankList from '../components/Rank/RankList.tsx';
-import { dummyRankData } from '../components/Rank/bummyData.ts';
+import { getRanking } from '../service/getRanking.ts';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Rank() {
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ['Rank'],
-  //   queryFn: () => getRanking(),
-  // });
-  //
-  // if (isLoading) return <div>Loading...</div>;
-  const data = dummyRankData;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['Rank'],
+    queryFn: () => getRanking(),
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error!!</div>;
 
   return (
     <div className='rounded-xl px-4'>
