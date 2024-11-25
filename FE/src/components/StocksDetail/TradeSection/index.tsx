@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { StockDetailType } from 'types';
-import SellSection from './SellSection';
 import BuySection from './BuySection';
+import SellSection from './SellSection';
 
 type TradeSectionProps = {
   code: string;
@@ -59,9 +59,9 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
           </button>
         </div>
         {category === 'buy' ? (
-          <BuySection code={code} data={data} />
+          <BuySection code={code} detailInfo={data} />
         ) : (
-          <SellSection />
+          <SellSection code={code} detailInfo={data} />
         )}
       </section>
     </>

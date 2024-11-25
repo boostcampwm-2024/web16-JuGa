@@ -43,7 +43,13 @@ export default function Order() {
                 <p className='font-semibold'>{stock_name}</p>
                 <p className='text-gray-500'>{stock_code}</p>
               </div>
-              <p className='w-1/4 text-center'>
+              <p
+                className={`w-1/4 text-center ${
+                  trade_type === 'BUY'
+                    ? 'text-juga-red-60'
+                    : 'text-juga-blue-50'
+                }`}
+              >
                 {trade_type === 'BUY' ? '매수' : '매도'}
               </p>
               <p className='w-1/4 text-center truncate'>{amount}</p>
@@ -54,7 +60,7 @@ export default function Order() {
               <p className='w-1/6 text-right'>
                 <button
                   onClick={() => handleCancelOrder(id)}
-                  className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-red-60 hover:bg-red-600'
+                  className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-grayscale-500 hover:bg-red-600'
                 >
                   취소
                 </button>
