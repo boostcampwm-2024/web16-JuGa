@@ -1,18 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { getStocksByCode } from 'service/stocks';
+import { StockDetailType } from 'types';
 
 type StocksDeatailHeaderProps = {
   code: string;
+  data: StockDetailType;
 };
 
-export default function Header({ code }: StocksDeatailHeaderProps) {
-  const { data, isLoading } = useQuery(['stocks', code], () =>
-    getStocksByCode(code),
-  );
-
-  if (isLoading) return;
-  if (!data) return;
-
+export default function Header({ code, data }: StocksDeatailHeaderProps) {
   const {
     hts_kor_isnm,
     stck_prpr,
@@ -35,6 +28,11 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
         ? 'text-juga-red-60'
         : 'text-juga-blue-40';
 
+  const percentAbsolute = Math.abs(Number(prdy_ctrt)).toFixed(2);
+
+  const plusOrMinus =
+    prdy_vrss_sign === '3' ? '' : prdy_vrss_sign < '3' ? '+' : '-';
+
   return (
     <div className='flex items-center justify-between w-full h-16 px-2'>
       <div className='flex flex-col font-semibold'>
@@ -46,7 +44,9 @@ export default function Header({ code }: StocksDeatailHeaderProps) {
           <p className='text-lg'>{Number(stck_prpr).toLocaleString()}원</p>
           <p>어제보다</p>
           <p className={`${colorStyleBySign}`}>
-            +{Number(prdy_vrss).toLocaleString()}원 ({prdy_ctrt}%)
+            {plusOrMinus}
+            {Math.abs(Number(prdy_vrss)).toLocaleString()}원 ({plusOrMinus}
+            {percentAbsolute}%)
           </p>
         </div>
       </div>

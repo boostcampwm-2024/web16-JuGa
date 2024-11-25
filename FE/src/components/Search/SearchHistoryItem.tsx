@@ -1,5 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/16/solid';
-import useSearchInputStore from '../../store/useSearchInputStore.ts';
+import useSearchInputStore from 'store/useSearchInputStore.ts';
 
 type SearchHistoryItemProps = {
   item: string;

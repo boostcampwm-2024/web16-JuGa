@@ -8,6 +8,10 @@ export class RedisDomainService {
     private readonly redis: Redis,
   ) {}
 
+  async exists(key: string): Promise<number> {
+    return this.redis.exists(key);
+  }
+
   async get(key: string): Promise<string | null> {
     return this.redis.get(key);
   }
@@ -45,6 +49,10 @@ export class RedisDomainService {
 
   async zrevrange(key: string, start: number, stop: number): Promise<string[]> {
     return this.redis.zrevrange(key, start, stop);
+  }
+
+  async zrevrank(key: string, member: string): Promise<number | null> {
+    return this.redis.zrevrank(key, member);
   }
 
   async zrem(key: string, member: string): Promise<number> {

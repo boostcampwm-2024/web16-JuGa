@@ -13,3 +13,25 @@ export async function login(
     }),
   }).then((res) => res.json());
 }
+
+export async function checkAuth() {
+  const url = import.meta.env.PROD
+    ? `${import.meta.env.VITE_API_URL}/auth/check`
+    : '/api/auth/check';
+
+  return fetch(url, {
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+export async function logout() {
+  const url = import.meta.env.PROD
+    ? `${import.meta.env.VITE_API_URL}/auth/logout`
+    : '/api/auth/logout';
+
+  return fetch(url, {
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+  });
+}

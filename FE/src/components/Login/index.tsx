@@ -10,7 +10,7 @@ export default function Login() {
   const { isOpen, toggleModal } = useLoginModalStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { setAccessToken } = useAuthStore();
+  const { setIsLogin } = useAuthStore();
   const [errorCode, setErrorCode] = useState<number>(200);
 
   useEffect(() => {
@@ -29,8 +29,29 @@ export default function Login() {
       return;
     }
 
-    setAccessToken(res.accessToken);
+    setIsLogin(true);
     toggleModal();
+  };
+
+  const handleKakaoBtnClick = async () => {
+    if (import.meta.env.DEV) {
+      const res = await login(
+        import.meta.env.VITE_TEST_ID,
+        import.meta.env.VITE_TEST_PW,
+      );
+
+      if ('error' in res) {
+        setErrorCode(res.statusCode);
+        return;
+      }
+
+      document.cookie = `accessToken=${res.accessToken}; path=/;`;
+      setIsLogin(true);
+      toggleModal();
+      return;
+    }
+
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/kakao`;
   };
 
   return (
@@ -67,11 +88,12 @@ export default function Login() {
             로그인
           </button>
         </form>
-        <button className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'>
+        <button
+          className='flex items-center justify-center gap-2 rounded-3xl bg-yellow-300 px-3.5 py-2 transition hover:bg-yellow-400'
+          onClick={handleKakaoBtnClick}
+        >
           <ChatBubbleOvalLeftIcon className='size-5' />
-          <a href={`${import.meta.env.VITE_API_URL}/auth/kakao`}>
-            카카오 계정으로 로그인
-          </a>
+          카카오 계정으로 로그인
         </button>
       </section>
     </>

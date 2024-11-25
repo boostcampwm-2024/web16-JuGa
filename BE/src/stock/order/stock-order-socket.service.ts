@@ -4,8 +4,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
-import { BaseSocketService } from '../../websocket/base-socket.service';
-import { SocketGateway } from '../../websocket/socket.gateway';
+import { BaseSocketDomainService } from '../../common/websocket/base-socket.domain-service';
+import { SocketGateway } from '../../common/websocket/socket.gateway';
 import { Order } from './stock-order.entity';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
@@ -19,36 +19,36 @@ export class StockOrderSocketService {
 
   constructor(
     private readonly socketGateway: SocketGateway,
-    private readonly baseSocketService: BaseSocketService,
+    private readonly baseSocketDomainService: BaseSocketDomainService,
     private readonly stockOrderRepository: StockOrderRepository,
   ) {
-    baseSocketService.registerSocketOpenHandler(async () => {
+    baseSocketDomainService.registerSocketOpenHandler(async () => {
       const orders: Order[] =
         await this.stockOrderRepository.findAllCodeByStatus();
       orders.forEach((order) => {
-        baseSocketService.registerCode(this.TR_ID, order.stock_code);
+        baseSocketDomainService.registerCode(this.TR_ID, order.stock_code);
       });
     });
 
-    baseSocketService.registerSocketDataHandler(
+    baseSocketDomainService.registerSocketDataHandler(
       this.TR_ID,
       (data: string[]) => {
         this.checkExecutableOrder(
           data[0], // 주식 코드
           data[2], // 주식 체결가
-        ).catch(() => {
-          throw new InternalServerErrorException();
+        ).catch((err) => {
+          throw new InternalServerErrorException(err);
         });
       },
     );
   }
 
   subscribeByCode(trKey: string) {
-    this.baseSocketService.registerCode(this.TR_ID, trKey);
+    this.baseSocketDomainService.registerCode(this.TR_ID, trKey);
   }
 
   unsubscribeByCode(trKey: string) {
-    this.baseSocketService.unregisterCode(this.TR_ID, trKey);
+    this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
   }
 
   private async checkExecutableOrder(stockCode: string, value) {

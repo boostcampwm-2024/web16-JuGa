@@ -4,15 +4,33 @@ import useLoginModalStore from 'store/useLoginModalStore';
 import useSearchModalStore from '../store/useSearchModalStore.ts';
 import useSearchInputStore from '../store/useSearchInputStore.ts';
 import logo from 'assets/Logo.png';
+import { checkAuth, logout } from 'service/auth.ts';
+import { useEffect } from 'react';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
-  const { isLogin, resetToken } = useAuthStore();
+  const { isLogin, setIsLogin } = useAuthStore();
   const { toggleSearchModal } = useSearchModalStore();
   const { searchInput } = useSearchInputStore();
 
+  useEffect(() => {
+    const check = async () => {
+      const res = await checkAuth();
+      if (res.ok) setIsLogin(true);
+      else setIsLogin(false);
+    };
+
+    check();
+  }, [setIsLogin]);
+
+  const handleLogout = () => {
+    logout().then(() => {
+      setIsLogin(false);
+    });
+  };
+
   return (
-    <header className='fixed left-0 top-0 h-[60px] w-full'>
+    <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
         <Link to={'/'} className='flex items-center gap-2'>
           <img src={logo} className={'h-[32px]'} />
@@ -21,9 +39,9 @@ export default function Header() {
 
         <div className='flex items-center gap-8'>
           <nav className='flex items-center gap-6 text-sm font-bold text-juga-grayscale-500'>
-            <button className='px-0.5 py-2'>홈</button>
-            <button className='px-0.5 py-2'>랭킹</button>
-            <button className='px-0.5 py-2'>마이페이지</button>
+            <Link to={'/'}>홈</Link>
+            <Link to={'/rank'}>랭킹</Link>
+            {isLogin && <Link to={'/mypage'}>마이페이지</Link>}
           </nav>
           <div className='relative'>
             <input
@@ -39,7 +57,7 @@ export default function Header() {
           {isLogin ? (
             <button
               className='px-4 py-2 text-sm text-juga-grayscale-500'
-              onClick={resetToken}
+              onClick={handleLogout}
             >
               로그아웃
             </button>

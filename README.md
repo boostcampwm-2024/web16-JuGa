@@ -24,14 +24,22 @@
 - 경쟁하고 정보도 나누며 더 즐겁게 배워보세요.
 
 ---
-  
+## ♥️ 사이트 이용방법
+[사이트](https://juga.kro.kr/)에 접속하신 후에,
+ID: **jindding** / PW: **1234** 를 입력해주시면 매수 등 로그인 후 사용가능한 서비스를 이용하실 수 있습니다.
+
+현재 카카오로 로그인하기 기능은 심사 대기 중으로 사용이 불가능합니다.
+
+## 🗂️ 기술 스택
+<div align="center">
+  <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/d58700ea-8bfe-459f-8b67-d0864bf76693">
+</div>
+
+## 🏛️ 소프트웨어 아키텍처
+![아키텍처 2 0](https://github.com/user-attachments/assets/e0c33dfc-7495-48bf-ba4a-5fd911f66f9a)
+
 ## 🧑🏻 팀원 소개
 | 🖥️ Web FE | ⚙️ Web BE | ⚙️ Web BE | 🖥️ Web FE | ⚙️ Web BE |
 | --- | --- | --- | --- | --- |
 | <img src="https://github.com/dongree.png" width="400"/> | <img src="https://github.com/uuuo3o.png" width="400"/> | <img src="https://github.com/jinddings.png" width="400"/> | <img src="https://github.com/dannysir.png" width="400"/> | <img src="https://github.com/sieunie.png" width="400"/> |
 | [고동우](https://github.com/dongree) | [김진](https://github.com/uuuo3o) | [박진명](https://github.com/jinddings) | [서산](https://github.com/dannysir) | [이시은](https://github.com/sieunie) |
-
-## 🗂️ 기술 스택
-<div align="center">
-  <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/3ca54910-ee13-43bb-a1e5-684c3d07fc54">
-</div>

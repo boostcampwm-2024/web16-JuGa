@@ -1,8 +1,5 @@
-import axios from 'axios';
-import { Injectable, Logger } from '@nestjs/common';
-import { KoreaInvestmentService } from '../../../koreaInvestment/korea-investment.service';
-import { getHeader } from '../../../util/get-header';
-import { getFullURL } from '../../../util/get-full-URL';
+import { Injectable } from '@nestjs/common';
+import { KoreaInvestmentDomainService } from '../../../common/koreaInvestment/korea-investment.domain-service';
 import { InquireCCNLApiResponse } from './interface/Inquire-ccnl.interface';
 import { TodayStockTradeHistoryOutputDto } from './dto/today-stock-trade-history-output.dto';
 import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
@@ -12,10 +9,8 @@ import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-d
 
 @Injectable()
 export class StockTradeHistoryService {
-  private readonly logger = new Logger();
-
   constructor(
-    private readonly koreaInvestmentService: KoreaInvestmentService,
+    private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
   ) {}
 
   /**
@@ -26,29 +21,19 @@ export class StockTradeHistoryService {
    * @author uuuo3o
    */
   async getTodayStockTradeHistory(stockCode: string) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+    };
 
-      const response = await this.requestApi<InquireCCNLApiResponse>(
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquireCCNLApiResponse>(
         'FHKST01010300',
         '/uapi/domestic-stock/v1/quotations/inquire-ccnl',
         queryParams,
       );
 
-      return this.formatTodayStockTradeHistoryData(response.output);
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    return this.formatTodayStockTradeHistoryData(response.output);
   }
 
   /**
@@ -81,31 +66,21 @@ export class StockTradeHistoryService {
    * @author uuuo3o
    */
   async getDailyStockTradeHistory(stockCode: string) {
-    try {
-      const queryParams = {
-        fid_cond_mrkt_div_code: 'J',
-        fid_input_iscd: stockCode,
-        fid_period_div_code: 'D',
-        fid_org_adj_prc: '0',
-      };
+    const queryParams = {
+      fid_cond_mrkt_div_code: 'J',
+      fid_input_iscd: stockCode,
+      fid_period_div_code: 'D',
+      fid_org_adj_prc: '0',
+    };
 
-      const response = await this.requestApi<InquireDailyPriceApiResponse>(
+    const response =
+      await this.koreaInvestmentDomainService.requestApi<InquireDailyPriceApiResponse>(
         'FHKST01010400',
         '/uapi/domestic-stock/v1/quotations/inquire-daily-price',
         queryParams,
       );
 
-      return this.formatDailyStockTradeHistoryData(response.output);
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers, // 실제 요청 헤더
-        message: error.message,
-      });
-      throw error;
-    }
+    return this.formatDailyStockTradeHistoryData(response.output);
   }
 
   /**
@@ -131,42 +106,5 @@ export class StockTradeHistoryService {
 
       return historyData;
     });
-  }
-
-  /**
-   * @private 한국투자 Open API - API 호출용 공통 함수
-   * @param {string} trId - API 호출에 사용할 tr_id
-   * @param {string} apiURL - API 호출에 사용할 URL
-   * @param {Record<string, string>} params - API 요청 시 필요한 쿼리 파라미터 DTO
-   * @returns - API 호출에 대한 응답 데이터
-   *
-   * @author uuuo3o
-   */
-  private async requestApi<T>(
-    trId: string,
-    apiURL: string,
-    params: Record<string, string>,
-  ): Promise<T> {
-    try {
-      const accessToken = await this.koreaInvestmentService.getAccessToken();
-      const headers = getHeader(accessToken, trId);
-      const url = getFullURL(apiURL);
-
-      const response = await axios.get<T>(url, {
-        headers,
-        params,
-      });
-
-      return response.data;
-    } catch (error) {
-      this.logger.error('API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.config?.headers,
-        message: error.message,
-      });
-      throw error;
-    }
   }
 }

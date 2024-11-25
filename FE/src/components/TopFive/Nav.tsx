@@ -2,13 +2,13 @@ import { useSearchParams } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { MarketType } from './type.ts';
 
+const markets: MarketType[] = ['전체', '코스피', '코스닥', '코스피200'];
+
 export default function Nav() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentMarket = searchParams.get('top') || '전체';
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  const markets: MarketType[] = ['전체', '코스피', '코스닥', '코스피200'];
 
   const handleMarketChange = (market: MarketType) => {
     if (market === '전체') {

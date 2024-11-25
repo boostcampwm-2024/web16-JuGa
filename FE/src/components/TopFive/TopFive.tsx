@@ -3,7 +3,7 @@ import Nav from './Nav';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MarketType } from './type.ts';
-import { getTopFiveStocks } from '../../service/getTopFiveStocks.ts';
+import { getTopFiveStocks } from 'service/getTopFiveStocks.ts';
 
 const paramsMap = {
   전체: 'ALL',
@@ -20,7 +20,7 @@ export default function TopFive() {
     queryFn: () => getTopFiveStocks(paramsMap[currentMarket]),
     keepPreviousData: true,
     cacheTime: 30000,
-    refetchInterval: 1000,
+    // refetchInterval: 1000,
   });
   return (
     <div className='flex flex-col gap-4'>

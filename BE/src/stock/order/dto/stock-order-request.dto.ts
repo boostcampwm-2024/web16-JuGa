@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber, IsPositive } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 
 export class StockOrderRequestDto {
   @ApiProperty({ description: '주식 id', example: '005930' })
+  @IsNotEmpty()
   stock_code: string;
 
   @ApiProperty({ description: '매수/매도 희망 가격' })

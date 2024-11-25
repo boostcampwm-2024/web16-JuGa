@@ -17,13 +17,21 @@ async function bootstrap() {
       'http://223.130.151.42:5173',
       'http://223.130.151.42:3000',
       //배포 서버
-      'http://175.45.204.158:5173',
+      'http://175.45.204.158',
       'http://175.45.204.158:3000',
       'http://juga.kro.kr',
+      // https
+      'https://175.45.204.158',
+      'https://175.45.204.158:5173',
+      'https://175.45.204.158:3000',
+      'https://juga.kro.kr',
+      'https://juga.kro.kr:3000',
+      'https://juga.kro.kr:5173',
     ],
-    methods: 'GET, HEAD, PUT, PATH, POST, DELETE',
+    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
     preflightContinue: false,
     optionsSuccessStatus: 204,
+    credentials: true,
   });
 
   app.use(cookieParser());
