@@ -61,7 +61,7 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
         {category === 'buy' ? (
           <BuySection code={code} detailInfo={data} />
         ) : (
-          <SellSection />
+          <SellSection code={code} detailInfo={data} />
         )}
       </section>
     </>
