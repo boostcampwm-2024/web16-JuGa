@@ -1,6 +1,7 @@
 import {
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Req,
@@ -54,6 +55,20 @@ export class StockBookmarkController {
     await this.stockBookmarkService.unregisterBookmark(
       parseInt(request.user.userId, 10),
       stockCode,
+    );
+  }
+
+  @Get()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: '즐겨찾기 리스트 조회 API' })
+  @ApiResponse({
+    status: 200,
+    description: '즐겨찾기 리스트 조회 성공',
+  })
+  async getBookmarkList(@Req() request: Request) {
+    return this.stockBookmarkService.getBookmarkList(
+      parseInt(request.user.userId, 10),
     );
   }
 }
