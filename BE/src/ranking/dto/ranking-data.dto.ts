@@ -8,16 +8,14 @@ export class RankingDataDto {
   nickname: string;
 
   @ApiProperty({
-    description: '수익률 (%)',
-    example: 15.7,
-    required: false,
+    description: '랭킹 순위',
+    example: 1,
   })
-  profitRate?: number;
+  rank: number;
 
   @ApiProperty({
-    description: '총 자산',
-    example: 1000000,
+    description: '수익률 (%) 혹은 총 자산',
     required: false,
   })
-  totalAsset?: number;
+  value: number;
 }
