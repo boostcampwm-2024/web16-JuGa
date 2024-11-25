@@ -1,6 +1,7 @@
 import Overay from 'components/ModalOveray';
 import { orderBuyStock, orderSellStock } from 'service/orders';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import { getTradeCommision } from 'utils/common';
 
 type TradeAlertModalProps = {
   code: string;
@@ -19,7 +20,9 @@ export default function TradeAlertModal({
 }: TradeAlertModalProps) {
   const { toggleModal } = useTradeAlertModalStore();
 
-  const charge = 55; // 수수료 임시
+  const totalPrice = +price * count;
+
+  const tradeCommission = getTradeCommision(totalPrice); // 수수료 임시
 
   const handleTrade = async () => {
     if (type === 'BUY') {
@@ -30,8 +33,6 @@ export default function TradeAlertModal({
       if (res.ok) toggleModal();
     }
   };
-
-  const totalPrice = +price * count;
 
   return (
     <>
@@ -47,11 +48,11 @@ export default function TradeAlertModal({
           </div>
           <div className='flex justify-between'>
             <p>예상 수수료</p>
-            <p>{charge}원</p>
+            <p>{tradeCommission.toLocaleString()}원</p>
           </div>
           <div className='flex justify-between'>
             <p>총 주문 금액</p>
-            <p>{(totalPrice + charge).toLocaleString()}원</p>
+            <p>{(totalPrice + tradeCommission).toLocaleString()}원</p>
           </div>
         </div>
 

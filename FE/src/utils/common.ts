@@ -26,3 +26,14 @@ export function parseTimestamp(timestamp: string) {
 export function isNumericString(str: string) {
   return str.length === 0 || /^[0-9]+$/.test(str);
 }
+
+export function getTradeCommision(price: number) {
+  let rate = 0;
+  if (price <= 10_000_000) rate = 0.0016;
+  else if (price <= 50_000_000) rate = 0.0014;
+  else if (price <= 100_000_000) rate = 0.0012;
+  else if (price <= 300_000_000) rate = 0.001;
+  else rate = 0.0008;
+
+  return Math.floor(price * rate);
+}
