@@ -16,6 +16,7 @@ import {
 import { Request } from 'express';
 import { StockBookmarkService } from './stock-bookmark.service';
 import { JwtAuthGuard } from '../../auth/jwt-auth-guard';
+import { StockBookmarkResponseDto } from './dto/stock-bookmark-response,dto';
 
 @Controller('/api/stocks/bookmark')
 @ApiTags('주식 즐겨찾기 API')
@@ -65,6 +66,7 @@ export class StockBookmarkController {
   @ApiResponse({
     status: 200,
     description: '즐겨찾기 리스트 조회 성공',
+    type: [StockBookmarkResponseDto],
   })
   async getBookmarkList(@Req() request: Request) {
     return this.stockBookmarkService.getBookmarkList(
