@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuthStore from 'store/authStore';
 import useLoginModalStore from 'store/useLoginModalStore';
 import useSearchModalStore from '../store/useSearchModalStore.ts';
@@ -12,6 +12,8 @@ export default function Header() {
   const { isLogin, setIsLogin } = useAuthStore();
   const { toggleSearchModal } = useSearchModalStore();
   const { searchInput } = useSearchInputStore();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const check = async () => {
@@ -29,6 +31,13 @@ export default function Header() {
     });
   };
 
+  const handleLink = (to: string) => {
+    if (location.pathname === to) {
+      return;
+    }
+    navigate(to);
+  };
+
   return (
     <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
@@ -39,9 +48,26 @@ export default function Header() {
 
         <div className='flex items-center gap-8'>
           <nav className='flex items-center gap-6 text-sm font-bold text-juga-grayscale-500'>
-            <Link to={'/'}>홈</Link>
-            <Link to={'/rank'}>랭킹</Link>
-            {isLogin && <Link to={'/mypage'}>마이페이지</Link>}
+            <div
+              onClick={() => handleLink('/')}
+              className='cursor-pointer px-1 py-2'
+            >
+              홈
+            </div>
+            <div
+              onClick={() => handleLink('/rank')}
+              className='cursor-pointer px-1 py-2'
+            >
+              랭킹
+            </div>
+            {isLogin && (
+              <div
+                onClick={() => handleLink('/mypage')}
+                className='cursor-pointer px-1 py-2'
+              >
+                마이페이지
+              </div>
+            )}
           </nav>
           <div className='relative'>
             <input
