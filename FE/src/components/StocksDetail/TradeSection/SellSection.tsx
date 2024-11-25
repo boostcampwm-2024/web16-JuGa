@@ -7,6 +7,7 @@ import { StockDetailType } from 'types';
 import useAuthStore from 'store/authStore';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 import { isNumericString } from 'utils/common';
+import TradeAlertModal from './TradeAlertModal';
 
 type SellSectionProps = {
   code: string;
@@ -177,6 +178,15 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           매도하기
         </button>
       </form>
+      {isOpen && (
+        <TradeAlertModal
+          code={code}
+          stockName={hts_kor_isnm}
+          price={currPrice}
+          count={count}
+          type='SELL'
+        />
+      )}
     </>
   );
 }

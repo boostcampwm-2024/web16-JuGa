@@ -7,6 +7,7 @@ type TradeAlertModalProps = {
   stockName: string;
   price: string;
   count: number;
+  type: 'SELL' | 'BUY';
 };
 
 export default function TradeAlertModal({
@@ -14,14 +15,19 @@ export default function TradeAlertModal({
   stockName,
   price,
   count,
+  type,
 }: TradeAlertModalProps) {
   const { toggleModal } = useTradeAlertModalStore();
 
   const charge = 55; // 수수료 임시
 
-  const handleBuy = async () => {
-    const res = await orderBuyStock(code, +price, count);
-    if (res.ok) toggleModal();
+  const handleTrade = async () => {
+    if (type === 'BUY') {
+      const res = await orderBuyStock(code, +price, count);
+      if (res.ok) toggleModal();
+    } else {
+      // 매도 api
+    }
   };
 
   const totalPrice = +price * count;
@@ -31,7 +37,7 @@ export default function TradeAlertModal({
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-5 shadow-lg'>
         <div className='self-start text-lg font-bold'>
-          {stockName} 매수 {count}주
+          {stockName} {type === 'BUY' ? '매수' : '매도'} {count}주
         </div>
         <div className='flex flex-col gap-2 my-5 text-juga-grayscale-500'>
           <div className='flex justify-between'>
@@ -56,10 +62,10 @@ export default function TradeAlertModal({
             취소
           </button>
           <button
-            className='px-6 py-2 text-white rounded-xl bg-juga-red-60'
-            onClick={handleBuy}
+            className={`rounded-xl px-6 py-2 text-white ${type === 'BUY' ? 'bg-juga-red-60' : 'bg-juga-blue-50'}`}
+            onClick={handleTrade}
           >
-            구매
+            {type === 'BUY' ? '매수' : '매도'}
           </button>
         </div>
       </section>

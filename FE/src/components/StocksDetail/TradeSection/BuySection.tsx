@@ -154,6 +154,7 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
           stockName={hts_kor_isnm}
           price={currPrice}
           count={count}
+          type='BUY'
         />
       )}
     </>
