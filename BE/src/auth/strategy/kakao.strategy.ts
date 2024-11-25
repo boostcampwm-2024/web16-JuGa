@@ -48,9 +48,7 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
       // eslint-disable-next-line no-underscore-dangle
       const kakaoId = profile._json.id;
       // eslint-disable-next-line no-underscore-dangle
-      const { email } = profile._json.kakao_account;
       const user = {
-        email,
         kakaoId,
       };
       done(null, user);
