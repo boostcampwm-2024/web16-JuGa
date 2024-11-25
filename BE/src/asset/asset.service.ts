@@ -25,7 +25,10 @@ export class AssetService {
       stock_code: stockCode,
     });
 
-    return { quantity: userStock ? userStock.quantity : 0 };
+    return {
+      quantity: userStock ? userStock.quantity : 0,
+      avg_price: userStock ? userStock.avg_price : 0,
+    };
   }
 
   async getCashBalance(userId: number) {

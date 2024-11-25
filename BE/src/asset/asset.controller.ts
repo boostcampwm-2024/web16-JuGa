@@ -20,13 +20,14 @@ export class AssetController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: '매도 가능 주식 개수 조회 API',
-    description: '특정 주식 매도 시에 필요한 매도 가능한 주식 개수를 조회한다.',
+    summary: '매도 가능 주식 개수, 매수 평균가 조회 API',
+    description:
+      '특정 주식 매도 시에 필요한 매도 가능한 주식 개수와 매수 평균가를 조회한다.',
   })
   @ApiResponse({
     status: 200,
-    description: '매도 가능 주식 개수 조회 성공',
-    example: { quantity: 0 },
+    description: '매도 가능 주식 개수 및 매수 평균가 조회 성공',
+    example: { quantity: 0, avg_price: 0 },
   })
   async getUserStockByCode(
     @Req() request: Request,
