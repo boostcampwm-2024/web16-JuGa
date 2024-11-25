@@ -62,4 +62,13 @@ export class StockBookmarkService {
       }),
     );
   }
+
+  async getBookmarkActive(userId, stockCode) {
+    return {
+      is_bookmarked: await this.stockBookmarkRepository.existsBy({
+        user_id: userId,
+        stock_code: stockCode,
+      }),
+    };
+  }
 }
