@@ -1,4 +1,11 @@
-import { Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -27,6 +34,24 @@ export class StockBookmarkController {
     @Param('stockCode') stockCode: string,
   ) {
     await this.stockBookmarkService.registerBookmark(
+      parseInt(request.user.userId, 10),
+      stockCode,
+    );
+  }
+
+  @Delete('/:stockCode')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: '종목 즐겨찾기 취소 API' })
+  @ApiResponse({
+    status: 200,
+    description: '종목 즐겨찾기 취소 성공',
+  })
+  async deleteBookmark(
+    @Req() request: Request,
+    @Param('stockCode') stockCode: string,
+  ) {
+    await this.stockBookmarkService.unregisterBookmark(
       parseInt(request.user.userId, 10),
       stockCode,
     );

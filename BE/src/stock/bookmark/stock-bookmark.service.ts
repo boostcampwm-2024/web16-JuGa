@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { StockBookmarkRepository } from './stock-bookmark.repository';
 
 @Injectable()
@@ -21,5 +25,16 @@ export class StockBookmarkService {
       stock_code: stockCode,
     });
     await this.stockBookmarkRepository.insert(bookmark);
+  }
+
+  async unregisterBookmark(userId, stockCode) {
+    const bookmark = await this.stockBookmarkRepository.findOneBy({
+      user_id: userId,
+      stock_code: stockCode,
+    });
+
+    if (!bookmark) throw new NotFoundException('존재하지 않는 북마크입니다.');
+
+    await this.stockBookmarkRepository.remove(bookmark);
   }
 }
