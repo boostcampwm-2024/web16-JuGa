@@ -1,5 +1,5 @@
 import Overay from 'components/ModalOveray';
-import { orderBuyStock } from 'service/orders';
+import { orderBuyStock, orderSellStock } from 'service/orders';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 
 type TradeAlertModalProps = {
@@ -26,7 +26,8 @@ export default function TradeAlertModal({
       const res = await orderBuyStock(code, +price, count);
       if (res.ok) toggleModal();
     } else {
-      // 매도 api
+      const res = await orderSellStock(code, +price, count);
+      if (res.ok) toggleModal();
     }
   };
 
