@@ -2,10 +2,10 @@ import { ChangeEvent, FocusEvent, FormEvent, useRef, useState } from 'react';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 import { StockDetailType } from 'types';
 import { isNumericString } from 'utils/common';
-import TradeAlertModal from './TradeAlertModal';
 import useAuthStore from 'store/authStore';
 import { useQuery } from '@tanstack/react-query';
 import { getCash } from 'service/assets';
+import TradeAlertModal from './TradeAlertModal';
 
 type BuySectionProps = {
   code: string;
