@@ -24,6 +24,8 @@ export default function TradeAlertModal({
     if (res.ok) toggleModal();
   };
 
+  const totalPrice = +price * count;
+
   return (
     <>
       <Overay onClick={() => toggleModal()} />
@@ -34,7 +36,7 @@ export default function TradeAlertModal({
         <div className='flex flex-col gap-2 my-5 text-juga-grayscale-500'>
           <div className='flex justify-between'>
             <p>{count}주 희망가격</p>
-            <p>{(+price).toLocaleString()}원</p>
+            <p>{totalPrice.toLocaleString()}원</p>
           </div>
           <div className='flex justify-between'>
             <p>예상 수수료</p>
@@ -42,7 +44,7 @@ export default function TradeAlertModal({
           </div>
           <div className='flex justify-between'>
             <p>총 주문 금액</p>
-            <p>{(+price + charge).toLocaleString()}원</p>
+            <p>{(totalPrice + charge).toLocaleString()}원</p>
           </div>
         </div>
 

@@ -59,7 +59,7 @@ export default function TradeSection({ code, data }: TradeSectionProps) {
           </button>
         </div>
         {category === 'buy' ? (
-          <BuySection code={code} data={data} />
+          <BuySection code={code} detailInfo={data} />
         ) : (
           <SellSection />
         )}

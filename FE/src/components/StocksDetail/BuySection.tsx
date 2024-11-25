@@ -4,15 +4,20 @@ import { StockDetailType } from 'types';
 import { isNumericString } from 'utils/common';
 import TradeAlertModal from './TradeAlertModal';
 import useAuthStore from 'store/authStore';
-const MyAsset = 10000000;
+import { useQuery } from '@tanstack/react-query';
+import { getCash } from 'service/assets';
 
 type BuySectionProps = {
   code: string;
-  data: StockDetailType;
+  detailInfo: StockDetailType;
 };
 
-export default function BuySection({ code, data }: BuySectionProps) {
-  const { stck_prpr, stck_mxpr, stck_llam } = data;
+export default function BuySection({ code, detailInfo }: BuySectionProps) {
+  const { stck_prpr, stck_mxpr, stck_llam, hts_kor_isnm } = detailInfo;
+
+  const { data, isLoading, isError } = useQuery(['detail', 'cash'], () =>
+    getCash(),
+  );
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
   const { isLogin } = useAuthStore();
@@ -31,6 +36,10 @@ export default function BuySection({ code, data }: BuySectionProps) {
 
     setCurrPrice(e.target.value);
   };
+
+  if (isLoading) return <div>loading</div>;
+  if (!data) return <div>No data</div>;
+  if (isError) return <div>error</div>;
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
     const n = +e.target.value;
@@ -66,7 +75,7 @@ export default function BuySection({ code, data }: BuySectionProps) {
 
     const price = +currPrice * count;
 
-    if (price > MyAsset) {
+    if (price > data.cash_balance) {
       setLackAssetFlag(true);
       timerRef.current = window.setTimeout(() => {
         setLackAssetFlag(false);
@@ -117,7 +126,7 @@ export default function BuySection({ code, data }: BuySectionProps) {
         <div className='flex flex-col gap-2'>
           <div className='flex justify-between'>
             <p>매수 가능 금액</p>
-            <p>0원</p>
+            <p>{data.cash_balance.toLocaleString()}원</p>
           </div>
           <div className='flex justify-between'>
             <p>총 주문 금액</p>
@@ -142,7 +151,7 @@ export default function BuySection({ code, data }: BuySectionProps) {
       {isOpen && (
         <TradeAlertModal
           code={code}
-          stockName={data.hts_kor_isnm}
+          stockName={hts_kor_isnm}
           price={currPrice}
           count={count}
         />
