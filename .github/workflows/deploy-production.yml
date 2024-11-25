@@ -164,6 +164,8 @@ jobs:
               --env-file ${{matrix.app.name}}.env \
               ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
 
+            docker ps | grep ${{ matrix.app.container }}
+            docker logs ${{ matrix.app.container }}
             rm ${{matrix.app.name}}.env
 
       - name: Remove Github Action Ip to Security group
