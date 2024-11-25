@@ -9,6 +9,9 @@ import { UserStock } from './user-stock.entity';
 import { Asset } from './asset.entity';
 import { InquirePriceResponseDto } from '../stock/detail/dto/stock-detail-response.dto';
 import { StockTradeHistorySocketService } from '../stock/trade/history/stock-trade-history-socket.service';
+import { StatusType } from '../stock/order/enum/status-type';
+import { TradeType } from '../stock/order/enum/trade-type';
+import { Order } from '../stock/order/stock-order.entity';
 
 @Injectable()
 export class AssetService {
@@ -33,8 +36,14 @@ export class AssetService {
 
   async getCashBalance(userId: number) {
     const asset = await this.assetRepository.findOneBy({ user_id: userId });
+    const pendingOrders =
+      await this.assetRepository.findAllPendingOrders(userId);
+    const totalPendingPrice = pendingOrders.reduce(
+      (sum, pendingOrder) => sum + pendingOrder.price * pendingOrder.amount,
+      0,
+    );
 
-    return { cash_balance: asset.cash_balance };
+    return { cash_balance: asset.cash_balance - totalPendingPrice };
   }
 
   async getMyPage(userId: number) {
