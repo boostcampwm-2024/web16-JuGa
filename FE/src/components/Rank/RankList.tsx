@@ -1,10 +1,10 @@
 import RankCard from './RankCard';
 import useAuthStore from '../../store/authStore.ts';
-import { AssetRankingType, ProfitRankingType } from './bummyData.ts';
+import { RankingCategory } from './RankType.ts';
 
 type Props = {
   title: '수익률순' | '자산순';
-  data: ProfitRankingType | AssetRankingType;
+  data: RankingCategory;
 };
 
 export default function RankList({ title, data }: Props) {
@@ -22,20 +22,19 @@ export default function RankList({ title, data }: Props) {
             <RankCard
               key={`${item.nickname}-${index}`}
               item={item}
-              ranking={index}
               type={title}
             />
           ))}
         </div>
       </div>
-      {isLogin && userRank !== null && typeof userRank.rank === 'number' ? (
+      {isLogin && userRank !== null ? (
         <div className={'w-full rounded-lg bg-white px-2 pb-1 pt-2 shadow-lg'}>
           <div className='border-b'>
             <h3 className='text-base font-bold text-gray-800'>{`내 ${title} 순위`}</h3>
           </div>
 
           <div className={'space-y-1'}>
-            <RankCard item={userRank} ranking={userRank.rank} type={title} />
+            <RankCard item={userRank} type={title} />
           </div>
         </div>
       ) : null}
