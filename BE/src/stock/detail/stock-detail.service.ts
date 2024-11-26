@@ -90,6 +90,7 @@ export class StockDetailService {
       const prevDay = new Date();
       if (periodDivCode === 'D') prevDay.setDate(today.getDate() - 60);
       if (periodDivCode === 'M') prevDay.setDate(today.getDate() - 1200);
+      if (periodDivCode === 'Y') prevDay.setDate(today.getDate() - 20000);
       prevDay.setDate(today.getDate() - 365);
       newDate2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       newDate1 = prevDay.toISOString().slice(0, 10).replace(/-/g, '');
