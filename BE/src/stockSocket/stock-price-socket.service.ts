@@ -17,6 +17,7 @@ import { StockExecuteOrderRepository } from './stock-execute-order.repository';
 @Injectable()
 export class StockPriceSocketService extends BaseStockSocketDomainService {
   private readonly logger = new Logger();
+  private connection: { [key: string]: number } = {};
 
   constructor(
     protected readonly socketGateway: SocketGateway,
@@ -71,10 +72,16 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
 
   subscribeByCode(trKey: string) {
     this.baseSocketDomainService.registerCode(this.TR_ID, trKey);
+
+    if (this.connection[trKey]) return this.connection[trKey]++;
+    return (this.connection[trKey] = 1);
   }
 
   unsubscribeByCode(trKey: string) {
-    this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
+    if (!this.connection[trKey]) return;
+    if (this.connection[trKey] > 1) return this.connection[trKey]--;
+    delete this.connection[trKey];
+    return this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
   }
 
   private async checkExecutableOrder(stockCode: string, value) {
@@ -102,6 +109,7 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
     );
 
     if (
+      buyOrders.length + sellOrders.length > 0 &&
       !(await this.stockExecuteOrderRepository.existsBy({
         stock_code: stockCode,
         status: StatusType.PENDING,
