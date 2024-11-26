@@ -1,18 +1,17 @@
 import useOrders from 'hooks/useOrder';
+import useOrderAlertModalStore from 'store/orderCancleAlertModalStore';
 import { parseTimestamp } from 'utils/common';
+import CancleAlertModal from './CancleAlertModal';
 
 export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
 
   const { data, isLoading, isError } = orderQuery;
+  const { isOpen, open } = useOrderAlertModalStore();
 
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
   if (isError) return <div>error</div>;
-
-  const handleCancelOrder = (id: number) => {
-    removeOrder.mutate(id);
-  };
 
   return (
     <div className='mx-auto flex min-h-[500px] w-full flex-col rounded-md bg-white p-4 shadow-md'>
@@ -59,8 +58,8 @@ export default function Order() {
               </p>
               <p className='w-1/6 text-right'>
                 <button
-                  onClick={() => handleCancelOrder(id)}
-                  className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-grayscale-500 hover:bg-red-600'
+                  onClick={() => open(order, () => removeOrder.mutate(id))}
+                  className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-grayscale-500 hover:bg-juga-grayscale-black'
                 >
                   취소
                 </button>
@@ -69,6 +68,7 @@ export default function Order() {
           );
         })}
       </ul>
+      {isOpen && <CancleAlertModal />}
     </div>
   );
 }
