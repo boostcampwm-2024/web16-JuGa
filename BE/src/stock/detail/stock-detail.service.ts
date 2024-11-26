@@ -82,19 +82,24 @@ export class StockDetailService {
     date2: string,
     periodDivCode: string,
   ) {
+    let newDate1 = date1;
+    let newDate2 = date2;
+
     if (date1 === '') {
       const today = new Date();
-      const pervDay = new Date();
-      pervDay.setDate(today.getDate() - 365);
-      date2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-      date1 = pervDay.toISOString().slice(0, 10).replace(/-/g, '');
+      const prevDay = new Date();
+      if (periodDivCode === 'D') prevDay.setDate(today.getDate() - 60);
+      if (periodDivCode === 'M') prevDay.setDate(today.getDate() - 1200);
+      prevDay.setDate(today.getDate() - 365);
+      newDate2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      newDate1 = prevDay.toISOString().slice(0, 10).replace(/-/g, '');
     }
 
     const queryParams = {
       fid_cond_mrkt_div_code: 'J',
       fid_input_iscd: stockCode,
-      fid_input_date_1: date1,
-      fid_input_date_2: date2,
+      fid_input_date_1: newDate1,
+      fid_input_date_2: newDate2,
       fid_period_div_code: periodDivCode,
       fid_org_adj_prc: '0',
     };
