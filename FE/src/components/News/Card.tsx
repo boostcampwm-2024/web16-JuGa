@@ -5,7 +5,12 @@ type CardWithImageProps = {
 };
 export default function Card({ data }: CardWithImageProps) {
   return (
-    <div className='flex cursor-pointer flex-col rounded-lg border p-4 transition-all hover:bg-gray-50'>
+    <a
+      className='flex cursor-pointer flex-col rounded-lg border p-4 transition-all hover:bg-gray-50'
+      href={data.link}
+      target='_blank'
+      rel='noopener noreferrer'
+    >
       <div className={'mb-2 flex w-full flex-row items-center justify-between'}>
         <div className={'flex flex-row items-center gap-3'}>
           <span className='rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600'>
@@ -25,6 +30,6 @@ export default function Card({ data }: CardWithImageProps) {
           {data.publisher}
         </span>
       </div>
-    </div>
+    </a>
   );
 }
