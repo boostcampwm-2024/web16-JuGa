@@ -82,6 +82,14 @@ export class StockDetailService {
     date2: string,
     periodDivCode: string,
   ) {
+    if (date1 === '') {
+      const today = new Date();
+      const pervDay = new Date();
+      pervDay.setDate(today.getDate() - 150);
+      date2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      date1 = pervDay.toISOString().slice(0, 10).replace(/-/g, '');
+    }
+
     const queryParams = {
       fid_cond_mrkt_div_code: 'J',
       fid_input_iscd: stockCode,
@@ -98,7 +106,7 @@ export class StockDetailService {
         queryParams,
       );
 
-    return this.formatStockInquirePriceData(response).slice().reverse();
+    return this.formatStockInquirePriceData(response).slice(-30);
   }
 
   /**
@@ -111,7 +119,13 @@ export class StockDetailService {
   private formatStockInquirePriceData(response: InquirePriceChartApiResponse) {
     const { output2 } = response;
 
-    return output2.map((info) => {
+    output2.sort((a, b) => {
+      if (a.stck_bsop_date > b.stck_bsop_date) return 1;
+      if (a.stck_bsop_date < b.stck_bsop_date) return -1;
+      return 0;
+    });
+
+    return output2.map((info, index) => {
       const stockData = new InquirePriceChartDataDto();
       const {
         stck_bsop_date,
@@ -130,6 +144,20 @@ export class StockDetailService {
       stockData.stck_lwpr = stck_lwpr;
       stockData.acml_vol = acml_vol;
       stockData.prdy_vrss_sign = prdy_vrss_sign;
+
+      if (index >= 4) {
+        const movAvg5 = output2
+          .slice(index - 4, index + 1)
+          .reduce((acc, cur) => acc + Number(cur.stck_clpr), 0);
+        stockData.mov_avg_5 = (movAvg5 / 5).toFixed(2);
+      }
+
+      if (index >= 19) {
+        const movAvg20 = output2
+          .slice(index - 19, index + 1)
+          .reduce((acc, cur) => acc + Number(cur.stck_clpr), 0);
+        stockData.mov_avg_20 = (movAvg20 / 20).toFixed(2);
+      }
 
       return stockData;
     });
