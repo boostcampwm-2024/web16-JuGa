@@ -160,7 +160,7 @@ jobs:
             docker run -d \
               --name ${{ matrix.app.container }} \
               --network juga-network \
-              -p ${{ matrix.app.port }}:${{ matrix.app.port }} \
+              -p ${{ matrix.app.port }}:3000 \
               --env-file ${{matrix.app.name}}.env \
               ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
 
