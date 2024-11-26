@@ -85,7 +85,7 @@ export class StockDetailService {
     if (date1 === '') {
       const today = new Date();
       const pervDay = new Date();
-      pervDay.setDate(today.getDate() - 150);
+      pervDay.setDate(today.getDate() - 365);
       date2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       date1 = pervDay.toISOString().slice(0, 10).replace(/-/g, '');
     }
