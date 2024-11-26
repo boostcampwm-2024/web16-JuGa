@@ -51,6 +51,12 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
     setCurrPrice(s);
   };
 
+  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const s = e.target.value;
+    if (!isNumericString(s)) return;
+    setCount(+s);
+  };
+
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
     const n = +e.target.value.replace(/,/g, '');
     if (n > +stck_mxpr) {
@@ -141,9 +147,9 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'> 수량</p>
             <input
-              type='number'
+              type='text'
               value={count}
-              onChange={(e) => setCount(+e.target.value)}
+              onChange={handleCountChange}
               onBlur={handleCntInputBlur}
               className='flex-1 py-1 rounded-lg'
               min={1}
@@ -157,25 +163,25 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           )}
         </div>
 
-        <div className='flex flex-col gap-2'>
-          <div className='flex justify-between'>
-            <p>예상 수익률</p>
-            <p
-              className={`${+plRate < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
-            >
-              {plRate}%
-            </p>
-          </div>
-        </div>
-        <div className='flex flex-col gap-2'>
-          <div className='flex justify-between'>
-            <p>예상 손익</p>
-            <p>{pl.toLocaleString()}원</p>
-          </div>
-        </div>
-
         <div className='my-5 h-[0.5px] w-full bg-juga-grayscale-200'></div>
+
         <div className='flex flex-col gap-2'>
+          <div className='flex flex-col gap-2'>
+            <div className='flex justify-between'>
+              <p>예상 수익률</p>
+              <p
+                className={`${+plRate < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+              >
+                {plRate}%
+              </p>
+            </div>
+          </div>
+          <div className='flex flex-col gap-2'>
+            <div className='flex justify-between'>
+              <p>예상 손익</p>
+              <p>{pl.toLocaleString()}원</p>
+            </div>
+          </div>
           <div className='flex justify-between'>
             <p>총 매도 금액</p>
             <p>{totalPrice.toLocaleString()}원</p>

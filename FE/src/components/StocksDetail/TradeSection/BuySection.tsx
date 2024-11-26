@@ -39,6 +39,12 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
     setCurrPrice(s);
   };
 
+  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const s = e.target.value;
+    if (!isNumericString(s)) return;
+    setCount(+s);
+  };
+
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
   if (isError) return <div>error</div>;
@@ -115,9 +121,9 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
           <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'> 수량</p>
             <input
-              type='number'
+              type='text'
               value={count}
-              onChange={(e) => setCount(+e.target.value)}
+              onChange={handleCountChange}
               className='flex-1 py-1 rounded-lg'
               min={1}
             />
