@@ -63,6 +63,7 @@ export class StockDetailService {
       per: stock.per,
       stck_mxpr: stock.stck_mxpr,
       stck_llam: stock.stck_llam,
+      is_bookmarked: false,
     };
   }
 
@@ -99,6 +100,13 @@ export class StockDetailService {
       );
 
     return this.formatStockInquirePriceData(response).slice().reverse();
+  }
+
+  getBookmarkActive(userId: number, stockCode: string) {
+    return this.stockDetailRepository.existsBookmarkByUserIdAndStockCode(
+      userId,
+      stockCode,
+    );
   }
 
   /**

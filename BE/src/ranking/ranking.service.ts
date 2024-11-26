@@ -98,7 +98,7 @@ export class RankingService {
 
     return {
       topRank: parsedTopRank,
-      userRank: userRank,
+      userRank,
     };
   }
 
