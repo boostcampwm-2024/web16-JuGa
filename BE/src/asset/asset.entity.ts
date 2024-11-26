@@ -22,7 +22,7 @@ export class Asset {
   @Column({ nullable: false, default: 0 })
   total_profit: number;
 
-  @Column('decimal', { nullable: false, default: 0, precision: 10, scale: 5 })
+  @Column('decimal', { nullable: false, default: 0, precision: 10, scale: 2 })
   total_profit_rate: number;
 
   @Column({ nullable: true })

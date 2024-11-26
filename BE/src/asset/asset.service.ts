@@ -82,7 +82,7 @@ export class AssetService {
       newAsset.stock_balance,
       newAsset.total_asset,
       newAsset.total_profit,
-      newAsset.total_profit_rate,
+      newAsset.total_profit_rate.toFixed(2),
       newAsset.total_profit_rate >= 0,
     );
 
