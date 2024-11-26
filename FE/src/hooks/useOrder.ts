@@ -26,7 +26,10 @@ export default function useOrders() {
   const orderSell = useMutation(
     ({ code, price, count }: { code: string; price: number; count: number }) =>
       orderSellStock(code, price, count),
-    { onSuccess: () => queryClient.invalidateQueries(['detail', 'cash']) },
+    {
+      onSuccess: (_, { code }) =>
+        queryClient.invalidateQueries(['detail', 'sellPosiible', code]),
+    },
   );
 
   return { orderQuery, removeOrder, orderBuy, orderSell };
