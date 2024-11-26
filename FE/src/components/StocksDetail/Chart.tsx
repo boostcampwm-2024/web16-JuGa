@@ -64,10 +64,12 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     y: 0,
   });
 
-  const { data, isLoading } = useQuery(
-    ['stocksChartData', code, timeCategory],
-    () => getStocksChartDataByCode(code, timeCategory),
-  );
+  const { data, isLoading } = useQuery({
+    queryKey: ['stocksChartData', code, timeCategory],
+    queryFn: () => getStocksChartDataByCode(code, timeCategory),
+    staleTime: 1000,
+    cacheTime: 1000 * 60,
+  });
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     e.preventDefault();
