@@ -27,7 +27,7 @@ const padding: Padding = {
   top: 20,
   right: 80,
   bottom: 10,
-  left: 20,
+  left: 40,
 };
 
 type StocksDeatailChartProps = {
@@ -240,6 +240,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         chartXCanvas.width - padding.left - padding.right,
         chartXCanvas.height,
         padding,
+        mousePosition,
+        upperChartCanvas.height + lowerChartCanvas.height,
       );
 
       if (
