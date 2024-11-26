@@ -80,3 +80,8 @@ export type ChartSizeConfigType = {
   yAxisWidth: number;
   xAxisHeight: number;
 };
+
+export type Profile = {
+  name: string;
+  email: string;
+};
