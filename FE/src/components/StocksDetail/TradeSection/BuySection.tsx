@@ -15,8 +15,10 @@ type BuySectionProps = {
 export default function BuySection({ code, detailInfo }: BuySectionProps) {
   const { stck_prpr, stck_mxpr, stck_llam, hts_kor_isnm } = detailInfo;
 
-  const { data, isLoading, isError } = useQuery(['detail', 'cash'], () =>
-    getCash(),
+  const { data, isLoading, isError } = useQuery(
+    ['detail', 'cash'],
+    () => getCash(),
+    { staleTime: 1000 },
   );
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);

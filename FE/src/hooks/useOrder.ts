@@ -9,7 +9,9 @@ import {
 export default function useOrders() {
   const queryClient = useQueryClient();
 
-  const orderQuery = useQuery(['account', 'order'], () => getOrders());
+  const orderQuery = useQuery(['account', 'order'], () => getOrders(), {
+    staleTime: 1000,
+  });
 
   const removeOrder = useMutation((id: number) => deleteOrder(id), {
     onSuccess: () => queryClient.invalidateQueries(['account', 'order']),

@@ -20,6 +20,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   const { data, isLoading, isError } = useQuery(
     ['detail', 'sellPosiible', code],
     () => getSellPossibleStockCnt(code),
+    { staleTime: 1000 },
   );
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
