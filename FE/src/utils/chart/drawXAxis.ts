@@ -21,7 +21,7 @@ export const drawXAxis = (
     height + padding.top + padding.bottom,
   );
 
-  ctx.font = '20px Arial';
+  ctx.font = '22px Arial';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#000';
 
@@ -39,7 +39,7 @@ export const drawXAxis = (
   if (
     mousePosition.x > 0 &&
     mousePosition.x < width + padding.left + padding.right &&
-    mousePosition.y > 0 &&
+    mousePosition.y > padding.top &&
     mousePosition.y < parentHeight
   ) {
     const mouseX = mousePosition.x - padding.left;
@@ -51,8 +51,8 @@ export const drawXAxis = (
       const mouseDate = data[dataIndex].stck_bsop_date;
       const dateText = formatTime(mouseDate);
 
-      ctx.font = '20px Arial ';
-      const textWidth = 100;
+      ctx.font = '22px Arial ';
+      const textWidth = ctx.measureText(dateText).width;
 
       const boxX =
         padding.left +
@@ -61,16 +61,14 @@ export const drawXAxis = (
         15;
       const boxY = height / 2 - 20;
 
-      // 박스 그리기
       ctx.fillStyle = '#2175F3';
       ctx.fillRect(boxX, boxY, textWidth + boxPadding * 2, boxHeight);
 
-      // 텍스트 그리기
       ctx.fillStyle = '#FFF';
       ctx.fillText(
         dateText,
         padding.left + (width * dataIndex) / (data.length - 1) + 24,
-        boxY + boxHeight / 2 + 6,
+        boxY + boxHeight / 2 + 8,
       );
     }
   }

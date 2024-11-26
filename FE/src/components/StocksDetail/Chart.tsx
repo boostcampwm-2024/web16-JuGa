@@ -223,6 +223,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         upperLabelNum,
         padding,
         0.1,
+        mousePosition,
+        upperChartCanvas.width,
+        upperChartCanvas.height,
       );
 
       drawLowerYAxis(
@@ -232,6 +235,10 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         lowerChartYCanvas.height - padding.top - padding.bottom,
         lowerLabelNum,
         padding,
+        mousePosition,
+        lowerChartCanvas.width,
+        lowerChartCanvas.height,
+        upperChartCanvas.height,
       );
 
       drawXAxis(
