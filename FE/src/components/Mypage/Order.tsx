@@ -1,5 +1,5 @@
 import useOrders from 'hooks/useOrder';
-import useOrderAlertModalStore from 'store/orderCancleAlertModalStore';
+import useOrderCancelAlertModalStore from 'store/orderCancleAlertModalStore';
 import { parseTimestamp } from 'utils/common';
 import CancleAlertModal from './CancleAlertModal';
 
@@ -7,7 +7,7 @@ export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
 
   const { data, isLoading, isError } = orderQuery;
-  const { isOpen, open } = useOrderAlertModalStore();
+  const { isOpen, open } = useOrderCancelAlertModalStore();
 
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;

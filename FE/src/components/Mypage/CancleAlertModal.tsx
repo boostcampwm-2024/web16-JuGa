@@ -1,8 +1,8 @@
 import Overay from 'components/ModalOveray';
-import useOrderAlertModalStore from 'store/orderCancleAlertModalStore';
+import useOrderCancelAlertModalStore from 'store/orderCancleAlertModalStore';
 
 export default function CancleAlertModal() {
-  const { close, onSuccess, order } = useOrderAlertModalStore();
+  const { close, onSuccess, order } = useOrderCancelAlertModalStore();
   if (!order) return;
 
   const { stock_name, amount, trade_type } = order;

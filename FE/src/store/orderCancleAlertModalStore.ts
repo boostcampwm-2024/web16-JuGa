@@ -9,7 +9,7 @@ type ModalStore = {
   close: () => void;
 };
 
-const useOrderAlertModalStore = create<ModalStore>((set) => ({
+const useOrderCancelAlertModalStore = create<ModalStore>((set) => ({
   isOpen: false,
   order: null,
   onSuccess: () => {},
@@ -18,4 +18,4 @@ const useOrderAlertModalStore = create<ModalStore>((set) => ({
   close: () => set(() => ({ isOpen: false })),
 }));
 
-export default useOrderAlertModalStore;
+export default useOrderCancelAlertModalStore;
