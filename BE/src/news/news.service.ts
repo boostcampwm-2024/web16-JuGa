@@ -5,7 +5,7 @@ import { NaverApiDomianService } from './naver-api-domian.service';
 import { NewsApiResponse } from './interface/news-value.interface';
 import { NewsDataOutputDto } from './dto/news-data-output.dto';
 import { NewsResponseDto } from './dto/news-response.dto';
-import { NewsRepository } from './interface/news.repository';
+import { NewsRepository } from './news.repository';
 
 @Injectable()
 export class NewsService {
