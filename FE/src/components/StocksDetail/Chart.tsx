@@ -46,7 +46,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   const upperChartY = useRef<HTMLCanvasElement>(null);
   const lowerChartY = useRef<HTMLCanvasElement>(null);
   const chartX = useRef<HTMLCanvasElement>(null);
-
+  // RAF 관리를 위한 ref
+  const rafRef = useRef<number>();
   const [timeCategory, setTimeCategory] = useState<TiemCategory>('D');
   const [charSizeConfig, setChartSizeConfig] = useState<ChartSizeConfigType>({
     upperHeight: 0.5,
@@ -117,10 +118,19 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
   const getCanvasMousePosition = (e: MouseEvent) => {
     if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: (e.clientX - rect.left) * 2,
-      y: (e.clientY - rect.top) * 2,
+
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
+
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      setMousePosition({
+        x: (e.clientX - rect.left) * 2,
+        y: (e.clientY - rect.top) * 2,
+      });
     });
   };
 
@@ -133,6 +143,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
   }, [isDragging, handleMouseDown, handleMouseUp, handleMouseMove]);
   const setCanvasSize = useCallback(

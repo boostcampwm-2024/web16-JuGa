@@ -42,7 +42,7 @@ export const drawUpperYAxis = (
 
   if (
     mousePosition.x > padding.left &&
-    mousePosition.x < upperChartWidth + padding.left &&
+    mousePosition.x < upperChartWidth &&
     mousePosition.y > padding.top &&
     mousePosition.y < upperChartHeight
   ) {

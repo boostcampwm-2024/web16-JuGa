@@ -40,7 +40,7 @@ export const drawLowerYAxis = (
 
   if (
     mousePosition.x > padding.left &&
-    mousePosition.x < lowerChartWidth + padding.left &&
+    mousePosition.x < lowerChartWidth &&
     mousePosition.y > upperChartHeight &&
     mousePosition.y < upperChartHeight + lowerChartHeight
   ) {
