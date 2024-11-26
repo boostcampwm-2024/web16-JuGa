@@ -15,7 +15,7 @@ export default function Order() {
   };
 
   return (
-    <div className='flex flex-col w-full p-4 mx-auto bg-white rounded-md shadow-md'>
+    <div className='mx-auto flex min-h-[500px] w-full flex-col rounded-md bg-white p-4 shadow-md'>
       <div className='flex pb-2 text-sm font-bold border-b'>
         <p className='w-1/3 text-left truncate'>종목</p>
         <p className='w-1/4 text-center'>요청 유형</p>
@@ -25,7 +25,7 @@ export default function Order() {
         <p className='w-1/6 text-right'></p>
       </div>
 
-      <ul className='flex flex-col text-sm divide-y min-h-48'>
+      <ul className='flex flex-col text-sm divide-y'>
         {data.map((order) => {
           const {
             id,
