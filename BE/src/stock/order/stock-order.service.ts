@@ -9,17 +9,17 @@ import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
-import { StockOrderSocketService } from './stock-order-socket.service';
 import { UserStockRepository } from '../../asset/user-stock.repository';
 import { AssetRepository } from '../../asset/asset.repository';
 import { StockOrderElementResponseDto } from './dto/stock-order-element-response.dto';
 import { Order } from './stock-order.entity';
+import { StockPriceSocketService } from '../../stockSocket/stock-price-socket.service';
 
 @Injectable()
 export class StockOrderService {
   constructor(
     private readonly stockOrderRepository: StockOrderRepository,
-    private readonly stockOrderSocketService: StockOrderSocketService,
+    private readonly stockPriceSocketService: StockPriceSocketService,
     private readonly userStockRepository: UserStockRepository,
     private readonly assetRepository: AssetRepository,
   ) {}
@@ -54,7 +54,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
@@ -89,7 +89,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async cancel(userId: number, orderId: number) {
@@ -111,7 +111,7 @@ export class StockOrderService {
         status: StatusType.PENDING,
       }))
     )
-      this.stockOrderSocketService.unsubscribeByCode(order.stock_code);
+      this.stockPriceSocketService.unsubscribeByCode(order.stock_code);
   }
 
   async getPendingListByUserId(userId: number) {
@@ -137,7 +137,7 @@ export class StockOrderService {
 
     await Promise.all(
       orders.map((order) =>
-        this.stockOrderSocketService.unsubscribeByCode(order.stock_code),
+        this.stockPriceSocketService.unsubscribeByCode(order.stock_code),
       ),
     );
 
