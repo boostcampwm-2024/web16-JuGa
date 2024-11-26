@@ -5,5 +5,5 @@ export interface NewsApiResponse {
   total: number;
   start: number;
   display: number;
-  item: NewsDataOutputDto[];
+  items: NewsDataOutputDto[];
 }
