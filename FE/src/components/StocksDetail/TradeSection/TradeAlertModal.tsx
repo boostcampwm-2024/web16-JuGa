@@ -1,5 +1,5 @@
 import Overay from 'components/ModalOveray';
-import { orderBuyStock, orderSellStock } from 'service/orders';
+import useOrders from 'hooks/useOrder';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 import { getTradeCommision } from 'utils/common';
 
@@ -19,6 +19,7 @@ export default function TradeAlertModal({
   type,
 }: TradeAlertModalProps) {
   const { toggleModal } = useTradeAlertModalStore();
+  const { orderBuy, orderSell } = useOrders();
 
   const totalPrice = +price * count;
 
@@ -26,11 +27,11 @@ export default function TradeAlertModal({
 
   const handleTrade = async () => {
     if (type === 'BUY') {
-      const res = await orderBuyStock(code, +price, count);
-      if (res.ok) toggleModal();
+      orderBuy.mutate({ code, price: +price, count });
+      toggleModal();
     } else {
-      const res = await orderSellStock(code, +price, count);
-      if (res.ok) toggleModal();
+      orderSell.mutate({ code, price: +price, count });
+      toggleModal();
     }
   };
 
