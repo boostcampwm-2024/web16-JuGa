@@ -17,7 +17,8 @@ export const newsMockData: NewsMockDataType[] = [
   {
     publisher: '동아일보',
     img: 'https://s.pstatic.net/dthumb.phinf/?src=%22https%3A%2F%2Fs.pstatic.net%2Fstatic%2Fnewsstand%2F2024%2F1125%2Farticle_img%2Fnew_main%2F9131%2F172557_001.jpg%22&type=nf312_208&service=navermain',
-    title: '청년 주거대책 발표...월세 지원 확대',
+    title:
+      '청년 주거대책 발표...월세 지원 확대https://s.pstatic.net/dthumb.phinf/?src=%22https%3A%2F%2Fs.pstatic.net%2Fstatic%2Fnewsstand%2F2024%2F1125%2Farticle_img%2Fnew_main%2F9131%2F172557_001.jpg%22&type=nf312_208&service=navermain',
     date: '11월 03일 18:39 직접 편집',
     link: 'https://www.donga.com/news/article/all/20241103/123456',
   },
