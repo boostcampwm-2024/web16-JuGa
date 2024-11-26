@@ -1,10 +1,8 @@
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Order } from './stock-order.entity';
 import { StatusType } from './enum/status-type';
-import { Asset } from '../../asset/asset.entity';
-import { UserStock } from '../../asset/user-stock.entity';
 import { StockOrderRawInterface } from './interface/stock-order-raw.interface';
 
 @Injectable()

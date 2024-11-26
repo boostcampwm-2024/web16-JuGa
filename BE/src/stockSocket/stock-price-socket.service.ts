@@ -73,15 +73,21 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
   subscribeByCode(trKey: string) {
     this.baseSocketDomainService.registerCode(this.TR_ID, trKey);
 
-    if (this.connection[trKey]) return this.connection[trKey]++;
-    return (this.connection[trKey] = 1);
+    if (this.connection[trKey]) {
+      this.connection[trKey] += 1;
+      return;
+    }
+    this.connection[trKey] = 1;
   }
 
   unsubscribeByCode(trKey: string) {
     if (!this.connection[trKey]) return;
-    if (this.connection[trKey] > 1) return this.connection[trKey]--;
+    if (this.connection[trKey] > 1) {
+      this.connection[trKey] -= 1;
+      return;
+    }
     delete this.connection[trKey];
-    return this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
+    this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
   }
 
   private async checkExecutableOrder(stockCode: string, value) {
