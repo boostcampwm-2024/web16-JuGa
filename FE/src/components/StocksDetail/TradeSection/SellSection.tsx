@@ -1,7 +1,7 @@
 import Lottie from 'lottie-react';
 import emptyAnimation from 'assets/emptyAnimation.json';
 import { useQuery } from '@tanstack/react-query';
-import { getSellPossibleStockCnt } from 'service/assets';
+import { getSellInfo } from 'service/assets';
 import { ChangeEvent, FocusEvent, FormEvent, useRef, useState } from 'react';
 import { StockDetailType } from 'types';
 import useAuthStore from 'store/authStore';
@@ -19,13 +19,13 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
 
   const { data, isLoading, isError } = useQuery(
     ['detail', 'sellPosiible', code],
-    () => getSellPossibleStockCnt(code),
+    () => getSellInfo(code),
     { staleTime: 1000 },
   );
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
   const { isLogin } = useAuthStore();
-  const [count, setCount] = useState<number>(0);
+  const [count, setCount] = useState<number>(1);
 
   const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
@@ -39,6 +39,12 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   if (isError) return <div>error</div>;
 
   const quantity = data.quantity;
+  const avg_price = data.avg_price;
+
+  const pl = (+currPrice - avg_price) * count;
+  const totalPrice = +currPrice * count;
+  const plRate = ((pl / totalPrice) * 100).toFixed(2);
+
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!isNumericString(e.target.value)) return;
 
@@ -92,15 +98,6 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   const handleSell = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // const price = +currPrice * count;
-
-    // if (price > data.cash_balance) {
-    //   setLackAssetFlag(true);
-    //   timerRef.current = window.setTimeout(() => {
-    //     setLackAssetFlag(false);
-    //   }, 2000);
-    //   return;
-    // }
     toggleModal();
   };
 
@@ -160,15 +157,30 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           )}
         </div>
 
-        <div className='my-5 h-[0.5px] w-full bg-juga-grayscale-200'></div>
-
         <div className='flex flex-col gap-2'>
           <div className='flex justify-between'>
-            <p>총 매도 금액</p>
-            <p>{(+currPrice * count).toLocaleString()}원</p>
+            <p>예상 수익률</p>
+            <p
+              className={`${+plRate < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+            >
+              {plRate}%
+            </p>
+          </div>
+        </div>
+        <div className='flex flex-col gap-2'>
+          <div className='flex justify-between'>
+            <p>예상 손익</p>
+            <p>{pl.toLocaleString()}원</p>
           </div>
         </div>
 
+        <div className='my-5 h-[0.5px] w-full bg-juga-grayscale-200'></div>
+        <div className='flex flex-col gap-2'>
+          <div className='flex justify-between'>
+            <p>총 매도 금액</p>
+            <p>{totalPrice.toLocaleString()}원</p>
+          </div>
+        </div>
         <div className='flex flex-col justify-center h-10'></div>
         <button
           className={
