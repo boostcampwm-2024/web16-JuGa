@@ -5,6 +5,7 @@ import { StockDetailController } from './stock-detail.controller';
 import { StockDetailService } from './stock-detail.service';
 import { StockDetailRepository } from './stock-detail.repository';
 import { Stocks } from './stock-detail.entity';
+import { StockBookmarkModule } from '../bookmark/stock-bookmark.module';
 
 @Module({
   imports: [KoreaInvestmentModule, TypeOrmModule.forFeature([Stocks])],
