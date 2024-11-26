@@ -34,9 +34,9 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
   const timerRef = useRef<number | null>(null);
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isNumericString(e.target.value)) return;
-
-    setCurrPrice(e.target.value);
+    const s = e.target.value.replace(/,/g, '');
+    if (!isNumericString(s)) return;
+    setCurrPrice(s);
   };
 
   if (isLoading) return <div>loading</div>;
@@ -44,7 +44,8 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
   if (isError) return <div>error</div>;
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const n = +e.target.value;
+    const n = +e.target.value.replace(/,/g, '');
+
     if (n > +stck_mxpr) {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -95,14 +96,14 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
             <p className='mr-3 w-14'>매수 가격</p>
             <input
               type='text'
-              value={currPrice}
+              value={(+currPrice).toLocaleString()}
               onChange={handlePriceChange}
               onBlur={handlePriceInputBlur}
               className='flex-1 py-1 rounded-lg'
             />
           </div>
           {lowerLimitFlag && (
-            <div className='text-sm text-juga-red-60'>
+            <div className='text-xs text-juga-red-60'>
               이 주식의 최소 가격은 {(+stck_llam).toLocaleString()}입니다.
             </div>
           )}

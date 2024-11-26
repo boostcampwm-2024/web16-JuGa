@@ -46,13 +46,13 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   const plRate = ((pl / totalPrice) * 100).toFixed(2);
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isNumericString(e.target.value)) return;
-
-    setCurrPrice(e.target.value);
+    const s = e.target.value.replace(/,/g, '');
+    if (!isNumericString(s)) return;
+    setCurrPrice(s);
   };
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const n = +e.target.value;
+    const n = +e.target.value.replace(/,/g, '');
     if (n > +stck_mxpr) {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -122,14 +122,14 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
             <p className='mr-3 w-14'>매도 가격</p>
             <input
               type='text'
-              value={currPrice}
+              value={(+currPrice).toLocaleString()}
               onChange={handlePriceChange}
               onBlur={handlePriceInputBlur}
               className='flex-1 py-1 rounded-lg'
             />
           </div>
           {lowerLimitFlag && (
-            <div className='text-sm text-juga-red-60'>
+            <div className='text-xs text-juga-red-60'>
               이 주식의 최소 가격은 {(+stck_llam).toLocaleString()}입니다.
             </div>
           )}
