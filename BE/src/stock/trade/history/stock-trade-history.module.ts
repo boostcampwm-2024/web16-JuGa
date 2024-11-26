@@ -9,5 +9,6 @@ import { SocketModule } from '../../../common/websocket/socket.module';
   imports: [KoreaInvestmentModule, SocketModule],
   controllers: [StockTradeHistoryController],
   providers: [StockTradeHistoryService, StockTradeHistorySocketService],
+  exports: [StockTradeHistorySocketService],
 })
 export class StockTradeHistoryModule {}

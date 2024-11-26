@@ -1,11 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class StockElementResponseDto {
+export class StockBookmarkResponseDto {
   constructor(
     name: string,
     code: string,
-    quantity: number,
-    avg_price: number,
     stck_prpr: string,
     prdy_vrss: string,
     prdy_vrss_sign: string,
@@ -13,8 +11,6 @@ export class StockElementResponseDto {
   ) {
     this.name = name;
     this.code = code;
-    this.quantity = quantity;
-    this.avg_price = avg_price;
     this.stck_prpr = stck_prpr;
     this.prdy_vrss = prdy_vrss;
     this.prdy_vrss_sign = prdy_vrss_sign;
@@ -26,12 +22,6 @@ export class StockElementResponseDto {
 
   @ApiProperty({ description: '종목 코드' })
   code: string;
-
-  @ApiProperty({ description: '보유량' })
-  quantity: number;
-
-  @ApiProperty({ description: '평균 매수가' })
-  avg_price: number;
 
   @ApiProperty({ description: '주식 현재가' })
   stck_prpr: string;

@@ -26,10 +26,21 @@ export class StockOrderService {
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const asset = await this.assetRepository.findOneBy({ user_id: userId });
+    const pendingOrders = await this.stockOrderRepository.findBy({
+      user_id: userId,
+      status: StatusType.PENDING,
+      trade_type: TradeType.BUY,
+      stock_code: stockOrderRequest.stock_code,
+    });
+    const totalPendingPrice = pendingOrders.reduce(
+      (sum, pendingOrder) => sum + pendingOrder.price * pendingOrder.amount,
+      0,
+    );
 
     if (
       asset &&
-      asset.cash_balance < stockOrderRequest.amount * stockOrderRequest.price
+      asset.cash_balance <
+        stockOrderRequest.amount * stockOrderRequest.price + totalPendingPrice
     )
       throw new BadRequestException('가용 자산이 충분하지 않습니다.');
 
@@ -51,8 +62,21 @@ export class StockOrderService {
       user_id: userId,
       stock_code: stockOrderRequest.stock_code,
     });
+    const pendingOrders = await this.stockOrderRepository.findBy({
+      user_id: userId,
+      status: StatusType.PENDING,
+      trade_type: TradeType.SELL,
+      stock_code: stockOrderRequest.stock_code,
+    });
+    const totalPendingCount = pendingOrders.reduce(
+      (sum, pendingOrder) => sum + pendingOrder.amount,
+      0,
+    );
 
-    if (!userStock || userStock.quantity < stockOrderRequest.amount)
+    if (
+      !userStock ||
+      userStock.quantity < stockOrderRequest.amount + totalPendingCount
+    )
       throw new BadRequestException('주식을 매도 수만큼 가지고 있지 않습니다.');
 
     const order = this.stockOrderRepository.create({

@@ -20,13 +20,14 @@ export class AssetController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: '매도 가능 주식 개수 조회 API',
-    description: '특정 주식 매도 시에 필요한 매도 가능한 주식 개수를 조회한다.',
+    summary: '매도 가능 주식 개수, 매수 평균가 조회 API',
+    description:
+      '특정 주식 매도 시에 필요한 매도 가능한 주식 개수와 매수 평균가를 조회한다.',
   })
   @ApiResponse({
     status: 200,
-    description: '매도 가능 주식 개수 조회 성공',
-    example: { quantity: 0 },
+    description: '매도 가능 주식 개수 및 매수 평균가 조회 성공',
+    example: { quantity: 0, avg_price: 0 },
   })
   async getUserStockByCode(
     @Req() request: Request,
@@ -69,6 +70,19 @@ export class AssetController {
   })
   async getMyPage(@Req() request: Request) {
     return this.assetService.getMyPage(parseInt(request.user.userId, 10));
+  }
+
+  @Get('/unsubscribe')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '마이페이지 내 주식 소켓 연결 취소 API',
+    description: '마이페이지에서 나갈 때 소켓 연결 취소를 위한 API',
+  })
+  async unsubscribeMyStocks(@Req() request: Request) {
+    await this.assetService.unsubscribeMyStocks(
+      parseInt(request.user.userId, 10),
+    );
   }
 
   @Cron('*/10 9-16 * * 1-5')
