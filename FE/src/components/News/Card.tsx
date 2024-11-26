@@ -18,7 +18,7 @@ export default function Card({ data }: CardWithImageProps) {
         <span className={'w-fit text-sm text-gray-500'}>{data.date}</span>
       </div>
       <div className='flex w-full items-center justify-between gap-4'>
-        <p className='line-clamp-1 flex-1 text-left text-sm text-gray-500'>
+        <p className='w-96 truncate text-left text-sm text-gray-500'>
           {data.img}
         </p>
         <span className='whitespace-nowrap text-sm text-gray-500'>
