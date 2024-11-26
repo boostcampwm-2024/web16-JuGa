@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-kakao';
+import { UserRepository } from '../user.repository';
 
 interface KakaoStrategyOptions {
   clientID: string;
@@ -32,7 +33,10 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
   Strategy,
   'kakao',
 ) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userRepository: UserRepository,
+  ) {
     const options: KakaoStrategyOptions = {
       clientID: configService.get<string>('KAKAO_CLIENT_ID') || '',
       clientSecret: '',
@@ -52,7 +56,9 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
       // eslint-disable-next-line no-underscore-dangle
       const kakaoId = profile._json.id;
 
-      const user = await this.userRepository.findOne({ where: { kakaoId } });
+      const user = await this.userRepository.findOne({
+        where: { kakaoId: kakaoId.toString() },
+      });
       if (!user) {
         throw new Error('User not found');
       }
@@ -61,7 +67,7 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
         userId: user.id,
         email: user.email,
         tutorial: user.tutorial,
-        kakaoId: user.kakaoId,
+        kakaoId: Number(user.kakaoId),
         nickname: user.nickname,
       });
     } catch (error) {
