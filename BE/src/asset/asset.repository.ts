@@ -21,12 +21,24 @@ export class AssetRepository extends Repository<Asset> {
 
   async findAllPendingOrders(userId: number, tradeType: TradeType) {
     const queryRunner = this.dataSource.createQueryRunner();
-    return queryRunner.manager.find<Order>(Order, {
-      where: {
-        user_id: userId,
-        status: StatusType.PENDING,
-        trade_type: tradeType,
-      },
-    });
+    await queryRunner.startTransaction();
+
+    try {
+      const orders = await queryRunner.manager.find<Order>(Order, {
+        where: {
+          user_id: userId,
+          status: StatusType.PENDING,
+          trade_type: tradeType,
+        },
+      });
+
+      await queryRunner.commitTransaction();
+      return orders;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

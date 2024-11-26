@@ -53,7 +53,6 @@ export class RankingService {
                 })
               : JSON.stringify({
                   nickname: rank.nickname,
-                  rank,
                   value: rank.totalAsset,
                 }),
           ),
@@ -98,7 +97,7 @@ export class RankingService {
 
     return {
       topRank: parsedTopRank,
-      userRank: userRank,
+      userRank,
     };
   }
 
@@ -123,10 +122,10 @@ export class RankingService {
         profitRateRanking.map((rank: Ranking) =>
           this.redisDomainService.zadd(
             profitRateKey,
-            rank.profitRate,
+            this.getSortScore(rank, SortType.PROFIT_RATE),
             JSON.stringify({
               nickname: rank.nickname,
-              profitRate: rank.profitRate,
+              value: Math.trunc(rank.profitRate * 100) / 100,
             }),
           ),
         ),
@@ -135,10 +134,10 @@ export class RankingService {
         assetRanking.map((rank: Ranking) =>
           this.redisDomainService.zadd(
             assetKey,
-            rank.totalAsset,
+            this.getSortScore(rank, SortType.ASSET),
             JSON.stringify({
               nickname: rank.nickname,
-              totalAsset: rank.totalAsset,
+              value: rank.totalAsset,
             }),
           ),
         ),

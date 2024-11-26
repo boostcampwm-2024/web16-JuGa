@@ -73,23 +73,4 @@ export class StockBookmarkController {
       parseInt(request.user.userId, 10),
     );
   }
-
-  @Get('/:stockCode')
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: '특정 종목에 대한 즐겨찾기 등록 여부 조회 API' })
-  @ApiResponse({
-    status: 200,
-    description: '즐겨찾기 등록 여부 조회 성공',
-    example: { is_bookmarked: true },
-  })
-  async getBookmarkActive(
-    @Req() request: Request,
-    @Param('stockCode') stockCode: string,
-  ) {
-    return this.stockBookmarkService.getBookmarkActive(
-      parseInt(request.user.userId, 10),
-      stockCode,
-    );
-  }
 }
