@@ -16,9 +16,21 @@ export class StockDetailRepository extends Repository<Stocks> {
 
   async existsBookmarkByUserIdAndStockCode(userId: number, stockCode: string) {
     const queryRunner = this.dataSource.createQueryRunner();
-    return queryRunner.manager.existsBy(Bookmark, {
-      user_id: userId,
-      stock_code: stockCode,
-    });
+    await queryRunner.startTransaction();
+
+    try {
+      const isExist = queryRunner.manager.existsBy(Bookmark, {
+        user_id: userId,
+        stock_code: stockCode,
+      });
+
+      await queryRunner.commitTransaction();
+      return await isExist;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
