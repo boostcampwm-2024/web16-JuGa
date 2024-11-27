@@ -15,7 +15,14 @@ export const drawUpperYAxis = (
   upperChartHeight: number,
 ) => {
   const values = data
-    .map((d) => [+d.stck_hgpr, +d.stck_lwpr, +d.stck_clpr, +d.stck_oprc])
+    .map((d) => [
+      +d.stck_hgpr,
+      +d.stck_lwpr,
+      +d.stck_clpr,
+      +d.stck_oprc,
+      Math.floor(+d.mov_avg_5),
+      Math.floor(+d.mov_avg_20),
+    ])
     .flat();
   const yMax = Math.round(Math.max(...values) * (1 + weight));
   const yMin = Math.round(Math.min(...values) * (1 - weight));
