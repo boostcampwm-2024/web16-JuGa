@@ -42,7 +42,7 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
     super(options);
   }
 
-  async validate(
+  validate(
     accessToken: string,
     refreshToken: string,
     profile: KakaoProfile,
