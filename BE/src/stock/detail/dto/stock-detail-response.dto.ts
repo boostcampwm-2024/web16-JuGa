@@ -30,4 +30,7 @@ export class InquirePriceResponseDto {
 
   @ApiProperty({ description: '주식 하한가' })
   stck_llam: string;
+
+  @ApiProperty({ description: '즐겨찾기 여부 (미인증시 false)' })
+  is_bookmarked: boolean;
 }

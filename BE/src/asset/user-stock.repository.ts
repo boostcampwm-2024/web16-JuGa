@@ -17,7 +17,9 @@ export class UserStockRepository extends Repository<UserStock> {
         'stocks',
         'stocks.code = user_stocks.stock_code',
       )
-      .where('user_stocks.user_id = :userId', { userId })
+      .where('user_stocks.user_id = :userId AND user_stocks.quantity > 0', {
+        userId,
+      })
       .getRawMany<UserStockInterface>();
   }
 

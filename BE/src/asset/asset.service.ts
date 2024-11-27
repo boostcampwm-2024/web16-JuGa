@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { MoreThan } from 'typeorm';
 import { UserStockRepository } from './user-stock.repository';
 import { AssetRepository } from './asset.repository';
 import { MypageResponseDto } from './dto/mypage-response.dto';
@@ -81,7 +82,7 @@ export class AssetService {
       newAsset.stock_balance,
       newAsset.total_asset,
       newAsset.total_profit,
-      newAsset.total_profit_rate,
+      newAsset.total_profit_rate.toFixed(2),
       newAsset.total_profit_rate >= 0,
     );
 
@@ -106,7 +107,7 @@ export class AssetService {
   private async updateMyAsset(asset: Asset, currPrices) {
     const userId = asset.user_id;
     const userStocks = await this.userStockRepository.find({
-      where: { user_id: userId },
+      where: { user_id: userId, quantity: MoreThan(0) },
     });
 
     const totalPrice = userStocks.reduce(

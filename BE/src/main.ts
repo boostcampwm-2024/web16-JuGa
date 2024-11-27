@@ -11,9 +11,11 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:5173',
+      'http://localhost:63342',
       'http://juga.kro.kr:5173',
       'http://juga.kro.kr:3000',
       // 개발 서버
+      'http://223.130.151.42',
       'http://223.130.151.42:5173',
       'http://223.130.151.42:3000',
       // 배포 서버
