@@ -166,13 +166,13 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
   }
 
   private calculateFee(totalPrice: number) {
-    if (totalPrice <= 10000000) return Math.floor(totalPrice * 0.16);
+    if (totalPrice <= 10000000) return Math.floor(totalPrice * 0.0016);
     if (totalPrice > 10000000 && totalPrice <= 50000000)
-      return Math.floor(totalPrice * 0.14);
+      return Math.floor(totalPrice * 0.0014);
     if (totalPrice > 50000000 && totalPrice <= 100000000)
-      return Math.floor(totalPrice * 0.12);
+      return Math.floor(totalPrice * 0.0012);
     if (totalPrice > 100000000 && totalPrice <= 300000000)
-      return Math.floor(totalPrice * 0.1);
-    return Math.floor(totalPrice * 0.08);
+      return Math.floor(totalPrice * 0.001);
+    return Math.floor(totalPrice * 0.0008);
   }
 }
