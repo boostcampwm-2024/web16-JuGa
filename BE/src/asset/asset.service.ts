@@ -29,6 +29,7 @@ export class AssetService {
     const pendingOrders = await this.assetRepository.findAllPendingOrders(
       userId,
       TradeType.SELL,
+      stockCode,
     );
     const totalPendingCount = pendingOrders.reduce(
       (sum, pendingOrder) => sum + pendingOrder.amount,
