@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { MyStockListUnit } from 'types';
 import { calcYield } from 'utils/common';
 
@@ -6,6 +7,12 @@ type MyStocksListProps = {
 };
 
 export default function MyStocksList({ stocks }: MyStocksListProps) {
+  const navigation = useNavigate();
+
+  const handleClick = (code: string) => {
+    navigation(`/stocks/${code}`);
+  };
+
   return (
     <div className='flex flex-col flex-1 w-full p-4 mx-auto bg-white rounded-md shadow-md'>
       <div className='flex pb-2 text-sm font-bold border-b'>
@@ -23,7 +30,11 @@ export default function MyStocksList({ stocks }: MyStocksListProps) {
           const stockYield = calcYield(avg_price, +stck_prpr);
 
           return (
-            <li className='flex py-2' key={code}>
+            <li
+              className='flex py-2 transition-colors hover:cursor-pointer hover:bg-gray-50'
+              key={code}
+              onClick={() => handleClick(code)}
+            >
               <div className='flex w-1/2 gap-2 text-left truncate'>
                 <p className='font-semibold'>{name}</p>
                 <p className='text-gray-500'>{code}</p>
