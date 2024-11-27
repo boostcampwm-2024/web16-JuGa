@@ -21,4 +21,10 @@ export class InquirePriceChartDataDto {
 
   @ApiProperty({ description: '전일 대비 부호' })
   prdy_vrss_sign: string;
+
+  @ApiProperty({ description: '이동 평균선 데이터(5일)' })
+  mov_avg_5: string;
+
+  @ApiProperty({ description: '이동 평균선 데이터(20일)' })
+  mov_avg_20: string;
 }
