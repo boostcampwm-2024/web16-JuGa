@@ -43,7 +43,7 @@ export type StockChartUnit = {
   mov_avg_20?: string;
 };
 
-export type MypageSectionType = 'account' | 'order' | 'info';
+export type MypageSectionType = 'account' | 'order' | 'bookmark' | 'info';
 
 export type Asset = {
   cash_balance: string;
