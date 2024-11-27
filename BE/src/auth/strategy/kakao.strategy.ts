@@ -22,10 +22,6 @@ interface KakaoProfile extends Profile {
 
 interface KakaoUser {
   kakaoId: number;
-  userId: number;
-  email: string;
-  tutorial: boolean;
-  nickname: string;
 }
 
 @Injectable()
@@ -56,20 +52,11 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
       // eslint-disable-next-line no-underscore-dangle
       const kakaoId = profile._json.id;
 
-      const user = await this.userRepository.findOne({
-        where: { kakaoId: kakaoId.toString() },
-      });
-      if (!user) {
-        throw new Error('User not found');
-      }
+      const user = {
+        kakaoId,
+      };
 
-      done(null, {
-        userId: user.id,
-        email: user.email,
-        tutorial: user.tutorial,
-        kakaoId: Number(user.kakaoId),
-        nickname: user.nickname,
-      });
+      done(null, user);
     } catch (error) {
       done(error instanceof Error ? error : new Error(String(error)));
     }
