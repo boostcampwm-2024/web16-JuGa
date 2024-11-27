@@ -17,8 +17,6 @@ export class NaverApiDomianService {
     };
     const url = 'https://openapi.naver.com/v1/search/news.json';
 
-    console.log(params);
-
     const response = await axios.get<T>(url, {
       headers,
       params,
