@@ -22,19 +22,19 @@ export class RankingService {
     return { profitRateRanking, assetRanking };
   }
 
-  async getRankingAuthUser(nickname: string): Promise<RankingResponseDto> {
+  async getRankingAuthUser(userId: string): Promise<RankingResponseDto> {
     const profitRateRanking = await this.getRankingData(SortType.PROFIT_RATE, {
-      nickname,
+      userId,
     });
     const assetRanking = await this.getRankingData(SortType.ASSET, {
-      nickname,
+      userId,
     });
     return { profitRateRanking, assetRanking };
   }
 
   private async getRankingData(
     sortBy: SortType,
-    options: { nickname?: string } = { nickname: null },
+    options: { userId?: string } = { userId: null },
   ): Promise<RankingResultDto> {
     const date = new Date().toISOString().slice(0, 10);
     const key = `ranking:${date}:${sortBy}`;
@@ -49,10 +49,12 @@ export class RankingService {
             sortBy === SortType.PROFIT_RATE
               ? JSON.stringify({
                   nickname: rank.nickname,
+                  userId: rank.userId,
                   value: Math.trunc(rank.profitRate * 100) / 100,
                 })
               : JSON.stringify({
                   nickname: rank.nickname,
+                  userId: rank.userId,
                   value: rank.totalAsset,
                 }),
           ),
@@ -61,12 +63,12 @@ export class RankingService {
     }
 
     const findUserRankWithValue = async () => {
-      if (!options.nickname) return null;
+      if (!options.userId) return null;
 
       const members = await this.redisDomainService.zrange(key, 0, -1);
       const userMember = members.find((member) => {
         const parsed = JSON.parse(member);
-        return parsed.nickname === options.nickname;
+        return parsed.userId === options.userId;
       });
 
       const parsedUserMember = JSON.parse(userMember);
@@ -74,6 +76,7 @@ export class RankingService {
         ? {
             nickname: parsedUserMember.nickname,
             rank: (await this.redisDomainService.zrevrank(key, userMember)) + 1,
+            userId: parsedUserMember.userId,
             value:
               sortBy === SortType.PROFIT_RATE
                 ? parsedUserMember.value
@@ -90,9 +93,9 @@ export class RankingService {
     ]);
 
     const parsedTopRank: RankingDataDto[] = topRank.map((rank) => {
-      const { nickname, value } = JSON.parse(rank);
+      const { nickname, value, userId } = JSON.parse(rank);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return { nickname, rank: topRank.indexOf(rank) + 1, value };
+      return { userId, nickname, rank: topRank.indexOf(rank) + 1, value };
     });
 
     return {
@@ -125,6 +128,7 @@ export class RankingService {
             this.getSortScore(rank, SortType.PROFIT_RATE),
             JSON.stringify({
               nickname: rank.nickname,
+              userId: rank.userId,
               value: Math.trunc(rank.profitRate * 100) / 100,
             }),
           ),
@@ -137,6 +141,7 @@ export class RankingService {
             this.getSortScore(rank, SortType.ASSET),
             JSON.stringify({
               nickname: rank.nickname,
+              userId: rank.userId,
               value: rank.totalAsset,
             }),
           ),

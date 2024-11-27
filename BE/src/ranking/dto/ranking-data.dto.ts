@@ -18,4 +18,10 @@ export class RankingDataDto {
     required: false,
   })
   value: number;
+
+  @ApiProperty({
+    description: '사용자 ID',
+    required: false,
+  })
+  userId: string;
 }

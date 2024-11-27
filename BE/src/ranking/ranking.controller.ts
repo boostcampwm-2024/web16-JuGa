@@ -23,7 +23,7 @@ export class RankingController {
       return this.rankingService.getRanking();
     }
 
-    const { nickname } = req.user;
-    return this.rankingService.getRankingAuthUser(nickname);
+    const { nickname, userId } = req.user;
+    return this.rankingService.getRankingAuthUser(userId);
   }
 }

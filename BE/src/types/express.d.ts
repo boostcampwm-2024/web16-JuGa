@@ -5,7 +5,7 @@ declare module 'express' {
   interface Request extends Req {
     user: {
       kakaoId?: string;
-      userId?: UUID;
+      userId?: string;
       email?: string;
       nickname?: string;
     };
