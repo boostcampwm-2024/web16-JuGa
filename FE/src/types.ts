@@ -55,6 +55,10 @@ export type MyStockListUnit = {
   avg_price: number;
   code: string;
   name: string;
+  stck_prpr: string;
+  prdy_vrss: string;
+  prdy_vrss_sign: string;
+  prdy_ctrt: string;
   quantity: number;
 };
 

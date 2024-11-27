@@ -37,3 +37,10 @@ export function getTradeCommision(price: number) {
 
   return Math.floor(price * rate);
 }
+
+export function calcYield(a: number, b: number) {
+  if (a === 0) return 0;
+
+  const result = ((b - a) / a) * 100;
+  return result;
+}
