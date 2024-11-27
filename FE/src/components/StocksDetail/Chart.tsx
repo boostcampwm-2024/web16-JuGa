@@ -27,7 +27,7 @@ const padding: Padding = {
   top: 20,
   right: 80,
   bottom: 10,
-  left: 20,
+  left: 40,
 };
 
 type StocksDeatailChartProps = {
@@ -46,7 +46,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   const upperChartY = useRef<HTMLCanvasElement>(null);
   const lowerChartY = useRef<HTMLCanvasElement>(null);
   const chartX = useRef<HTMLCanvasElement>(null);
-
+  // RAF 관리를 위한 ref
+  const rafRef = useRef<number>();
   const [timeCategory, setTimeCategory] = useState<TiemCategory>('D');
   const [charSizeConfig, setChartSizeConfig] = useState<ChartSizeConfigType>({
     upperHeight: 0.5,
@@ -63,11 +64,13 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     y: 0,
   });
 
+
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
     () => getStocksChartDataByCode(code, timeCategory),
     { staleTime: 1000 },
   );
+
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     e.preventDefault();
@@ -118,10 +121,19 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
   const getCanvasMousePosition = (e: MouseEvent) => {
     if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: (e.clientX - rect.left) * 2,
-      y: (e.clientY - rect.top) * 2,
+
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
+
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      setMousePosition({
+        x: (e.clientX - rect.left) * 2,
+        y: (e.clientY - rect.top) * 2,
+      });
     });
   };
 
@@ -134,6 +146,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
   }, [isDragging, handleMouseDown, handleMouseUp, handleMouseMove]);
   const setCanvasSize = useCallback(
@@ -224,6 +239,9 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         upperLabelNum,
         padding,
         0.1,
+        mousePosition,
+        upperChartCanvas.width,
+        upperChartCanvas.height,
       );
 
       drawLowerYAxis(
@@ -233,6 +251,10 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         lowerChartYCanvas.height - padding.top - padding.bottom,
         lowerLabelNum,
         padding,
+        mousePosition,
+        lowerChartCanvas.width,
+        lowerChartCanvas.height,
+        upperChartCanvas.height,
       );
 
       drawXAxis(
@@ -241,6 +263,8 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         chartXCanvas.width - padding.left - padding.right,
         chartXCanvas.height,
         padding,
+        mousePosition,
+        upperChartCanvas.height + lowerChartCanvas.height,
       );
 
       if (
