@@ -49,18 +49,18 @@ export class RankingService {
             sortBy === SortType.PROFIT_RATE
               ? JSON.stringify({
                   nickname: rank.nickname,
-                  profitRate: rank.profitRate,
+                  value: Math.trunc(rank.profitRate * 100) / 100,
                 })
               : JSON.stringify({
                   nickname: rank.nickname,
-                  totalAsset: rank.totalAsset,
+                  value: rank.totalAsset,
                 }),
           ),
         ),
       );
     }
 
-    const findUserRank = async () => {
+    const findUserRankWithValue = async () => {
       if (!options.nickname) return null;
 
       const members = await this.redisDomainService.zrange(key, 0, -1);
@@ -69,24 +69,35 @@ export class RankingService {
         return parsed.nickname === options.nickname;
       });
 
+      const parsedUserMember = JSON.parse(userMember);
       return userMember
-        ? this.redisDomainService.zrevrank(key, userMember)
+        ? {
+            nickname: parsedUserMember.nickname,
+            rank: (await this.redisDomainService.zrevrank(key, userMember)) + 1,
+            value:
+              sortBy === SortType.PROFIT_RATE
+                ? parsedUserMember.value
+                : parsedUserMember.value,
+          }
         : null;
     };
 
+    const userRankWithValue = await findUserRankWithValue();
+
     const [topRank, userRank] = await Promise.all([
       this.redisDomainService.zrevrange(key, 0, 9),
-      findUserRank(),
+      userRankWithValue,
     ]);
 
-    const parsedTopRank: RankingDataDto[] = topRank.map((rank) =>
+    const parsedTopRank: RankingDataDto[] = topRank.map((rank) => {
+      const { nickname, value } = JSON.parse(rank);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      JSON.parse(rank),
-    );
+      return { nickname, rank: topRank.indexOf(rank) + 1, value };
+    });
 
     return {
       topRank: parsedTopRank,
-      userRank: userRank !== null ? userRank + 1 : null,
+      userRank,
     };
   }
 
@@ -111,10 +122,10 @@ export class RankingService {
         profitRateRanking.map((rank: Ranking) =>
           this.redisDomainService.zadd(
             profitRateKey,
-            rank.profitRate,
+            this.getSortScore(rank, SortType.PROFIT_RATE),
             JSON.stringify({
               nickname: rank.nickname,
-              profitRate: rank.profitRate,
+              value: Math.trunc(rank.profitRate * 100) / 100,
             }),
           ),
         ),
@@ -123,10 +134,10 @@ export class RankingService {
         assetRanking.map((rank: Ranking) =>
           this.redisDomainService.zadd(
             assetKey,
-            rank.totalAsset,
+            this.getSortScore(rank, SortType.ASSET),
             JSON.stringify({
               nickname: rank.nickname,
-              totalAsset: rank.totalAsset,
+              value: rank.totalAsset,
             }),
           ),
         ),

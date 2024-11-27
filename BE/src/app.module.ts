@@ -18,6 +18,8 @@ import { StockTradeHistoryModule } from './stock/trade/history/stock-trade-histo
 import { RedisModule } from './common/redis/redis.module';
 import { HTTPExceptionFilter } from './common/filters/http-exception.filter';
 import { RankingModule } from './ranking/ranking.module';
+import { NewsModule } from './news/news.module';
+import { StockBookmarkModule } from './stock/bookmark/stock-bookmark.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { RankingModule } from './ranking/ranking.module';
     StockTradeHistoryModule,
     RedisModule,
     RankingModule,
+    NewsModule,
+    StockBookmarkModule,
   ],
   controllers: [AppController],
   providers: [

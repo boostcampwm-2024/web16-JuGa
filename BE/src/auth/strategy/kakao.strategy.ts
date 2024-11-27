@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-kakao';
+import { UserRepository } from '../user.repository';
 
 interface KakaoStrategyOptions {
   clientID: string;
@@ -21,6 +22,10 @@ interface KakaoProfile extends Profile {
 
 interface KakaoUser {
   kakaoId: number;
+  userId: number;
+  email: string;
+  tutorial: boolean;
+  nickname: string;
 }
 
 @Injectable()
@@ -28,7 +33,10 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
   Strategy,
   'kakao',
 ) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userRepository: UserRepository,
+  ) {
     const options: KakaoStrategyOptions = {
       clientID: configService.get<string>('KAKAO_CLIENT_ID') || '',
       clientSecret: '',
@@ -38,7 +46,7 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
     super(options);
   }
 
-  validate(
+  async validate(
     accessToken: string,
     refreshToken: string,
     profile: KakaoProfile,
@@ -47,11 +55,21 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
     try {
       // eslint-disable-next-line no-underscore-dangle
       const kakaoId = profile._json.id;
-      // eslint-disable-next-line no-underscore-dangle
-      const user = {
-        kakaoId,
-      };
-      done(null, user);
+
+      const user = await this.userRepository.findOne({
+        where: { kakaoId: kakaoId.toString() },
+      });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      done(null, {
+        userId: user.id,
+        email: user.email,
+        tutorial: user.tutorial,
+        kakaoId: Number(user.kakaoId),
+        nickname: user.nickname,
+      });
     } catch (error) {
       done(error instanceof Error ? error : new Error(String(error)));
     }
