@@ -38,7 +38,7 @@ export type StockChartUnit = {
   stck_lwpr: string;
   acml_vol: string;
   prdy_vrss_sign: string;
-  mov_avg_5: string;
+  mov_avg_5?: string;
   mov_avg_20?: string;
 };
 

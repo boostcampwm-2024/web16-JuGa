@@ -20,7 +20,7 @@ export function drawLineChart(
 
   const values = data
     .map((d) => {
-      if (d.mov_avg_20) {
+      if (d.mov_avg_20 && d.mov_avg_5) {
         return [
           +d.stck_hgpr,
           +d.stck_lwpr,
@@ -29,7 +29,7 @@ export function drawLineChart(
           Math.floor(+d.mov_avg_5),
           Math.floor(+d.mov_avg_20),
         ];
-      } else {
+      } else if (d.mov_avg_5) {
         return [
           +d.stck_hgpr,
           +d.stck_lwpr,
@@ -37,6 +37,16 @@ export function drawLineChart(
           +d.stck_oprc,
           Math.floor(+d.mov_avg_5),
         ];
+      } else if (d.mov_avg_20) {
+        return [
+          +d.stck_hgpr,
+          +d.stck_lwpr,
+          +d.stck_clpr,
+          +d.stck_oprc,
+          Math.floor(+d.mov_avg_20),
+        ];
+      } else {
+        return [+d.stck_hgpr, +d.stck_lwpr, +d.stck_clpr, +d.stck_oprc];
       }
     })
     .flat();
@@ -44,17 +54,19 @@ export function drawLineChart(
   const yMin = Math.round(Math.min(...values) * (1 - weight));
 
   data.forEach((e, i) => {
-    const cx = x + padding.left + (width * i) / (n - 1) + gap / 2;
-    const cy =
-      y +
-      padding.top +
-      height -
-      (height * (+e.mov_avg_5 - yMin)) / (yMax - yMin);
+    if (e.mov_avg_5) {
+      const cx = x + padding.left + (width * i) / (n - 1) + gap / 2;
+      const cy =
+        y +
+        padding.top +
+        height -
+        (height * (+e.mov_avg_5 - yMin)) / (yMax - yMin);
 
-    if (i === 0) {
-      ctx.moveTo(cx, cy);
-    } else {
-      ctx.lineTo(cx, cy);
+      if (i === 0) {
+        ctx.moveTo(cx, cy);
+      } else {
+        ctx.lineTo(cx, cy);
+      }
     }
   });
   ctx.strokeStyle = '#000';
