@@ -38,6 +38,8 @@ export type StockChartUnit = {
   stck_lwpr: string;
   acml_vol: string;
   prdy_vrss_sign: string;
+  mov_avg_5: string;
+  mov_avg_20: string;
 };
 
 export type MypageSectionType = 'account' | 'order' | 'info';
@@ -55,6 +57,10 @@ export type MyStockListUnit = {
   avg_price: number;
   code: string;
   name: string;
+  stck_prpr: string;
+  prdy_vrss: string;
+  prdy_vrss_sign: string;
+  prdy_ctrt: string;
   quantity: number;
 };
 

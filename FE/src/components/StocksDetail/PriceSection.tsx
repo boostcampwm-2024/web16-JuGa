@@ -35,17 +35,16 @@ export default function PriceSection() {
   );
 
   useEffect(() => {
-    // 이벤트 리스너 등록
+    if (!buttonFlag) return;
     const handleTradeHistory = (chartData: PriceDataType) => {
       addData(chartData);
     };
-
     socket.on(`trade-history/${id}`, handleTradeHistory);
 
     return () => {
       socket.off(`trade-history/${id}`, handleTradeHistory);
     };
-  }, [id, addData]);
+  }, [id, addData, buttonFlag]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;

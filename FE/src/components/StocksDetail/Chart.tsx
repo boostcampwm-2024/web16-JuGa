@@ -14,7 +14,7 @@ import { drawXAxis } from 'utils/chart/drawXAxis.ts';
 import { drawUpperYAxis } from 'utils/chart/drawUpperYAxis.ts';
 import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
 import { drawChartGrid } from 'utils/chart/drawChartGrid.ts';
-import { drawMouseGrid } from '../../utils/chart/drawMouseGrid.ts';
+import { drawMouseGrid } from 'utils/chart/drawMouseGrid.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },
@@ -46,7 +46,6 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   const upperChartY = useRef<HTMLCanvasElement>(null);
   const lowerChartY = useRef<HTMLCanvasElement>(null);
   const chartX = useRef<HTMLCanvasElement>(null);
-  // RAF 관리를 위한 ref
   const rafRef = useRef<number>();
   const [timeCategory, setTimeCategory] = useState<TiemCategory>('D');
   const [charSizeConfig, setChartSizeConfig] = useState<ChartSizeConfigType>({
@@ -64,13 +63,11 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     y: 0,
   });
 
-
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
     () => getStocksChartDataByCode(code, timeCategory),
     { staleTime: 1000 },
   );
-
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     e.preventDefault();
@@ -361,7 +358,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
   return (
     <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-white p-3'>
-      <div className='flex items-center justify-between w-full h-fit'>
+      <div className='flex h-fit w-full items-center justify-between'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
           {categories.map(({ label, value }) => (
