@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
 import { getTradeHistory } from 'service/getTradeHistory.ts';
-import { createSSEConnection } from './PriceSectionSseHook.ts';
+import { socket } from 'utils/socket.ts';
 
 export default function PriceSection() {
   const { id } = useParams();
@@ -34,44 +34,18 @@ export default function PriceSection() {
     [id, buttonFlag],
   );
 
-  // useEffect(() => {
-  //   // 이벤트 리스너 등록
-  //   const handleTradeHistory = (chartData: PriceDataType) => {
-  //     addData(chartData);
-  //   };
-  //
-  //   // 소켓 이벤트 구독
-  //   socket.on(`trade-history/${id}`, handleTradeHistory);
-  //
-  //   return () => {
-  //     console.log('socket unSub!');
-  //     socket.off(`trade-history/${id}`, handleTradeHistory);
-  //
-  //     fetch(`/api/stocks/trade-history/${id}/unsubscribe`, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     }).catch((error) => {
-  //       console.error('Failed to unsubscribe:', error);
-  //     });
-  //   };
-  // }, [id, addData]);
-
   useEffect(() => {
-    if (!buttonFlag) return;
-    const eventSource = createSSEConnection(
-      `${import.meta.env.VITE_API_URL}/stocks/trade-history/${id}/today-sse`,
-      addData,
-    );
+    // 이벤트 리스너 등록
+    const handleTradeHistory = (chartData: PriceDataType) => {
+      addData(chartData);
+    };
+
+    socket.on(`trade-history/${id}`, handleTradeHistory);
 
     return () => {
-      if (eventSource) {
-        console.log('SSE connection close');
-        eventSource.close();
-      }
+      socket.off(`trade-history/${id}`, handleTradeHistory);
     };
-  }, [buttonFlag, id, addData]);
+  }, [id, addData]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;

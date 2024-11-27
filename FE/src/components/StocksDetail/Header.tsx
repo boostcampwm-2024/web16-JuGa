@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { unsbscribe } from 'service/stocks';
+import { unsubscribe } from 'service/stocks';
 import { StockDetailType } from 'types';
 import { stringToLocaleString } from 'utils/common';
 import { socket } from 'utils/socket';
 
-type StocksDeatailHeaderProps = {
+type StocksDetailHeaderProps = {
   code: string;
   data: StockDetailType;
 };
 
-export default function Header({ code, data }: StocksDeatailHeaderProps) {
+export default function Header({ code, data }: StocksDetailHeaderProps) {
   const {
     hts_kor_isnm,
     stck_prpr,
@@ -42,7 +42,8 @@ export default function Header({ code, data }: StocksDeatailHeaderProps) {
     socket.on(`detail/${code}`, handleSocketData);
 
     return () => {
-      unsbscribe(code);
+      socket.off(`detail/${code}`, handleSocketData);
+      unsubscribe(code);
     };
   }, [code]);
 
@@ -64,7 +65,7 @@ export default function Header({ code, data }: StocksDeatailHeaderProps) {
     currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
 
   return (
-    <div className='flex items-center justify-between w-full h-16 px-2'>
+    <div className='flex h-16 w-full items-center justify-between px-2'>
       <div className='flex flex-col font-semibold'>
         <div className='flex gap-2 text-sm'>
           <h2>{hts_kor_isnm}</h2>
