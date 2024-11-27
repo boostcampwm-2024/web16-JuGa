@@ -19,7 +19,11 @@ export class AssetRepository extends Repository<Asset> {
       .getRawMany();
   }
 
-  async findAllPendingOrders(userId: number, tradeType: TradeType) {
+  async findAllPendingOrders(
+    userId: number,
+    tradeType: TradeType,
+    stockCode?: string,
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
@@ -29,6 +33,7 @@ export class AssetRepository extends Repository<Asset> {
           user_id: userId,
           status: StatusType.PENDING,
           trade_type: tradeType,
+          ...(stockCode ? { stock_code: stockCode } : {}),
         },
       });
 
