@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { ProfileResponseDto } from './dto/profile-response.dto';
 
@@ -15,6 +19,13 @@ export class UserService {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
+
+    const isDuplicated = await this.userRepository.findBy({
+      nickname: newName,
+    });
+    if (isDuplicated.length > 0) {
+      throw new BadRequestException('이미 존재하는 닉네임입니다.');
     }
 
     return this.userRepository.update({ id: userId }, { nickname: newName });
