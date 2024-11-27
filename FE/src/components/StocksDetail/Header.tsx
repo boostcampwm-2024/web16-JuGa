@@ -1,8 +1,10 @@
 import { HeartIcon } from '@heroicons/react/16/solid';
+import Toast from 'components/Toast';
 import { useEffect, useRef, useState } from 'react';
 import { bookmark, unbookmark } from 'service/bookmark';
 import { unsubscribe } from 'service/stocks';
 import useAuthStore from 'store/authStore';
+import useLoginModalStore from 'store/useLoginModalStore';
 import { StockDetailType } from 'types';
 import { stringToLocaleString } from 'utils/common';
 import { socket } from 'utils/socket';
@@ -31,6 +33,7 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   const [currPrdyRate, setCurrPrdyRate] = useState(prdy_ctrt);
   const [isBookmarked, setIsBookmarked] = useState(is_bookmarked);
   const { isLogin } = useAuthStore();
+  const { toggleModal } = useLoginModalStore();
 
   const { debounceValue } = useDebounce(isBookmarked, 1000);
   const isInitialMount = useRef(true);
@@ -114,6 +117,8 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
         <button
           onClick={() => {
             if (!isLogin) {
+              toggleModal();
+              Toast({ message: '로그인을 해주세요!', type: 'warning' });
               return;
             }
             setIsBookmarked((prev) => !prev);
