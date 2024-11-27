@@ -86,8 +86,8 @@ export class StockDetailController {
     const { count, fid_period_div_code } = body;
     return this.stockDetailService.getInquirePriceChart(
       stockCode,
-      count,
       fid_period_div_code,
+      count,
     );
   }
 }
