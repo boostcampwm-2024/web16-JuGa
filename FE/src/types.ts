@@ -39,7 +39,7 @@ export type StockChartUnit = {
   acml_vol: string;
   prdy_vrss_sign: string;
   mov_avg_5: string;
-  mov_avg_20: string;
+  mov_avg_20?: string;
 };
 
 export type MypageSectionType = 'account' | 'order' | 'info';
