@@ -3,5 +3,5 @@ export class NewsDataOutputDto {
   originallink: string;
   link: string;
   description: string;
-  pubDate: string;
+  pubDate: Date;
 }
