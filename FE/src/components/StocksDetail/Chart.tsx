@@ -64,12 +64,13 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     y: 0,
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['stocksChartData', code, timeCategory],
-    queryFn: () => getStocksChartDataByCode(code, timeCategory),
-    staleTime: 1000,
-    cacheTime: 1000 * 60,
-  });
+
+  const { data, isLoading } = useQuery(
+    ['stocksChartData', code, timeCategory],
+    () => getStocksChartDataByCode(code, timeCategory),
+    { staleTime: 1000 },
+  );
+
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     e.preventDefault();
@@ -360,7 +361,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
   return (
     <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-white p-3'>
-      <div className='flex h-fit w-full items-center justify-between'>
+      <div className='flex items-center justify-between w-full h-fit'>
         <p className='font-semibold'>차트</p>
         <nav className='flex gap-4 text-sm'>
           {categories.map(({ label, value }) => (

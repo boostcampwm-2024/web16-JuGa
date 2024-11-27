@@ -1,21 +1,20 @@
 import useOrders from 'hooks/useOrder';
+import useOrderCancelAlertModalStore from 'store/orderCancleAlertModalStore';
 import { parseTimestamp } from 'utils/common';
+import CancleAlertModal from './CancleAlertModal';
 
 export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
 
   const { data, isLoading, isError } = orderQuery;
+  const { isOpen, open } = useOrderCancelAlertModalStore();
 
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
   if (isError) return <div>error</div>;
 
-  const handleCancelOrder = (id: number) => {
-    removeOrder.mutate(id);
-  };
-
   return (
-    <div className='flex flex-col w-full p-4 mx-auto bg-white rounded-md shadow-md'>
+    <div className='mx-auto flex min-h-[500px] w-full flex-col rounded-md bg-white p-4 shadow-md'>
       <div className='flex pb-2 text-sm font-bold border-b'>
         <p className='w-1/3 text-left truncate'>종목</p>
         <p className='w-1/4 text-center'>요청 유형</p>
@@ -25,7 +24,7 @@ export default function Order() {
         <p className='w-1/6 text-right'></p>
       </div>
 
-      <ul className='flex flex-col text-sm divide-y min-h-48'>
+      <ul className='flex flex-col text-sm divide-y'>
         {data.map((order) => {
           const {
             id,
@@ -59,8 +58,8 @@ export default function Order() {
               </p>
               <p className='w-1/6 text-right'>
                 <button
-                  onClick={() => handleCancelOrder(id)}
-                  className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-grayscale-500 hover:bg-red-600'
+                  onClick={() => open(order, () => removeOrder.mutate(id))}
+                  className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-grayscale-500 hover:bg-juga-grayscale-black'
                 >
                   취소
                 </button>
@@ -69,6 +68,7 @@ export default function Order() {
           );
         })}
       </ul>
+      {isOpen && <CancleAlertModal />}
     </div>
   );
 }

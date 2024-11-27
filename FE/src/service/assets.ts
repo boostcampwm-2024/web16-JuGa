@@ -29,9 +29,9 @@ export async function getCash(): Promise<{ cash_balance: number }> {
   });
 }
 
-export async function getSellPossibleStockCnt(
+export async function getSellInfo(
   code: string,
-): Promise<{ quantity: number }> {
+): Promise<{ quantity: number; avg_price: number }> {
   const url = import.meta.env.PROD
     ? `${import.meta.env.VITE_API_URL}/assets/stocks/${code}`
     : `/api/assets/stocks/${code}`;
@@ -42,7 +42,7 @@ export async function getSellPossibleStockCnt(
       'Content-Type': 'application/json',
     },
   }).then((res) => {
-    if (res.status === 401) return { quantity: 0 };
+    if (res.status === 401) return { quantity: 0, avg_price: 0 };
     return res.json();
   });
 }

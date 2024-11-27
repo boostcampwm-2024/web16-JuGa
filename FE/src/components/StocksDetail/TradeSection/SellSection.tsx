@@ -1,7 +1,7 @@
 import Lottie from 'lottie-react';
 import emptyAnimation from 'assets/emptyAnimation.json';
 import { useQuery } from '@tanstack/react-query';
-import { getSellPossibleStockCnt } from 'service/assets';
+import { getSellInfo } from 'service/assets';
 import { ChangeEvent, FocusEvent, FormEvent, useRef, useState } from 'react';
 import { StockDetailType } from 'types';
 import useAuthStore from 'store/authStore';
@@ -19,12 +19,13 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
 
   const { data, isLoading, isError } = useQuery(
     ['detail', 'sellPosiible', code],
-    () => getSellPossibleStockCnt(code),
+    () => getSellInfo(code),
+    { staleTime: 1000 },
   );
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
   const { isLogin } = useAuthStore();
-  const [count, setCount] = useState<number>(0);
+  const [count, setCount] = useState<number>(1);
 
   const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
@@ -38,14 +39,26 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   if (isError) return <div>error</div>;
 
   const quantity = data.quantity;
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isNumericString(e.target.value)) return;
+  const avg_price = data.avg_price;
 
-    setCurrPrice(e.target.value);
+  const pl = (+currPrice - avg_price) * count;
+  const totalPrice = +currPrice * count;
+  const plRate = ((pl / totalPrice) * 100).toFixed(2);
+
+  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const s = e.target.value.replace(/,/g, '');
+    if (!isNumericString(s)) return;
+    setCurrPrice(s);
+  };
+
+  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const s = e.target.value;
+    if (!isNumericString(s)) return;
+    setCount(+s);
   };
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const n = +e.target.value;
+    const n = +e.target.value.replace(/,/g, '');
     if (n > +stck_mxpr) {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -91,15 +104,6 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   const handleSell = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // const price = +currPrice * count;
-
-    // if (price > data.cash_balance) {
-    //   setLackAssetFlag(true);
-    //   timerRef.current = window.setTimeout(() => {
-    //     setLackAssetFlag(false);
-    //   }, 2000);
-    //   return;
-    // }
     toggleModal();
   };
 
@@ -124,14 +128,14 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
             <p className='mr-3 w-14'>매도 가격</p>
             <input
               type='text'
-              value={currPrice}
+              value={(+currPrice).toLocaleString()}
               onChange={handlePriceChange}
               onBlur={handlePriceInputBlur}
               className='flex-1 py-1 rounded-lg'
             />
           </div>
           {lowerLimitFlag && (
-            <div className='text-sm text-juga-red-60'>
+            <div className='text-xs text-juga-red-60'>
               이 주식의 최소 가격은 {(+stck_llam).toLocaleString()}입니다.
             </div>
           )}
@@ -143,9 +147,9 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'> 수량</p>
             <input
-              type='number'
+              type='text'
               value={count}
-              onChange={(e) => setCount(+e.target.value)}
+              onChange={handleCountChange}
               onBlur={handleCntInputBlur}
               className='flex-1 py-1 rounded-lg'
               min={1}
@@ -162,12 +166,27 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
         <div className='my-5 h-[0.5px] w-full bg-juga-grayscale-200'></div>
 
         <div className='flex flex-col gap-2'>
+          <div className='flex flex-col gap-2'>
+            <div className='flex justify-between'>
+              <p>예상 수익률</p>
+              <p
+                className={`${+plRate < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+              >
+                {plRate}%
+              </p>
+            </div>
+          </div>
+          <div className='flex flex-col gap-2'>
+            <div className='flex justify-between'>
+              <p>예상 손익</p>
+              <p>{pl.toLocaleString()}원</p>
+            </div>
+          </div>
           <div className='flex justify-between'>
             <p>총 매도 금액</p>
-            <p>{(+currPrice * count).toLocaleString()}원</p>
+            <p>{totalPrice.toLocaleString()}원</p>
           </div>
         </div>
-
         <div className='flex flex-col justify-center h-10'></div>
         <button
           className={

@@ -15,8 +15,10 @@ type BuySectionProps = {
 export default function BuySection({ code, detailInfo }: BuySectionProps) {
   const { stck_prpr, stck_mxpr, stck_llam, hts_kor_isnm } = detailInfo;
 
-  const { data, isLoading, isError } = useQuery(['detail', 'cash'], () =>
-    getCash(),
+  const { data, isLoading, isError } = useQuery(
+    ['detail', 'cash'],
+    () => getCash(),
+    { staleTime: 1000 },
   );
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
@@ -32,9 +34,15 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
   const timerRef = useRef<number | null>(null);
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isNumericString(e.target.value)) return;
+    const s = e.target.value.replace(/,/g, '');
+    if (!isNumericString(s)) return;
+    setCurrPrice(s);
+  };
 
-    setCurrPrice(e.target.value);
+  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const s = e.target.value;
+    if (!isNumericString(s)) return;
+    setCount(+s);
   };
 
   if (isLoading) return <div>loading</div>;
@@ -42,7 +50,8 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
   if (isError) return <div>error</div>;
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const n = +e.target.value;
+    const n = +e.target.value.replace(/,/g, '');
+
     if (n > +stck_mxpr) {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -93,14 +102,14 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
             <p className='mr-3 w-14'>매수 가격</p>
             <input
               type='text'
-              value={currPrice}
+              value={(+currPrice).toLocaleString()}
               onChange={handlePriceChange}
               onBlur={handlePriceInputBlur}
               className='flex-1 py-1 rounded-lg'
             />
           </div>
           {lowerLimitFlag && (
-            <div className='text-sm text-juga-red-60'>
+            <div className='text-xs text-juga-red-60'>
               이 주식의 최소 가격은 {(+stck_llam).toLocaleString()}입니다.
             </div>
           )}
@@ -112,9 +121,9 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
           <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'> 수량</p>
             <input
-              type='number'
+              type='text'
               value={count}
-              onChange={(e) => setCount(+e.target.value)}
+              onChange={handleCountChange}
               className='flex-1 py-1 rounded-lg'
               min={1}
             />
