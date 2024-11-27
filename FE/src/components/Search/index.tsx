@@ -24,7 +24,6 @@ export default function SearchModal() {
     shouldSearch ? searchInput : '',
     500,
   );
-
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['search', debounceValue],
     queryFn: () => getSearchResults(formatNoSpecialChar(debounceValue)),
