@@ -111,7 +111,7 @@ export class StockTradeHistoryService {
     });
   }
 
-  unsubscribeCode(stockCode: string) {
-    return this.stockPriceSocketService.unsubscribeByCode(stockCode);
-  }
+  // unsubscribeCode(stockCode: string) {
+  //   return this.stockPriceSocketService.unsubscribeByCode(stockCode);
+  // }
 }

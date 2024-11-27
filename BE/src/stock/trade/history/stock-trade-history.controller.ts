@@ -1,9 +1,9 @@
+import { Observable } from 'rxjs';
 import { Controller, Get, Param, Sse } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockTradeHistoryService } from './stock-trade-history.service';
 import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
 import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-data.dto';
-import { Observable } from 'rxjs';
 import { SseEvent } from './interface/sse-event';
 import { StockPriceSocketService } from '../../../stockSocket/stock-price-socket.service';
 
@@ -95,6 +95,6 @@ export class StockTradeHistoryController {
     description: '구독 취소 성공',
   })
   unsubscribeCode(@Param('stockCode') stockCode: string) {
-    this.stockTradeHistoryService.unsubscribeCode(stockCode);
+    this.stockPriceSocketService.unsubscribeByCode(stockCode);
   }
 }
