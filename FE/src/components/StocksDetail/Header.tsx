@@ -1,9 +1,12 @@
 import { HeartIcon } from '@heroicons/react/16/solid';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { bookmark, unbookmark } from 'service/bookmark';
 import { unsubscribe } from 'service/stocks';
+import useAuthStore from 'store/authStore';
 import { StockDetailType } from 'types';
 import { stringToLocaleString } from 'utils/common';
 import { socket } from 'utils/socket';
+import { useDebounce } from 'utils/useDebounce';
 
 type StocksDetailHeaderProps = {
   code: string;
@@ -27,6 +30,23 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   const [currPrdyVrss, setCurrPrdyVrss] = useState(prdy_vrss);
   const [currPrdyRate, setCurrPrdyRate] = useState(prdy_ctrt);
   const [isBookmarked, setIsBookmarked] = useState(is_bookmarked);
+  const { isLogin } = useAuthStore();
+
+  const { debounceValue } = useDebounce(isBookmarked, 1000);
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    if (debounceValue) {
+      bookmark(code);
+    } else {
+      unbookmark(code);
+    }
+  }, [code, debounceValue]);
 
   useEffect(() => {
     const handleSocketData = (data: {
@@ -91,8 +111,15 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
             <p>{e.value}</p>
           </div>
         ))}
-        <button onClick={() => setIsBookmarked((prev) => !prev)}>
-          {isBookmarked ? (
+        <button
+          onClick={() => {
+            if (!isLogin) {
+              return;
+            }
+            setIsBookmarked((prev) => !prev);
+          }}
+        >
+          {isLogin && isBookmarked ? (
             <HeartIcon className='size-6 fill-juga-red-60' />
           ) : (
             <HeartIcon className='size-6 fill-juga-grayscale-200' />
