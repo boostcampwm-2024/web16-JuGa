@@ -6,11 +6,13 @@ import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-d
 import { InquireDailyPriceApiResponse } from './interface/inquire-daily-price.interface';
 import { DailyStockTradeHistoryOutputDto } from './dto/daily-stock-trade-history-ouput.dto';
 import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-data.dto';
+import { StockPriceSocketService } from '../../../stockSocket/stock-price-socket.service';
 
 @Injectable()
 export class StockTradeHistoryService {
   constructor(
     private readonly koreaInvestmentDomainService: KoreaInvestmentDomainService,
+    private readonly stockPriceSocketService: StockPriceSocketService,
   ) {}
 
   /**
@@ -33,6 +35,7 @@ export class StockTradeHistoryService {
         queryParams,
       );
 
+    this.stockPriceSocketService.subscribeByCode(stockCode);
     return this.formatTodayStockTradeHistoryData(response.output);
   }
 
@@ -107,4 +110,8 @@ export class StockTradeHistoryService {
       return historyData;
     });
   }
+
+  // unsubscribeCode(stockCode: string) {
+  //   return this.stockPriceSocketService.unsubscribeByCode(stockCode);
+  // }
 }

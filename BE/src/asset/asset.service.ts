@@ -9,8 +9,8 @@ import { StockDetailService } from '../stock/detail/stock-detail.service';
 import { UserStock } from './user-stock.entity';
 import { Asset } from './asset.entity';
 import { InquirePriceResponseDto } from '../stock/detail/dto/stock-detail-response.dto';
-import { StockTradeHistorySocketService } from '../stock/trade/history/stock-trade-history-socket.service';
 import { TradeType } from '../stock/order/enum/trade-type';
+import { StockPriceSocketService } from '../stockSocket/stock-price-socket.service';
 
 @Injectable()
 export class AssetService {
@@ -18,7 +18,7 @@ export class AssetService {
     private readonly userStockRepository: UserStockRepository,
     private readonly assetRepository: AssetRepository,
     private readonly stockDetailService: StockDetailService,
-    private readonly stockTradeHistorySocketService: StockTradeHistorySocketService,
+    private readonly stockPriceSocketService: StockPriceSocketService,
   ) {}
 
   async getUserStockByCode(userId: number, stockCode: string) {
@@ -149,7 +149,7 @@ export class AssetService {
       await this.userStockRepository.findAllDistinctCode(userId);
 
     userStocks.map((userStock) =>
-      this.stockTradeHistorySocketService.subscribeByCode(userStock.stock_code),
+      this.stockPriceSocketService.subscribeByCode(userStock.stock_code),
     );
   }
 
@@ -158,9 +158,7 @@ export class AssetService {
       await this.userStockRepository.findAllDistinctCode(userId);
 
     userStocks.map((userStock) =>
-      this.stockTradeHistorySocketService.unsubscribeByCode(
-        userStock.stock_code,
-      ),
+      this.stockPriceSocketService.unsubscribeByCode(userStock.stock_code),
     );
   }
 }
