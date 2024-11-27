@@ -89,4 +89,9 @@ export class AssetController {
   async updateAllAssets() {
     await this.assetService.updateAllAssets();
   }
+
+  @Cron('0 8 * * 1-5')
+  async updatePrevTotalAsset() {
+    await this.assetService.updatePrevTotalAsset();
+  }
 }

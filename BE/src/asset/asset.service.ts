@@ -125,7 +125,6 @@ export class AssetService {
       total_profit: asset.cash_balance + totalPrice - 10000000,
       total_profit_rate: (asset.cash_balance + totalPrice - 10000000) / 100000,
       last_updated: new Date(),
-      prev_total_asset: asset.total_asset,
     };
     return this.assetRepository.save(updatedAsset);
   }
@@ -160,6 +159,13 @@ export class AssetService {
 
     userStocks.map((userStock) =>
       this.stockPriceSocketService.unsubscribeByCode(userStock.stock_code),
+    );
+  }
+
+  async updatePrevTotalAsset() {
+    await this.assetRepository.update(
+      {},
+      { prev_total_asset: () => 'total_asset' },
     );
   }
 }
