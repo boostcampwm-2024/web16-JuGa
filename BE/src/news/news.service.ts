@@ -46,7 +46,7 @@ export class NewsService {
     };
   }
 
-  @Cron('*/30 8-16 * * 1-5')
+  @Cron('*/1 8-16 * * 1-5')
   async cronNewsData() {
     await this.newsRepository.delete({ query: In(['증권', '주식']) });
     await this.getNewsDataByQuery('주식');
@@ -76,13 +76,20 @@ export class NewsService {
     return items.slice(0, 10).map((item) => {
       const result = new NewsItemDataDto();
 
-      result.title = item.title.replace(/<\/?b>/g, '');
-      result.description = item.description.replace(/<\/?b>/g, '');
+      result.title = this.htmlEncode(item.title);
+      result.description = this.htmlEncode(item.description);
       result.originallink = item.originallink;
       result.pubDate = item.pubDate;
       result.query = query;
 
       return result;
     });
+  }
+
+  private htmlEncode(value: string) {
+    return value
+      .replace(/<\/?b>/g, '')
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&');
   }
 }
