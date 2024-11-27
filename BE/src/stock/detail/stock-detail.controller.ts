@@ -83,11 +83,10 @@ export class StockDetailController {
     @Param('stockCode') stockCode: string,
     @Body() body: StockDetailChartRequestDto,
   ) {
-    const { fid_input_date_1, fid_input_date_2, fid_period_div_code } = body;
+    const { count, fid_period_div_code } = body;
     return this.stockDetailService.getInquirePriceChart(
       stockCode,
-      fid_input_date_1,
-      fid_input_date_2,
+      count,
       fid_period_div_code,
     );
   }

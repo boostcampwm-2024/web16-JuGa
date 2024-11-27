@@ -79,23 +79,14 @@ export class StockDetailService {
    */
   async getInquirePriceChart(
     stockCode: string,
-    date1: string,
-    date2: string,
     periodDivCode: string,
+    count: number = 30,
   ) {
-    let newDate1 = date1;
-    let newDate2 = date2;
-
-    if (date1 === '') {
-      const today = new Date();
-      const prevDay = new Date();
-      if (periodDivCode === 'D') prevDay.setDate(today.getDate() - 90);
-      if (periodDivCode === 'W') prevDay.setDate(today.getDate() - 500);
-      if (periodDivCode === 'M') prevDay.setDate(today.getDate() - 2000);
-      if (periodDivCode === 'Y') prevDay.setDate(today.getDate() - 20000);
-      newDate2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-      newDate1 = prevDay.toISOString().slice(0, 10).replace(/-/g, '');
-    }
+    const today = new Date();
+    const prevDay = new Date();
+    prevDay.setDate(today.getDate() - 20000);
+    const newDate2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const newDate1 = prevDay.toISOString().slice(0, 10).replace(/-/g, '');
 
     const queryParams = {
       fid_cond_mrkt_div_code: 'J',
@@ -113,7 +104,7 @@ export class StockDetailService {
         queryParams,
       );
 
-    return this.formatStockInquirePriceData(response).slice(-30);
+    return this.formatStockInquirePriceData(response).slice(-count);
   }
 
   getBookmarkActive(userId: number, stockCode: string) {
@@ -131,7 +122,9 @@ export class StockDetailService {
    * @author uuuo3o
    */
   private formatStockInquirePriceData(response: InquirePriceChartApiResponse) {
-    const { output2 } = response;
+    const output2 = response.output2.filter(
+      (item) => Object.keys(item).length !== 0,
+    );
 
     output2.sort((a, b) => {
       if (a.stck_bsop_date > b.stck_bsop_date) return 1;
