@@ -1,3 +1,4 @@
+import { PencilSquareIcon } from '@heroicons/react/16/solid';
 import { useQuery } from '@tanstack/react-query';
 import { getMyProfile } from 'service/user';
 
@@ -12,22 +13,23 @@ export default function MyInfo() {
   if (!data) return <div>No data</div>;
   if (isError) return <div>error</div>;
 
-  const { name, email } = data;
+  const { name } = data;
 
   return (
     <div className='flex flex-col items-center p-6 text-lg'>
-      <div className='w-full px-40'>
-        <div className='flex items-center justify-between py-2 border-b'>
-          <p className='font-medium text-left text-jugagrayscale-400 w-28'>
-            Username
+      <div className='flex w-[50%] items-center gap-2 py-2'>
+        <div className='flex items-center justify-between w-full'>
+          <p className='w-28 min-w-[100px] truncate font-medium text-juga-grayscale-black'>
+            username
           </p>
-          <p className='font-semibold text-jugagrayscale-500'>{name}</p>
-        </div>
-        <div className='flex items-center justify-between py-2'>
-          <p className='font-medium text-left text-jugagrayscale-400 w-28'>
-            Email
-          </p>
-          <p className='font-semibold text-jugagrayscale-500'>{email}</p>
+          <div className='flex items-center gap-2'>
+            <p className='min-w-[50px] truncate font-semibold text-juga-grayscale-500'>
+              {name}
+            </p>
+            <button>
+              <PencilSquareIcon className='w-5 h-5' />
+            </button>
+          </div>
         </div>
       </div>
     </div>

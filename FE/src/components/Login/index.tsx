@@ -1,6 +1,6 @@
 import useLoginModalStore from 'store/useLoginModalStore';
 import Input from './Input';
-import { ChatBubbleOvalLeftIcon } from '@heroicons/react/16/solid';
+import { ChatBubbleOvalLeftIcon, XMarkIcon } from '@heroicons/react/16/solid';
 import { FormEvent, useEffect, useState } from 'react';
 import { login } from 'service/auth';
 import useAuthStore from 'store/authStore';
@@ -94,6 +94,9 @@ export default function Login() {
         >
           <ChatBubbleOvalLeftIcon className='size-5' />
           카카오 계정으로 로그인
+        </button>
+        <button className='absolute right-8 top-8' onClick={toggleModal}>
+          <XMarkIcon className='h-7 w-7 text-juga-grayscale-500' />
         </button>
       </section>
     </>
