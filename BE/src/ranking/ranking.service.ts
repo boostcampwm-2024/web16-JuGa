@@ -104,7 +104,7 @@ export class RankingService {
     };
   }
 
-  @Cron('*/1 * * * 1-5')
+  @Cron('0 16 * * 1-5')
   async updateRanking() {
     const [profitRateRanking, assetRanking] = await Promise.all([
       this.calculateRanking(SortType.PROFIT_RATE),
