@@ -1,31 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-
-const stocks = [
-  {
-    name: '삼성전자',
-    code: '005930',
-    stck_prpr: '50000',
-    prdy_vrss: '3.5',
-    prdy_vrss_sign: '3',
-    prdy_ctrt: '123',
-  },
-  {
-    name: '삼성전자',
-    code: '005930',
-    stck_prpr: '50000',
-    prdy_vrss: '3.5',
-    prdy_vrss_sign: '3',
-    prdy_ctrt: '123',
-  },
-  {
-    name: '삼성전자',
-    code: '005930',
-    stck_prpr: '50000',
-    prdy_vrss: '3.5',
-    prdy_vrss_sign: '3',
-    prdy_ctrt: '123',
-  },
-];
+import { getBookmarkedStocks } from 'service/bookmark';
 
 export default function BookMark() {
   const navigation = useNavigate();
@@ -33,6 +8,18 @@ export default function BookMark() {
   const handleClick = (code: string) => {
     navigation(`/stocks/${code}`);
   };
+
+  const { data, isLoading, isError } = useQuery(
+    ['bookmark', 'stock'],
+    () => getBookmarkedStocks(),
+    {
+      staleTime: 1000,
+    },
+  );
+
+  if (isLoading) return <div>loading</div>;
+  if (!data) return <div>No data</div>;
+  if (isError) return <div>error</div>;
 
   return (
     <div className='mx-auto flex min-h-[500px] w-full flex-1 flex-col rounded-md bg-white p-4 shadow-md'>
@@ -43,7 +30,7 @@ export default function BookMark() {
       </div>
 
       <ul className='flex flex-col text-sm divide-y'>
-        {stocks.map((stock) => {
+        {data.map((stock) => {
           const { code, name, stck_prpr, prdy_ctrt, prdy_vrss_sign } = stock;
 
           return (
@@ -60,7 +47,7 @@ export default function BookMark() {
                 {(+stck_prpr).toLocaleString()}원
               </p>
               <p
-                className={`w-1/4 truncate text-right ${+prdy_vrss_sign < 3 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+                className={`w-1/4 truncate text-right ${+prdy_vrss_sign > 3 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
               >
                 {prdy_ctrt}%
               </p>

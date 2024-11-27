@@ -92,3 +92,12 @@ export type Profile = {
   name: string;
   email: string;
 };
+
+export type BookmakredStock = {
+  name: string;
+  code: string;
+  stck_prpr: string;
+  prdy_vrss: string;
+  prdy_vrss_sign: string;
+  prdy_ctrt: string;
+};
