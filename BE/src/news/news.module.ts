@@ -7,8 +7,8 @@ import { NewsRepository } from './news.repository';
 import { News } from './news.entity';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([News])],
   controllers: [NewsController],
   providers: [NewsService, NaverApiDomianService, NewsRepository],
-  imports: [TypeOrmModule.forFeature([News])],
 })
 export class NewsModule {}
