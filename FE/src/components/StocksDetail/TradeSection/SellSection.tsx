@@ -6,7 +6,7 @@ import { ChangeEvent, FocusEvent, FormEvent, useRef, useState } from 'react';
 import { StockDetailType } from 'types';
 import useAuthStore from 'store/authStore';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
-import { isNumericString } from 'utils/common';
+import { calcYield, isNumericString } from 'utils/common';
 import TradeAlertModal from './TradeAlertModal';
 
 type SellSectionProps = {
@@ -43,7 +43,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
 
   const pl = (+currPrice - avg_price) * count;
   const totalPrice = +currPrice * count;
-  const plRate = ((pl / totalPrice) * 100).toFixed(2);
+  const plRate = calcYield(avg_price, +currPrice);
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const s = e.target.value.replace(/,/g, '');
@@ -170,9 +170,9 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
             <div className='flex justify-between'>
               <p>예상 수익률</p>
               <p
-                className={`${+plRate < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
+                className={`${plRate < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
               >
-                {plRate}%
+                {plRate.toFixed(2)}%
               </p>
             </div>
           </div>
