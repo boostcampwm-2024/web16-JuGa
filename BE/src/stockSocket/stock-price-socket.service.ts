@@ -1,15 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
-import { LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { filter, map, Observable, Subject } from 'rxjs';
 import { BaseSocketDomainService } from '../common/websocket/base-socket.domain-service';
 import { SocketGateway } from '../common/websocket/socket.gateway';
 import { BaseStockSocketDomainService } from './base-stock-socket.domain-service';
 import { Order } from '../stock/order/stock-order.entity';
-import { TradeType } from '../stock/order/enum/trade-type';
 import { StatusType } from '../stock/order/enum/status-type';
 import { TodayStockTradeHistoryDataDto } from '../stock/trade/history/dto/today-stock-trade-history-data.dto';
 import { StockDetailSocketDataDto } from '../stock/trade/history/dto/stock-detail-socket-data.dto';
@@ -18,7 +12,6 @@ import { SseEvent } from '../stock/trade/history/interface/sse-event';
 
 @Injectable()
 export class StockPriceSocketService extends BaseStockSocketDomainService {
-  private readonly logger = new Logger();
   private connection: { [key: string]: number } = {};
   private eventSubject = new Subject<SseEvent>();
 
@@ -110,69 +103,19 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
   }
 
   private async checkExecutableOrder(stockCode: string, value) {
-    const buyOrders = await this.stockExecuteOrderRepository.find({
-      where: {
-        stock_code: stockCode,
-        trade_type: TradeType.BUY,
-        status: StatusType.PENDING,
-        price: MoreThanOrEqual(value),
-      },
-    });
-
-    const sellOrders = await this.stockExecuteOrderRepository.find({
-      where: {
-        stock_code: stockCode,
-        trade_type: TradeType.SELL,
-        status: StatusType.PENDING,
-        price: LessThanOrEqual(value),
-      },
-    });
-
-    await Promise.all(buyOrders.map((buyOrder) => this.executeBuy(buyOrder)));
-    await Promise.all(
-      sellOrders.map((sellOrder) => this.executeSell(sellOrder)),
-    );
+    const affectedRow =
+      await this.stockExecuteOrderRepository.checkExecutableOrder(
+        stockCode,
+        value,
+      );
 
     if (
-      buyOrders.length + sellOrders.length > 0 &&
+      affectedRow > 0 &&
       !(await this.stockExecuteOrderRepository.existsBy({
         stock_code: stockCode,
         status: StatusType.PENDING,
       }))
     )
       this.unsubscribeByCode(stockCode);
-  }
-
-  private async executeBuy(order) {
-    this.logger.log(`${order.id}번 매수 예약이 체결되었습니다.`, 'BUY');
-
-    const totalPrice = order.price * order.amount;
-    const fee = this.calculateFee(totalPrice);
-    await this.stockExecuteOrderRepository.updateOrderAndAssetAndUserStockWhenBuy(
-      order,
-      totalPrice + fee,
-    );
-  }
-
-  private async executeSell(order) {
-    this.logger.log(`${order.id}번 매도 예약이 체결되었습니다.`, 'SELL');
-
-    const totalPrice = order.price * order.amount;
-    const fee = this.calculateFee(totalPrice);
-    await this.stockExecuteOrderRepository.updateOrderAndAssetAndUserStockWhenSell(
-      order,
-      totalPrice - fee,
-    );
-  }
-
-  private calculateFee(totalPrice: number) {
-    if (totalPrice <= 10000000) return Math.floor(totalPrice * 0.0016);
-    if (totalPrice > 10000000 && totalPrice <= 50000000)
-      return Math.floor(totalPrice * 0.0014);
-    if (totalPrice > 50000000 && totalPrice <= 100000000)
-      return Math.floor(totalPrice * 0.0012);
-    if (totalPrice > 100000000 && totalPrice <= 300000000)
-      return Math.floor(totalPrice * 0.001);
-    return Math.floor(totalPrice * 0.0008);
   }
 }
