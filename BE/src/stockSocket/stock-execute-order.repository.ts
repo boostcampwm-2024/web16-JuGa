@@ -32,7 +32,7 @@ export class StockExecuteOrderRepository extends Repository<Order> {
     await queryRunner.startTransaction();
 
     try {
-      const buyOrders = await this.find({
+      const buyOrders = await queryRunner.manager.find(Order, {
         where: {
           stock_code: stockCode,
           trade_type: TradeType.BUY,
@@ -41,7 +41,7 @@ export class StockExecuteOrderRepository extends Repository<Order> {
         },
       });
 
-      const sellOrders = await this.find({
+      const sellOrders = await queryRunner.manager.find(Order, {
         where: {
           stock_code: stockCode,
           trade_type: TradeType.SELL,
