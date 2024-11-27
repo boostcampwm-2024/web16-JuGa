@@ -1,6 +1,6 @@
 import { HeartIcon } from '@heroicons/react/16/solid';
 import Toast from 'components/Toast';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { bookmark, unbookmark } from 'service/bookmark';
 import { unsubscribe } from 'service/stocks';
 import useAuthStore from 'store/authStore';
@@ -8,7 +8,7 @@ import useLoginModalStore from 'store/useLoginModalStore';
 import { StockDetailType } from 'types';
 import { stringToLocaleString } from 'utils/common';
 import { socket } from 'utils/socket';
-import { useDebounce } from 'utils/useDebounce';
+// import { useDebounce } from 'utils/useDebounce';
 
 type StocksDetailHeaderProps = {
   code: string;
@@ -35,21 +35,21 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   const { isLogin } = useAuthStore();
   const { toggleModal } = useLoginModalStore();
 
-  const { debounceValue } = useDebounce(isBookmarked, 1000);
-  const isInitialMount = useRef(true);
+  // const { debounceValue } = useDebounce(isBookmarked, 1000);
+  // const isInitialMount = useRef(true);
 
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
+  // useEffect(() => {
+  //   if (isInitialMount.current) {
+  //     isInitialMount.current = false;
+  //     return;
+  //   }
 
-    if (debounceValue) {
-      bookmark(code);
-    } else {
-      unbookmark(code);
-    }
-  }, [code, debounceValue]);
+  //   if (debounceValue) {
+  //     bookmark(code);
+  //   } else {
+  //     unbookmark(code);
+  //   }
+  // }, [code, debounceValue]);
 
   useEffect(() => {
     const handleSocketData = (data: {
@@ -121,6 +121,9 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
               Toast({ message: '로그인을 해주세요!', type: 'warning' });
               return;
             }
+            if (isBookmarked) unbookmark(code);
+            else bookmark(code);
+
             setIsBookmarked((prev) => !prev);
           }}
         >
