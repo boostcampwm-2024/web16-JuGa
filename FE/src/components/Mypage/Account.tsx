@@ -4,8 +4,10 @@ import MyStocksList from './MyStocksList';
 import { getAssets } from 'service/assets';
 
 export default function Account() {
-  const { data, isLoading, isError } = useQuery(['account', 'assets'], () =>
-    getAssets(),
+  const { data, isLoading, isError } = useQuery(
+    ['account', 'assets'],
+    () => getAssets(),
+    { staleTime: 1000 },
   );
 
   if (isLoading) return <div>loading</div>;
@@ -15,7 +17,7 @@ export default function Account() {
   const { asset, stocks } = data;
 
   return (
-    <div className='flex flex-col gap-3'>
+    <div className='flex min-h-[500px] flex-col gap-3'>
       <AccountCondition asset={asset} />
       <MyStocksList stocks={stocks} />
     </div>

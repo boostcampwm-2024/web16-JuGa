@@ -28,6 +28,8 @@ export default function SearchModal() {
     queryKey: ['search', debounceValue],
     queryFn: () => getSearchResults(debounceValue),
     enabled: !!debounceValue && !isDebouncing,
+    staleTime: 1000,
+    cacheTime: 1000 * 60,
   });
 
   useEffect(() => {

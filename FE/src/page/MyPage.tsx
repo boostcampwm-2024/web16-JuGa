@@ -1,4 +1,5 @@
 import Account from 'components/Mypage/Account';
+import MyInfo from 'components/Mypage/MyInfo';
 import Nav from 'components/Mypage/Nav';
 import Order from 'components/Mypage/Order';
 import { useSearchParams } from 'react-router-dom';
@@ -15,7 +16,7 @@ export default function MyPage() {
           {
             account: <Account />,
             order: <Order />,
-            info: <div>info</div>,
+            info: <MyInfo />,
           }[currentPage]
         }
       </div>
