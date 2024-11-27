@@ -1,3 +1,4 @@
+import { HeartIcon } from '@heroicons/react/16/solid';
 import { useEffect, useState } from 'react';
 import { unsubscribe } from 'service/stocks';
 import { StockDetailType } from 'types';
@@ -18,12 +19,14 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
     prdy_ctrt,
     hts_avls,
     per,
+    is_bookmarked,
   } = data;
 
   const [currPrice, setCurrPrice] = useState(stck_prpr);
   const [currPrdyVrssSign, setCurrPrdyVrssSign] = useState(prdy_vrss_sign);
   const [currPrdyVrss, setCurrPrdyVrss] = useState(prdy_vrss);
   const [currPrdyRate, setCurrPrdyRate] = useState(prdy_ctrt);
+  const [isBookmarked, setIsBookmarked] = useState(is_bookmarked);
 
   useEffect(() => {
     const handleSocketData = (data: {
@@ -65,7 +68,7 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
     currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
 
   return (
-    <div className='flex h-16 w-full items-center justify-between px-2'>
+    <div className='flex items-center justify-between w-full h-16 px-2'>
       <div className='flex flex-col font-semibold'>
         <div className='flex gap-2 text-sm'>
           <h2>{hts_kor_isnm}</h2>
@@ -81,13 +84,20 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
           </p>
         </div>
       </div>
-      <div className='flex gap-4 text-xs font-semibold'>
+      <div className='flex items-center gap-4 text-xs font-semibold'>
         {stockInfo.map((e, idx) => (
           <div key={`stockdetailinfo${idx}`} className='flex gap-2'>
             <p className='text-juga-grayscale-200'>{e.label}</p>
             <p>{e.value}</p>
           </div>
         ))}
+        <button onClick={() => setIsBookmarked((prev) => !prev)}>
+          {isBookmarked ? (
+            <HeartIcon className='size-6 fill-juga-red-60' />
+          ) : (
+            <HeartIcon className='size-6 fill-juga-grayscale-200' />
+          )}
+        </button>
       </div>
     </div>
   );

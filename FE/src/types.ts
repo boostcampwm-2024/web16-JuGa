@@ -28,6 +28,7 @@ export type StockDetailType = {
   per: string;
   stck_mxpr: string;
   stck_llam: string;
+  is_bookmarked: boolean;
 };
 
 export type StockChartUnit = {
