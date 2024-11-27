@@ -1,3 +1,5 @@
+import { formatNoSpecialChar } from '../../utils/formatNoSpecialChar.ts';
+
 type SearchCardHighLightProps = {
   text: string;
   highlight: string;
@@ -11,7 +13,7 @@ export const SearchCardHighLight = ({
     return <div>{text}</div>;
   }
 
-  const targetWord = highlight.trim();
+  const targetWord = formatNoSpecialChar(highlight.trim());
 
   const parts = text.trim().split(new RegExp(`(${targetWord})`, 'gi'));
   return (

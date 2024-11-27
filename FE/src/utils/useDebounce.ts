@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { formatNoSpecialChar } from './formatNoSpecialChar.ts';
 
 export const useDebounce = (value: string, delay: number) => {
   const [debounceValue, setDebounceValue] = useState(value);
@@ -8,7 +9,7 @@ export const useDebounce = (value: string, delay: number) => {
     setIsDebouncing(true);
 
     const handler = setTimeout(() => {
-      setDebounceValue(value);
+      setDebounceValue(formatNoSpecialChar(value));
       setIsDebouncing(false);
     }, delay);
 
