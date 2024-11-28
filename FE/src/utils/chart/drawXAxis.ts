@@ -11,6 +11,9 @@ export const drawXAxis = (
   padding: Padding,
   mousePosition: MousePositionType,
   parentHeight: number,
+  setMouseIndex: (
+    value: ((prevState: number | null) => number | null) | number | null,
+  ) => void,
 ) => {
   const labels = makeXLabels(data);
 
@@ -44,8 +47,8 @@ export const drawXAxis = (
   ) {
     const mouseX = mousePosition.x - padding.left;
     const dataIndex = Math.floor((mouseX / width) * (data.length - 1));
-
     if (dataIndex >= 0 && dataIndex < data.length) {
+      setMouseIndex(dataIndex);
       const boxPadding = 10;
       const boxHeight = 30;
       const mouseDate = data[dataIndex].stck_bsop_date;
@@ -71,5 +74,5 @@ export const drawXAxis = (
         boxY + boxHeight / 2 + 8,
       );
     }
-  }
+  } else setMouseIndex(null);
 };
