@@ -21,10 +21,10 @@ export class UserService {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
 
-    const isDuplicated = await this.userRepository.findBy({
+    const isDuplicated = await this.userRepository.existsBy({
       nickname: newName,
     });
-    if (isDuplicated.length > 0) {
+    if (isDuplicated) {
       throw new BadRequestException('이미 존재하는 닉네임입니다.');
     }
 
