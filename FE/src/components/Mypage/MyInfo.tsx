@@ -1,7 +1,8 @@
 import { PencilSquareIcon } from '@heroicons/react/16/solid';
 import { useQuery } from '@tanstack/react-query';
+import Toast from 'components/Toast';
 import { useEffect, useState } from 'react';
-import { getMyProfile } from 'service/user';
+import { getMyProfile, rename } from 'service/user';
 
 export default function MyInfo() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -22,6 +23,16 @@ export default function MyInfo() {
   if (!data) return <div>No data</div>;
   if (isError) return <div>error</div>;
 
+  const handeleEditBtnClick = () => {
+    rename(nickname).then((res) => {
+      if (res.statusCode === 400) {
+        Toast({ message: res.message, type: 'error' });
+        return;
+      }
+      setIsEditMode(false);
+    });
+  };
+
   return (
     <div className='flex flex-col items-center p-6 text-lg'>
       <div className='flex w-[50%] items-center gap-2 py-2'>
@@ -40,7 +51,7 @@ export default function MyInfo() {
                   autoFocus
                 />
                 <button
-                  onClick={() => setIsEditMode(false)}
+                  onClick={handeleEditBtnClick}
                   className='w-10 p-1 text-sm font-semibold text-white rounded-lg bg-juga-blue-40'
                 >
                   수정
