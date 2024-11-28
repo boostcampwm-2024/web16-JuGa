@@ -29,7 +29,7 @@ export class StockExecuteOrderRepository extends Repository<Order> {
 
   async checkExecutableOrder(stockCode, value) {
     const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.startTransaction('SERIALIZABLE');
+    await queryRunner.startTransaction();
 
     try {
       const buyOrders = await queryRunner.manager.find(Order, {
@@ -39,6 +39,9 @@ export class StockExecuteOrderRepository extends Repository<Order> {
           status: StatusType.PENDING,
           price: MoreThanOrEqual(value),
         },
+        lock: {
+          mode: 'pessimistic_write',
+        },
       });
 
       const sellOrders = await queryRunner.manager.find(Order, {
@@ -47,6 +50,9 @@ export class StockExecuteOrderRepository extends Repository<Order> {
           trade_type: TradeType.SELL,
           status: StatusType.PENDING,
           price: LessThanOrEqual(value),
+        },
+        lock: {
+          mode: 'pessimistic_write',
         },
       });
 
