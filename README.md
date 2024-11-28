@@ -50,6 +50,7 @@
 ### 로그인
 ![image (14)](https://github.com/user-attachments/assets/9968ef08-cbf8-41fd-bfdc-8ca25dd8d80c)
 
+- 로그인 모달창에서 로그인을 할 수 있습니다.
 - 카카오 oAuth 로그인으로 간편하게 로그인할 수 있습니다.
 
 
