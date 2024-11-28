@@ -158,8 +158,6 @@ export class StockExecuteOrderRepository extends Repository<Order> {
       .where({ user_id: order.user_id, stock_code: order.stock_code })
       .setParameters({ newQuantity: order.amount })
       .execute();
-
-    await queryRunner.commitTransaction();
   }
 
   private calculateFee(totalPrice: number) {
