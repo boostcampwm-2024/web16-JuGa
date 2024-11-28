@@ -52,6 +52,10 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   // }, [code, debounceValue]);
 
   useEffect(() => {
+    setCurrPrice(stck_prpr);
+  }, [stck_prpr]);
+
+  useEffect(() => {
     const handleSocketData = (data: {
       stck_prpr: string;
       prdy_vrss: string;
