@@ -61,6 +61,15 @@ export default function MyInfo() {
                 >
                   수정
                 </button>
+                <button
+                  onClick={() => {
+                    setNickname(data.name);
+                    setIsEditMode(false);
+                  }}
+                  className='w-10 p-1 text-sm font-semibold text-white rounded-lg bg-juga-grayscale-500'
+                >
+                  취소
+                </button>
               </>
             ) : (
               <>
