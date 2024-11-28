@@ -25,6 +25,12 @@ export class UserService {
       throw new BadRequestException('사용 불가능한 문자가 포함되어 있습니다.');
     }
 
+    const regex = /^[가-힣a-zA-Z0-9]+$/;
+
+    if (!regex.test(newName)) {
+      throw new BadRequestException('한글, 영문, 숫자만 사용 가능합니다.');
+    }
+
     const isDuplicated = await this.userRepository.existsBy({
       nickname: newName,
     });
