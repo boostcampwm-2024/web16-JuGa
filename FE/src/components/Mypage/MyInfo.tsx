@@ -35,9 +35,9 @@ export default function MyInfo() {
 
   return (
     <div className='flex flex-col items-center p-6 text-lg'>
-      <div className='flex w-[50%] items-center gap-2 py-2'>
+      <div className='flex w-full max-w-[600px] items-center gap-2 py-2 sm:w-[80%] lg:w-[50%]'>
         <div className='flex items-center justify-between w-full'>
-          <p className='w-28 min-w-[100px] truncate font-medium text-juga-grayscale-black'>
+          <p className='w-28 min-w-[80px] truncate font-medium text-juga-grayscale-black sm:min-w-[100px]'>
             닉네임
           </p>
           <div className='flex items-center gap-2'>
@@ -47,7 +47,7 @@ export default function MyInfo() {
                   type='text'
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  className='min-w-[50px] text-right font-semibold text-juga-grayscale-500'
+                  className='w-24 min-w-[60px] flex-1 text-right font-semibold text-juga-grayscale-500 sm:w-auto sm:min-w-[80px]'
                   autoFocus
                 />
                 <button
@@ -59,7 +59,7 @@ export default function MyInfo() {
               </>
             ) : (
               <>
-                <p className='min-w-[50px] truncate font-semibold text-juga-grayscale-500'>
+                <p className='min-w-[60px] truncate font-semibold text-juga-grayscale-500 sm:min-w-[80px]'>
                   {nickname}
                 </p>
                 <div className='flex items-center justify-end w-9'>
