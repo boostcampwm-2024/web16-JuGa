@@ -49,6 +49,7 @@ export default function BookMark() {
               <p
                 className={`w-1/4 truncate text-right ${+prdy_vrss_sign > 3 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
               >
+                {+prdy_vrss_sign < 3 && '+'}
                 {prdy_ctrt}%
               </p>
             </li>
