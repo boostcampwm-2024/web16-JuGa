@@ -21,6 +21,10 @@ export class UserService {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
 
+    if (newName.replaceAll(/ /g, '').includes('익명의투자자')) {
+      throw new BadRequestException('사용 불가능한 문자가 포함되어 있습니다.');
+    }
+
     const isDuplicated = await this.userRepository.existsBy({
       nickname: newName,
     });
