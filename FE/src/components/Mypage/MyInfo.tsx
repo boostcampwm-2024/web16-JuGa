@@ -1,16 +1,14 @@
 import { PencilSquareIcon } from '@heroicons/react/16/solid';
-import { useQuery } from '@tanstack/react-query';
 import Toast from 'components/Toast';
+
+import useUser from 'hooks/useUser';
 import { useEffect, useState } from 'react';
-import { getMyProfile, rename } from 'service/user';
 
 export default function MyInfo() {
   const [isEditMode, setIsEditMode] = useState(false);
-  const { data, isLoading, isError } = useQuery(
-    ['myInfo', 'profile'],
-    () => getMyProfile(),
-    { staleTime: 1000 },
-  );
+  const { userQuery, updateNickame } = useUser();
+
+  const { data, isLoading, isError } = userQuery;
 
   const [nickname, setNickname] = useState('');
 
@@ -29,12 +27,14 @@ export default function MyInfo() {
       return;
     }
 
-    rename(nickname).then((res) => {
-      if (res.statusCode === 400) {
-        Toast({ message: res.message, type: 'error' });
-        return;
-      }
-      setIsEditMode(false);
+    updateNickame.mutate(nickname, {
+      onSuccess: (res) => {
+        if (res.statusCode === 400) {
+          Toast({ message: res.message, type: 'error' });
+          return;
+        }
+        setIsEditMode(false);
+      },
     });
   };
 
