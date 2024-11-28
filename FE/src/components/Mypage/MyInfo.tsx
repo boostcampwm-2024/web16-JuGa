@@ -24,6 +24,11 @@ export default function MyInfo() {
   if (isError) return <div>error</div>;
 
   const handeleEditBtnClick = () => {
+    if (nickname === data.name) {
+      setIsEditMode(false);
+      return;
+    }
+
     rename(nickname).then((res) => {
       if (res.statusCode === 400) {
         Toast({ message: res.message, type: 'error' });
