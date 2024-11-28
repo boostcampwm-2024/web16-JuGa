@@ -26,6 +26,10 @@ export class UserRepository extends Repository<User> {
       const hashedPassword: string = await bcrypt.hash(password, salt);
       const user = this.create({ email, password: hashedPassword });
       await queryRunner.manager.save(user);
+
+      user.nickname = `익명의 투자자${user.id}`;
+      await queryRunner.manager.save(user);
+
       const asset = this.assetRepository.create({ user_id: user.id });
       await queryRunner.manager.save(asset);
 
@@ -52,6 +56,10 @@ export class UserRepository extends Repository<User> {
         password: hashedPassword,
       });
       await this.save(user);
+
+      user.nickname = `익명의 투자자${user.id}`;
+      await queryRunner.manager.save(user);
+
       const asset = this.assetRepository.create({ user_id: user.id });
       await queryRunner.manager.save(asset);
 

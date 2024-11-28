@@ -1,7 +1,8 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -9,6 +10,7 @@ import {
 import { UserService } from './user.service';
 import { JwtAuthGuard } from './jwt-auth-guard';
 import { ProfileResponseDto } from './dto/profile-response.dto';
+import { RenameUserDto } from './dto/rename-user.dto';
 
 @Controller('/api/user')
 @ApiTags('프로필 API')
@@ -26,5 +28,21 @@ export class UserController {
   })
   getProfile(@Req() request: Request) {
     return this.userService.getProfile(parseInt(request.user.userId, 10));
+  }
+
+  @Patch('/rename')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: '유저 닉네임 변경 API',
+  })
+  @ApiBody({
+    type: RenameUserDto,
+  })
+  @ApiBearerAuth()
+  renameUser(@Req() request: Request, @Body() body: RenameUserDto) {
+    const userId = parseInt(request.user.userId, 10);
+    const newName = body.nickname;
+
+    return this.userService.renameUser(userId, newName);
   }
 }
