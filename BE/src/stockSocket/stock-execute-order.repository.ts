@@ -27,7 +27,7 @@ export class StockExecuteOrderRepository extends Repository<Order> {
       .getRawMany();
   }
 
-  async checkExecutableOrder(stockCode, value) {
+  async checkExecutableBuyOrder(stockCode, value) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
@@ -44,6 +44,25 @@ export class StockExecuteOrderRepository extends Repository<Order> {
         },
       });
 
+      await Promise.all(
+        buyOrders.map((buyOrder) => this.executeBuy(queryRunner, buyOrder)),
+      );
+
+      await queryRunner.commitTransaction();
+      return buyOrders.length;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException(err);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async checkExecutableSellOrder(stockCode, value) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    try {
       const sellOrders = await queryRunner.manager.find(Order, {
         where: {
           stock_code: stockCode,
@@ -57,14 +76,11 @@ export class StockExecuteOrderRepository extends Repository<Order> {
       });
 
       await Promise.all(
-        buyOrders.map((buyOrder) => this.executeBuy(queryRunner, buyOrder)),
-      );
-      await Promise.all(
         sellOrders.map((sellOrder) => this.executeSell(queryRunner, sellOrder)),
       );
 
       await queryRunner.commitTransaction();
-      return buyOrders.length + sellOrders.length;
+      return sellOrders.length;
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException(err);

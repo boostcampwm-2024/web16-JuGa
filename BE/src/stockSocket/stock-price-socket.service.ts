@@ -103,14 +103,20 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
   }
 
   private async checkExecutableOrder(stockCode: string, value) {
-    const affectedRow =
-      await this.stockExecuteOrderRepository.checkExecutableOrder(
+    const affectedBuyRow =
+      await this.stockExecuteOrderRepository.checkExecutableBuyOrder(
+        stockCode,
+        value,
+      );
+
+    const affectedSellRow =
+      await this.stockExecuteOrderRepository.checkExecutableSellOrder(
         stockCode,
         value,
       );
 
     if (
-      affectedRow > 0 &&
+      affectedBuyRow + affectedSellRow > 0 &&
       !(await this.stockExecuteOrderRepository.existsBy({
         stock_code: stockCode,
         status: StatusType.PENDING,
