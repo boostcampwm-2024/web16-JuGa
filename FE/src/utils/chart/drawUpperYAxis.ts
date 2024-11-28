@@ -16,6 +16,7 @@ export const drawUpperYAxis = (
 ) => {
   const values = data
     .map((d) => {
+
       if (d.mov_avg_20 && d.mov_avg_5) {
         return [
           +d.stck_hgpr,
@@ -25,6 +26,7 @@ export const drawUpperYAxis = (
           Math.floor(+d.mov_avg_5),
           Math.floor(+d.mov_avg_20),
         ];
+
       } else if (d.mov_avg_5) {
         return [
           +d.stck_hgpr,
@@ -33,6 +35,7 @@ export const drawUpperYAxis = (
           +d.stck_oprc,
           Math.floor(+d.mov_avg_5),
         ];
+
       } else if (d.mov_avg_20) {
         return [
           +d.stck_hgpr,

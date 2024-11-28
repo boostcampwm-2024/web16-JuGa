@@ -29,7 +29,7 @@ export class StockExecuteOrderRepository extends Repository<Order> {
 
   async checkExecutableOrder(stockCode, value) {
     const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.startTransaction();
+    await queryRunner.startTransaction('SERIALIZABLE');
 
     try {
       const buyOrders = await queryRunner.manager.find(Order, {
