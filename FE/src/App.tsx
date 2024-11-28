@@ -12,6 +12,8 @@ import Login from 'components/Login';
 import SearchModal from './components/Search';
 import MyPage from 'page/MyPage';
 import Rank from 'page/Rank.tsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -39,6 +41,7 @@ function Layout() {
       </main>
       <Login />
       <SearchModal />
+      <ToastContainer />
     </>
   );
 }

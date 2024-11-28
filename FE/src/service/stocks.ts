@@ -1,24 +1,29 @@
 import { StockChartUnit, StockDetailType, TiemCategory } from 'types';
 
 export async function getStocksByCode(code: string): Promise<StockDetailType> {
-  return fetch(`${import.meta.env.VITE_API_URL}/stocks/detail/${code}`).then(
-    (res) => res.json(),
-  );
+  const url = import.meta.env.PROD
+    ? `${import.meta.env.VITE_API_URL}/stocks/detail/${code}`
+    : `/api/stocks/detail/${code}`;
+
+  return fetch(url, {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((res) => res.json());
 }
 
 export async function getStocksChartDataByCode(
   code: string,
   peroid: TiemCategory = 'D',
-  start: string = '',
-  end: string = '',
+  count: number = 50,
 ): Promise<StockChartUnit[]> {
   return fetch(`${import.meta.env.VITE_API_URL}/stocks/detail/${code}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      fid_input_date_1: start,
-      fid_input_date_2: end,
       fid_period_div_code: peroid,
+      count: count,
     }),
   }).then((res) => res.json());
 }
