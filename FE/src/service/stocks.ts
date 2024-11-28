@@ -1,9 +1,16 @@
 import { StockChartUnit, StockDetailType, TiemCategory } from 'types';
 
 export async function getStocksByCode(code: string): Promise<StockDetailType> {
-  return fetch(`${import.meta.env.VITE_API_URL}/stocks/detail/${code}`).then(
-    (res) => res.json(),
-  );
+  const url = import.meta.env.PROD
+    ? `${import.meta.env.VITE_API_URL}/stocks/detail/${code}`
+    : `/api/stocks/detail/${code}`;
+
+  return fetch(url, {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((res) => res.json());
 }
 
 export async function getStocksChartDataByCode(

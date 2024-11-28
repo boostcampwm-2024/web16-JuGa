@@ -2,7 +2,14 @@ import Lottie from 'lottie-react';
 import emptyAnimation from 'assets/emptyAnimation.json';
 import { useQuery } from '@tanstack/react-query';
 import { getSellInfo } from 'service/assets';
-import { ChangeEvent, FocusEvent, FormEvent, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FocusEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { StockDetailType } from 'types';
 import useAuthStore from 'store/authStore';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
@@ -33,6 +40,10 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   const timerRef = useRef<number | null>(null);
 
   const { isOpen, toggleModal } = useTradeAlertModalStore();
+
+  useEffect(() => {
+    setCurrPrice(stck_prpr);
+  }, [stck_prpr]);
 
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
