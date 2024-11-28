@@ -62,11 +62,6 @@
 - 자신의 오늘 랭킹을 확인할 수 있습니다.
 
 
-## 🗂️ 기술 스택
-<div align="center">
-  <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/d58700ea-8bfe-459f-8b67-d0864bf76693">
-</div>
-
 ## 🏛️ 소프트웨어 아키텍처
 <img width="2336" alt="소프트웨어 아키텍처 3 0" src="https://github.com/user-attachments/assets/3e4d5e3c-3fc5-44a5-8a8e-77bd704e22f2">
 
