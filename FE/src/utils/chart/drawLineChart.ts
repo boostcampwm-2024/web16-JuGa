@@ -69,7 +69,7 @@ export function drawLineChart(
       }
     }
   });
-  ctx.strokeStyle = '#000';
+  ctx.strokeStyle = 'rgb(249 115 22)';
   ctx.lineWidth = lineWidth;
   ctx.stroke();
 
@@ -90,7 +90,7 @@ export function drawLineChart(
       }
     }
   });
-  ctx.strokeStyle = '#199123';
+  ctx.strokeStyle = 'rgb(22 163 74)';
   ctx.lineWidth = lineWidth;
   ctx.stroke();
 }

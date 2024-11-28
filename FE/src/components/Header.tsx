@@ -3,7 +3,8 @@ import useAuthStore from 'store/authStore';
 import useLoginModalStore from 'store/useLoginModalStore';
 import useSearchModalStore from '../store/useSearchModalStore.ts';
 import useSearchInputStore from '../store/useSearchInputStore.ts';
-import logo from 'assets/Logo.png';
+import logoPng from 'assets/logo.png';
+import logoWebp from 'assets/logo.webp';
 import { checkAuth, logout } from 'service/auth.ts';
 import { useEffect } from 'react';
 
@@ -42,7 +43,14 @@ export default function Header() {
     <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
         <Link to={'/'} className='flex items-center gap-2'>
-          <img src={logo} className={'h-[32px]'} />
+          <picture>
+            <source
+              srcSet={logoWebp}
+              type='image/webp'
+              className={'h-[32px]'}
+            />
+            <img src={logoPng} className={'h-[32px]'} />
+          </picture>
           <h1 className='text-xl font-bold text-juga-grayscale-black'>JuGa</h1>
         </Link>
 
