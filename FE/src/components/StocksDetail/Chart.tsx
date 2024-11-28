@@ -362,9 +362,6 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     charSizeConfig,
     mousePosition,
   ]);
-  if (mouseIndex !== null) {
-    console.log(data[mouseIndex], mouseIndex);
-  }
   return (
     <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-white p-3'>
       <div className='flex h-fit w-full items-center justify-between'>
