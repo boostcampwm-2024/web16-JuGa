@@ -1,4 +1,5 @@
 import Account from 'components/Mypage/Account';
+import BookMark from 'components/Mypage/BookMark';
 import MyInfo from 'components/Mypage/MyInfo';
 import Nav from 'components/Mypage/Nav';
 import Order from 'components/Mypage/Order';
@@ -16,6 +17,7 @@ export default function MyPage() {
           {
             account: <Account />,
             order: <Order />,
+            bookmark: <BookMark />,
             info: <MyInfo />,
           }[currentPage]
         }

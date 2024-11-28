@@ -47,7 +47,7 @@ export default function SearchModal() {
     <>
       <Overlay onClick={() => toggleSearchModal()} />
       <section
-        className={`${searchInput.length ? 'h-[520px]' : 'h-[160px]'} fixed left-1/2 top-3 z-20 w-[640px] -translate-x-1/2 rounded-2xl bg-white shadow-xl`}
+        className={`${searchInput.length ? 'h-[520px]' : ''} fixed left-1/2 top-3 z-20 w-[640px] -translate-x-1/2 rounded-2xl bg-white shadow-xl`}
       >
         <div
           className={'absolute left-0 right-0 top-0 rounded-t-2xl bg-white p-3'}
@@ -70,8 +70,18 @@ export default function SearchModal() {
 
               <div className={'h-[400px] overflow-y-auto'}>
                 {isSearching ? (
-                  <div className={'flex h-full items-center justify-center'}>
-                    <Lottie animationData={searchAnimation} />
+                  <div
+                    className={
+                      'flex h-[320px] flex-col items-center justify-center'
+                    }
+                  >
+                    <Lottie
+                      animationData={searchAnimation}
+                      className='h-[200px]'
+                    />
+                    <p className='font-bold text-juga-grayscale-black'>
+                      두 글자 이상의 검색어를 입력해주세요.
+                    </p>
                   </div>
                 ) : (
                   showSearchResults && <SearchList searchData={data} />

@@ -20,8 +20,6 @@ export default function Account() {
 
   const { asset, stocks } = data;
 
-  console.log(asset, stocks);
-
   return (
     <div className='flex min-h-[500px] flex-col gap-3'>
       <AccountCondition asset={asset} />

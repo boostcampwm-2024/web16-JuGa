@@ -15,6 +15,7 @@ import { drawUpperYAxis } from 'utils/chart/drawUpperYAxis.ts';
 import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
 import { drawChartGrid } from 'utils/chart/drawChartGrid.ts';
 import { drawMouseGrid } from 'utils/chart/drawMouseGrid.ts';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/16/solid';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },
@@ -48,6 +49,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   const chartX = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>();
   const [timeCategory, setTimeCategory] = useState<TiemCategory>('D');
+  const [moveAverageToggle, setMoveAverageToggle] = useState(true);
   const [charSizeConfig, setChartSizeConfig] = useState<ChartSizeConfigType>({
     upperHeight: 0.5,
     lowerHeight: 0.4,
@@ -62,6 +64,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     x: 0,
     y: 0,
   });
+  const [mouseIndex, setMouseIndex] = useState<number | null>(null);
 
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
@@ -198,16 +201,18 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         padding,
       );
 
-      drawLineChart(
-        UpperChartCtx,
-        chartData,
-        0,
-        0,
-        upperChartCanvas.width - padding.left - padding.right,
-        upperChartCanvas.height - padding.top - padding.bottom,
-        padding,
-        0.1,
-      );
+      if (moveAverageToggle) {
+        drawLineChart(
+          UpperChartCtx,
+          chartData,
+          0,
+          0,
+          upperChartCanvas.width - padding.left - padding.right,
+          upperChartCanvas.height - padding.top - padding.bottom,
+          padding,
+          0.1,
+        );
+      }
 
       drawCandleChart(
         UpperChartCtx,
@@ -262,6 +267,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         padding,
         mousePosition,
         upperChartCanvas.height + lowerChartCanvas.height,
+        setMouseIndex,
       );
 
       if (
@@ -293,6 +299,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       drawUpperYAxis,
       drawLowerYAxis,
       drawXAxis,
+      moveAverageToggle,
     ],
   );
 
@@ -355,7 +362,6 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     charSizeConfig,
     mousePosition,
   ]);
-
   return (
     <div className='box-border flex h-[260px] flex-col items-center rounded-lg bg-white p-3'>
       <div className='flex h-fit w-full items-center justify-between'>
@@ -381,6 +387,59 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         <div className='flex flex-row'>
           <canvas ref={upperChartCanvasRef} />
           <canvas ref={upperChartY} />
+          <div className='absolute flex w-[520px] flex-col gap-1'>
+            {mouseIndex !== null && data ? (
+              <div
+                className={'relative flex flex-row items-center gap-1 text-xs'}
+              >
+                <span>
+                  시작 {Number(data[mouseIndex].stck_oprc).toLocaleString()}원
+                </span>
+                <span>
+                  고가 {Number(data[mouseIndex].stck_hgpr).toLocaleString()}원
+                </span>
+                <span>
+                  저가 {Number(data[mouseIndex].stck_lwpr).toLocaleString()}원
+                </span>
+                <span>
+                  종가 {Number(data[mouseIndex].stck_clpr).toLocaleString()}원
+                </span>
+              </div>
+            ) : null}
+            <div className={'relative flex flex-row items-center gap-1'}>
+              <button
+                className='flex h-3 w-3 items-center justify-center rounded bg-juga-grayscale-50'
+                onClick={() => setMoveAverageToggle((prev) => !prev)}
+              >
+                {moveAverageToggle ? (
+                  <EyeSlashIcon className='h-2 w-2 text-juga-grayscale-200' />
+                ) : (
+                  <EyeIcon className='h-2 w-2 text-juga-grayscale-200' />
+                )}
+              </button>
+              <div className='text-xs text-black'>이동평균선</div>
+              <div className='flex gap-1'>
+                <span className='text-xs text-orange-500'>5</span>
+                {mouseIndex !== null && data ? (
+                  <span className={'text-xs'}>
+                    {Math.floor(
+                      Number(data[mouseIndex].mov_avg_5),
+                    ).toLocaleString()}
+                    원
+                  </span>
+                ) : null}
+                <span className='text-xs text-green-600'>20</span>
+                {mouseIndex !== null && data ? (
+                  <span className={'text-xs'}>
+                    {Math.floor(
+                      Number(data[mouseIndex].mov_avg_20),
+                    ).toLocaleString()}
+                    원
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          </div>
         </div>
         <div className='group flex h-[1px] w-full cursor-row-resize items-center justify-center bg-juga-grayscale-100'>
           <div

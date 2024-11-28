@@ -1,4 +1,11 @@
-import { ChangeEvent, FocusEvent, FormEvent, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FocusEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import useTradeAlertModalStore from 'store/tradeAlertModalStore';
 import { StockDetailType } from 'types';
 import { isNumericString } from 'utils/common';
@@ -23,6 +30,10 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
   const { isLogin } = useAuthStore();
+
+  useEffect(() => {
+    setCurrPrice(stck_prpr);
+  }, [stck_prpr]);
 
   const { isOpen, toggleModal } = useTradeAlertModalStore();
 

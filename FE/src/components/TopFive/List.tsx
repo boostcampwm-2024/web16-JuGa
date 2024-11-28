@@ -34,6 +34,7 @@ export default function List({ listTitle, data, isLoading }: ListProps) {
                   price={stock.stck_prpr}
                   changePercentage={stock.prdy_ctrt}
                   changePrice={stock.prdy_vrss}
+                  flag={stock.prdy_vrss_sign}
                   index={index}
                 />
               </li>
