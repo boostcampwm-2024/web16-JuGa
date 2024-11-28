@@ -70,8 +70,18 @@ export default function SearchModal() {
 
               <div className={'h-[400px] overflow-y-auto'}>
                 {isSearching ? (
-                  <div className={'flex h-full items-center justify-center'}>
-                    <Lottie animationData={searchAnimation} />
+                  <div
+                    className={
+                      'flex h-[320px] flex-col items-center justify-center'
+                    }
+                  >
+                    <Lottie
+                      animationData={searchAnimation}
+                      className='h-[200px]'
+                    />
+                    <p className='font-bold text-juga-grayscale-black'>
+                      두 글자 이상의 검색어를 입력해주세요.
+                    </p>
                   </div>
                 ) : (
                   showSearchResults && <SearchList searchData={data} />
