@@ -25,10 +25,10 @@ export class UserService {
       throw new BadRequestException('사용 불가능한 문자가 포함되어 있습니다.');
     }
 
-    const isDuplicated = await this.userRepository.findBy({
+    const isDuplicated = await this.userRepository.existsBy({
       nickname: newName,
     });
-    if (isDuplicated.length > 0) {
+    if (isDuplicated) {
       throw new BadRequestException('이미 존재하는 닉네임입니다.');
     }
 
