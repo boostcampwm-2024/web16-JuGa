@@ -23,6 +23,29 @@ export async function orderBuyStock(
   });
 }
 
+export async function orderSellStock(
+  code: string,
+  price: number,
+  amount: number,
+) {
+  const url = import.meta.env.PROD
+    ? `${import.meta.env.VITE_API_URL}/stocks/order/sell`
+    : '/api/stocks/order/sell';
+
+  return fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      stock_code: code,
+      price,
+      amount,
+    }),
+  });
+}
+
 export async function getOrders(): Promise<Order[]> {
   const url = import.meta.env.PROD
     ? `${import.meta.env.VITE_API_URL}/stocks/order/list`

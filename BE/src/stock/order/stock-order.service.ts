@@ -9,27 +9,38 @@ import { StockOrderRequestDto } from './dto/stock-order-request.dto';
 import { StockOrderRepository } from './stock-order.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
-import { StockOrderSocketService } from './stock-order-socket.service';
 import { UserStockRepository } from '../../asset/user-stock.repository';
 import { AssetRepository } from '../../asset/asset.repository';
 import { StockOrderElementResponseDto } from './dto/stock-order-element-response.dto';
 import { Order } from './stock-order.entity';
+import { StockPriceSocketService } from '../../stockSocket/stock-price-socket.service';
 
 @Injectable()
 export class StockOrderService {
   constructor(
     private readonly stockOrderRepository: StockOrderRepository,
-    private readonly stockOrderSocketService: StockOrderSocketService,
+    private readonly stockPriceSocketService: StockPriceSocketService,
     private readonly userStockRepository: UserStockRepository,
     private readonly assetRepository: AssetRepository,
   ) {}
 
   async buy(userId: number, stockOrderRequest: StockOrderRequestDto) {
     const asset = await this.assetRepository.findOneBy({ user_id: userId });
+    const pendingOrders = await this.stockOrderRepository.findBy({
+      user_id: userId,
+      status: StatusType.PENDING,
+      trade_type: TradeType.BUY,
+      stock_code: stockOrderRequest.stock_code,
+    });
+    const totalPendingPrice = pendingOrders.reduce(
+      (sum, pendingOrder) => sum + pendingOrder.price * pendingOrder.amount,
+      0,
+    );
 
     if (
       asset &&
-      asset.cash_balance < stockOrderRequest.amount * stockOrderRequest.price
+      asset.cash_balance <
+        stockOrderRequest.amount * stockOrderRequest.price + totalPendingPrice
     )
       throw new BadRequestException('가용 자산이 충분하지 않습니다.');
 
@@ -43,7 +54,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
@@ -51,8 +62,21 @@ export class StockOrderService {
       user_id: userId,
       stock_code: stockOrderRequest.stock_code,
     });
+    const pendingOrders = await this.stockOrderRepository.findBy({
+      user_id: userId,
+      status: StatusType.PENDING,
+      trade_type: TradeType.SELL,
+      stock_code: stockOrderRequest.stock_code,
+    });
+    const totalPendingCount = pendingOrders.reduce(
+      (sum, pendingOrder) => sum + pendingOrder.amount,
+      0,
+    );
 
-    if (!userStock || userStock.quantity < stockOrderRequest.amount)
+    if (
+      !userStock ||
+      userStock.quantity < stockOrderRequest.amount + totalPendingCount
+    )
       throw new BadRequestException('주식을 매도 수만큼 가지고 있지 않습니다.');
 
     const order = this.stockOrderRepository.create({
@@ -65,7 +89,7 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockOrderSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
   }
 
   async cancel(userId: number, orderId: number) {
@@ -87,7 +111,7 @@ export class StockOrderService {
         status: StatusType.PENDING,
       }))
     )
-      this.stockOrderSocketService.unsubscribeByCode(order.stock_code);
+      this.stockPriceSocketService.unsubscribeByCode(order.stock_code);
   }
 
   async getPendingListByUserId(userId: number) {
@@ -113,7 +137,7 @@ export class StockOrderService {
 
     await Promise.all(
       orders.map((order) =>
-        this.stockOrderSocketService.unsubscribeByCode(order.stock_code),
+        this.stockPriceSocketService.unsubscribeByCode(order.stock_code),
       ),
     );
 

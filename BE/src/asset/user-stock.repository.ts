@@ -17,14 +17,19 @@ export class UserStockRepository extends Repository<UserStock> {
         'stocks',
         'stocks.code = user_stocks.stock_code',
       )
-      .where('user_stocks.user_id = :userId', { userId })
+      .where('user_stocks.user_id = :userId AND user_stocks.quantity > 0', {
+        userId,
+      })
       .getRawMany<UserStockInterface>();
   }
 
-  findAllDistinctCode() {
-    return this.createQueryBuilder('user_stocks')
+  findAllDistinctCode(userId?: number) {
+    const queryBuilder = this.createQueryBuilder('user_stocks')
       .select('DISTINCT user_stocks.stock_code')
-      .where({ quantity: MoreThan(0) })
-      .getRawMany();
+      .where({ quantity: MoreThan(0) });
+
+    if (userId) queryBuilder.andWhere({ user_id: userId });
+
+    return queryBuilder.getRawMany();
   }
 }

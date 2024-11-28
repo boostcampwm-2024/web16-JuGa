@@ -33,15 +33,28 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { email: string }): Promise<{
+  async validate(payload: { email?: string; kakaoId?: string }): Promise<{
     userId: number;
     email: string;
     tutorial: boolean;
     kakaoId: string | null;
     nickname: string;
   }> {
-    const { email } = payload;
-    const user: User = await this.userRepository.findOne({ where: { email } });
+    const { email, kakaoId } = payload;
+
+    let user: User;
+
+    if (kakaoId) {
+      user = await this.userRepository.findOne({
+        where: { kakaoId },
+      });
+      if (!user) throw new UnauthorizedException();
+    } else if (email) {
+      user = await this.userRepository.findOne({
+        where: { email },
+      });
+    }
+
     if (!user) throw new UnauthorizedException();
 
     return {

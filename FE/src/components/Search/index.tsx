@@ -11,6 +11,7 @@ import { getSearchResults } from 'service/getSearchResults.ts';
 import Lottie from 'lottie-react';
 import searchAnimation from 'assets/searchAnimation.json';
 import { useSearchHistory } from './searchHistoryHook.ts';
+import { formatNoSpecialChar } from '../../utils/formatNoSpecialChar.ts';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
@@ -23,16 +24,17 @@ export default function SearchModal() {
     shouldSearch ? searchInput : '',
     500,
   );
-
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['search', debounceValue],
-    queryFn: () => getSearchResults(debounceValue),
+    queryFn: () => getSearchResults(formatNoSpecialChar(debounceValue)),
     enabled: !!debounceValue && !isDebouncing,
+    staleTime: 1000,
+    cacheTime: 1000 * 60,
   });
 
   useEffect(() => {
     if (data && data.length > 0 && debounceValue && !isLoading) {
-      addSearchHistory(debounceValue);
+      addSearchHistory(formatNoSpecialChar(debounceValue));
     }
   }, [data, debounceValue]);
 

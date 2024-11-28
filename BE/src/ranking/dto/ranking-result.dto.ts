@@ -9,9 +9,9 @@ export class RankingResultDto {
   topRank: RankingDataDto[];
 
   @ApiProperty({
-    description: '현재 사용자의 순위 (없을 경우 null)',
-    example: 42,
+    description: '현재 사용자의 랭킹 데이터',
+    example: { rank: 1, value: 10000, nickname: 'trader' },
     nullable: true,
   })
-  userRank: number | null;
+  userRank: RankingDataDto;
 }

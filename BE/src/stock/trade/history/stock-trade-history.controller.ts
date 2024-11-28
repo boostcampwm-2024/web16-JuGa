@@ -2,17 +2,17 @@ import { Observable } from 'rxjs';
 import { Controller, Get, Param, Sse } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StockTradeHistoryService } from './stock-trade-history.service';
-import { StockTradeHistorySocketService } from './stock-trade-history-socket.service';
 import { TodayStockTradeHistoryDataDto } from './dto/today-stock-trade-history-data.dto';
 import { DailyStockTradeHistoryDataDto } from './dto/daily-stock-trade-history-data.dto';
 import { SseEvent } from './interface/sse-event';
+import { StockPriceSocketService } from '../../../stockSocket/stock-price-socket.service';
 
 @ApiTags('주식현재가 체결 조회 API')
 @Controller('/api/stocks/trade-history')
 export class StockTradeHistoryController {
   constructor(
     private readonly stockTradeHistoryService: StockTradeHistoryService,
-    private readonly stockTradeHistorySocketService: StockTradeHistorySocketService,
+    private readonly stockPriceSocketService: StockPriceSocketService,
   ) {}
 
   @Get(':stockCode/today')
@@ -30,12 +30,7 @@ export class StockTradeHistoryController {
     type: TodayStockTradeHistoryDataDto,
   })
   getTodayStockTradeHistory(@Param('stockCode') stockCode: string) {
-    const data =
-      this.stockTradeHistoryService.getTodayStockTradeHistory(stockCode);
-
-    this.stockTradeHistorySocketService.subscribeByCode(stockCode);
-
-    return data;
+    return this.stockTradeHistoryService.getTodayStockTradeHistory(stockCode);
   }
 
   @Get(':stockCode/daily')
@@ -72,15 +67,15 @@ export class StockTradeHistoryController {
     type: TodayStockTradeHistoryDataDto,
   })
   streamTradeHistory(@Param('stockCode') stockCode: string) {
-    this.stockTradeHistorySocketService.subscribeByCode(stockCode);
+    this.stockPriceSocketService.subscribeByCode(stockCode);
 
     return new Observable<SseEvent>((subscriber) => {
-      const subscription = this.stockTradeHistorySocketService
+      const subscription = this.stockPriceSocketService
         .getTradeDataStream(stockCode)
         .subscribe(subscriber);
 
       return () => {
-        this.stockTradeHistorySocketService.unsubscribeByCode(stockCode);
+        this.stockPriceSocketService.unsubscribeByCode(stockCode);
         subscription.unsubscribe();
       };
     });
@@ -100,6 +95,6 @@ export class StockTradeHistoryController {
     description: '구독 취소 성공',
   })
   unsubscribeCode(@Param('stockCode') stockCode: string) {
-    this.stockTradeHistorySocketService.unsubscribeByCode(stockCode);
+    this.stockPriceSocketService.unsubscribeByCode(stockCode);
   }
 }

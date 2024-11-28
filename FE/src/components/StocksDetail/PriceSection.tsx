@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
 import { getTradeHistory } from 'service/getTradeHistory.ts';
-import { createSSEConnection } from './PriceSectionSseHook.ts';
+import { socket } from 'utils/socket.ts';
 
 export default function PriceSection() {
   const { id } = useParams();
@@ -36,18 +36,15 @@ export default function PriceSection() {
 
   useEffect(() => {
     if (!buttonFlag) return;
-    const eventSource = createSSEConnection(
-      `${import.meta.env.VITE_API_URL}/stocks/trade-history/${id}/today-sse`,
-      addData,
-    );
+    const handleTradeHistory = (chartData: PriceDataType) => {
+      addData(chartData);
+    };
+    socket.on(`trade-history/${id}`, handleTradeHistory);
 
     return () => {
-      if (eventSource) {
-        console.log('SSE connection close');
-        eventSource.close();
-      }
+      socket.off(`trade-history/${id}`, handleTradeHistory);
     };
-  }, [buttonFlag, id, addData]);
+  }, [id, addData, buttonFlag]);
 
   useEffect(() => {
     const tmpIndex = buttonFlag ? 0 : 1;

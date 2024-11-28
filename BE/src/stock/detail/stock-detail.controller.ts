@@ -1,15 +1,26 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { StockDetailService } from './stock-detail.service';
 import { InquirePriceResponseDto } from './dto/stock-detail-response.dto';
 import { StockDetailChartRequestDto } from './dto/stock-detail-chart-request.dto';
 import { InquirePriceChartResponseDto } from './dto/stock-detail-chart-response.dto';
+import { OptionalAuthGuard } from '../../auth/optional-auth-guard';
 
 @ApiTags('특정 주식 종목에 대한 detail 페이지 조회 API')
 @Controller('/api/stocks/detail')
@@ -17,6 +28,8 @@ export class StockDetailController {
   constructor(private readonly stockDetailService: StockDetailService) {}
 
   @Get(':stockCode')
+  @ApiBearerAuth()
+  @UseGuards(OptionalAuthGuard)
   @ApiOperation({ summary: '단일 주식 종목 detail 페이지 상단부 조회 API' })
   @ApiParam({
     name: 'stockCode',
@@ -30,8 +43,18 @@ export class StockDetailController {
     description: '단일 주식 종목 기본값 조회 성공',
     type: InquirePriceResponseDto,
   })
-  getStockDetail(@Param('stockCode') stockCode: string) {
-    return this.stockDetailService.getInquirePrice(stockCode);
+  async getStockDetail(
+    @Req() request: Request,
+    @Param('stockCode') stockCode: string,
+  ) {
+    const stockData = await this.stockDetailService.getInquirePrice(stockCode);
+    if (!request.user) return stockData;
+
+    stockData.is_bookmarked = await this.stockDetailService.getBookmarkActive(
+      parseInt(request.user.userId, 10),
+      stockCode,
+    );
+    return stockData;
   }
 
   @Post(':stockCode')
@@ -60,12 +83,11 @@ export class StockDetailController {
     @Param('stockCode') stockCode: string,
     @Body() body: StockDetailChartRequestDto,
   ) {
-    const { fid_input_date_1, fid_input_date_2, fid_period_div_code } = body;
+    const { count, fid_period_div_code } = body;
     return this.stockDetailService.getInquirePriceChart(
       stockCode,
-      fid_input_date_1,
-      fid_input_date_2,
       fid_period_div_code,
+      count,
     );
   }
 }

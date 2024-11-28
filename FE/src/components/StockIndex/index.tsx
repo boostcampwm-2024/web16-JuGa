@@ -1,21 +1,22 @@
 import { Card } from './Card.tsx';
 import { useQuery } from '@tanstack/react-query';
+import { getStockIndex } from '../../service/getStockIndex.ts';
 
 export default function StockIndex() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['StockIndex'],
-    queryFn: () =>
-      fetch(`${import.meta.env.VITE_API_URL}/stocks/index`).then((res) =>
-        res.json(),
-      ),
+    queryFn: () => getStockIndex(),
+    staleTime: 1000,
+    cacheTime: 60000,
   });
 
-  if (isLoading) return;
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading data</div>;
 
   const { KOSPI, KOSDAQ, KOSPI200, KSQ150 } = data;
 
   return (
-    <div className='flex items-center justify-between w-full gap-2 my-2'>
+    <div className='my-2 flex w-full items-center justify-between gap-2'>
       <Card name='코스피' id='KOSPI' initialData={KOSPI} />
       <Card name='코스닥' id='KOSDAQ' initialData={KOSDAQ} />
       <Card name='코스피200' id='KOSPI200' initialData={KOSPI200} />

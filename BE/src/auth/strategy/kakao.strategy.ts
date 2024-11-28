@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-kakao';
+import { UserRepository } from '../user.repository';
 
 interface KakaoStrategyOptions {
   clientID: string;
@@ -28,7 +29,10 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
   Strategy,
   'kakao',
 ) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userRepository: UserRepository,
+  ) {
     const options: KakaoStrategyOptions = {
       clientID: configService.get<string>('KAKAO_CLIENT_ID') || '',
       clientSecret: '',
@@ -47,12 +51,11 @@ export class KakaoStrategy extends PassportStrategy<Strategy>(
     try {
       // eslint-disable-next-line no-underscore-dangle
       const kakaoId = profile._json.id;
-      // eslint-disable-next-line no-underscore-dangle
-      const { email } = profile._json.kakao_account;
+
       const user = {
-        email,
         kakaoId,
       };
+
       done(null, user);
     } catch (error) {
       done(error instanceof Error ? error : new Error(String(error)));

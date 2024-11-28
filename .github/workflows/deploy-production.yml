@@ -18,8 +18,34 @@ jobs:
       matrix:
         app:
           [
-            { name: 'be', dir: 'BE', port: 3000, container: 'juga-docker-be' },
-            { name: 'fe', dir: 'FE', port: 5173, container: 'juga-docker-fe' },
+            {
+              name: 'be-1',
+              dir: 'BE',
+              port: 3000,
+              container: 'juga-docker-be-1',
+              env: 'ENV_BE_1',
+            },
+            {
+              name: 'be-2',
+              dir: 'BE',
+              port: 3001,
+              container: 'juga-docker-be-2',
+              env: 'ENV_BE_2',
+            },
+            {
+              name: 'be-3',
+              dir: 'BE',
+              port: 3002,
+              container: 'juga-docker-be-3',
+              env: 'ENV_BE_3',
+            },
+            {
+              name: 'fe',
+              dir: 'FE',
+              port: 5173,
+              container: 'juga-docker-fe',
+              env: 'ENV_FE',
+            },
           ]
 
     steps:
@@ -35,7 +61,7 @@ jobs:
       - name: Create .env file
         run: |
           touch ./${{ matrix.app.dir }}/.env
-          echo "${{ secrets.ENV }}" > ./${{matrix.app.dir}}/.env
+          echo "${{ secrets[matrix.app.env] }}" > ./${{matrix.app.dir}}/.env
 
       - name: Install dependencies
         working-directory: ./${{matrix.app.dir}}
@@ -43,7 +69,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        if: ${{ matrix.app.name == 'be' }}
+        if: ${{ contains(matrix.app.name, 'be') }}
         working-directory: ./${{matrix.app.dir}}
         run: npm test
         env:
@@ -116,15 +142,17 @@ jobs:
           script: |
             docker system prune -af
 
-            echo "${{ secrets.ENV }}" > .env
+            echo "${{ secrets[matrix.app.env] }}" > ${{matrix.app.name}}.env
             docker network create juga-network || true
 
-            docker run -d \
-              --name redis \
-              --network juga-network \
-              -p 6379:6379 \
-              -v redis_data:/data \
-              redis:latest redis-server --appendonly yes
+            if [ "${{ matrix.app.name }}" = "be-1" ]; then
+              docker run -d \
+                --name redis \
+                --network juga-network \
+                -p 6379:6379 \
+                -v redis_data:/data \
+                redis:latest redis-server --appendonly yes
+            fi
 
             docker pull ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
             docker stop ${{ matrix.app.container }} || true
@@ -132,9 +160,13 @@ jobs:
             docker run -d \
               --name ${{ matrix.app.container }} \
               --network juga-network \
-              -p ${{ matrix.app.port }}:${{ matrix.app.port }} \
-              --env-file .env \
+              -p ${{ matrix.app.port }}:3000 \
+              --env-file ${{matrix.app.name}}.env \
               ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}
+
+            docker ps | grep ${{ matrix.app.container }}
+            docker logs ${{ matrix.app.container }}
+            rm ${{matrix.app.name}}.env
 
       - name: Remove Github Action Ip to Security group
         run: |

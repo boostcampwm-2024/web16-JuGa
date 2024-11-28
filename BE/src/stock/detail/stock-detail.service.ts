@@ -63,6 +63,7 @@ export class StockDetailService {
       per: stock.per,
       stck_mxpr: stock.stck_mxpr,
       stck_llam: stock.stck_llam,
+      is_bookmarked: false,
     };
   }
 
@@ -78,15 +79,20 @@ export class StockDetailService {
    */
   async getInquirePriceChart(
     stockCode: string,
-    date1: string,
-    date2: string,
     periodDivCode: string,
+    count: number = 30,
   ) {
+    const today = new Date();
+    const prevDay = new Date();
+    prevDay.setDate(today.getDate() - 20000);
+    const newDate2 = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const newDate1 = prevDay.toISOString().slice(0, 10).replace(/-/g, '');
+
     const queryParams = {
       fid_cond_mrkt_div_code: 'J',
       fid_input_iscd: stockCode,
-      fid_input_date_1: date1,
-      fid_input_date_2: date2,
+      fid_input_date_1: newDate1,
+      fid_input_date_2: newDate2,
       fid_period_div_code: periodDivCode,
       fid_org_adj_prc: '0',
     };
@@ -98,7 +104,14 @@ export class StockDetailService {
         queryParams,
       );
 
-    return this.formatStockInquirePriceData(response).slice().reverse();
+    return this.formatStockInquirePriceData(response).slice(-count);
+  }
+
+  getBookmarkActive(userId: number, stockCode: string) {
+    return this.stockDetailRepository.existsBookmarkByUserIdAndStockCode(
+      userId,
+      stockCode,
+    );
   }
 
   /**
@@ -109,9 +122,17 @@ export class StockDetailService {
    * @author uuuo3o
    */
   private formatStockInquirePriceData(response: InquirePriceChartApiResponse) {
-    const { output2 } = response;
+    const output2 = response.output2.filter(
+      (item) => Object.keys(item).length !== 0,
+    );
 
-    return output2.map((info) => {
+    output2.sort((a, b) => {
+      if (a.stck_bsop_date > b.stck_bsop_date) return 1;
+      if (a.stck_bsop_date < b.stck_bsop_date) return -1;
+      return 0;
+    });
+
+    return output2.map((info, index) => {
       const stockData = new InquirePriceChartDataDto();
       const {
         stck_bsop_date,
@@ -130,6 +151,20 @@ export class StockDetailService {
       stockData.stck_lwpr = stck_lwpr;
       stockData.acml_vol = acml_vol;
       stockData.prdy_vrss_sign = prdy_vrss_sign;
+
+      if (index >= 4) {
+        const movAvg5 = output2
+          .slice(index - 4, index + 1)
+          .reduce((acc, cur) => acc + Number(cur.stck_clpr), 0);
+        stockData.mov_avg_5 = (movAvg5 / 5).toFixed(2);
+      }
+
+      if (index >= 19) {
+        const movAvg20 = output2
+          .slice(index - 19, index + 1)
+          .reduce((acc, cur) => acc + Number(cur.stck_clpr), 0);
+        stockData.mov_avg_20 = (movAvg20 / 20).toFixed(2);
+      }
 
       return stockData;
     });

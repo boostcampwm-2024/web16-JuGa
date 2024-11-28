@@ -13,7 +13,7 @@ export default function StocksDetail() {
   const { data, isLoading } = useQuery(
     ['stocks', code],
     () => getStocksByCode(code!),
-    { enabled: !!code },
+    { staleTime: 1000, enabled: !!code },
   );
 
   if (!code) return <div>Non code</div>;
