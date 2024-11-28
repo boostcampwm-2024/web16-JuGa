@@ -68,7 +68,8 @@
 </div>
 
 ## 🏛️ 소프트웨어 아키텍처
-![아키텍처 2 0](https://github.com/user-attachments/assets/e0c33dfc-7495-48bf-ba4a-5fd911f66f9a)
+<img width="2336" alt="소프트웨어 아키텍처 3 0" src="https://github.com/user-attachments/assets/3e4d5e3c-3fc5-44a5-8a8e-77bd704e22f2">
+
 
 ## 🧑🏻 팀원 소개
 | 🖥️ Web FE | ⚙️ Web BE | ⚙️ Web BE | 🖥️ Web FE | ⚙️ Web BE |
