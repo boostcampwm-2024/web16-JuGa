@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import {
   ApiBearerAuth,
@@ -30,7 +30,7 @@ export class UserController {
     return this.userService.getProfile(parseInt(request.user.userId, 10));
   }
 
-  @Post('/rename')
+  @Patch('/rename')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '유저 닉네임 변경 API',
