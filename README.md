@@ -23,20 +23,48 @@
 - 친구들과 함께 성장하는 재미를 느껴보세요.
 - 경쟁하고 정보도 나누며 더 즐겁게 배워보세요.
 
----
-## ♥️ 사이트 이용방법
-[사이트](https://juga.kro.kr/)에 접속하신 후에,
-ID: **jindding** / PW: **1234** 를 입력해주시면 매수 등 로그인 후 사용가능한 서비스를 이용하실 수 있습니다.
+### [🚀 시작하기](https://juga.kro.kr/)
 
-현재 카카오로 로그인하기 기능은 심사 대기 중으로 사용이 불가능합니다.
+> 위의 시작하기를 누르면 사이트로 이동됩니다.
+> 
 
-## 🗂️ 기술 스택
-<div align="center">
-  <img width="800" alt="기술 스택" src="https://github.com/user-attachments/assets/d58700ea-8bfe-459f-8b67-d0864bf76693">
-</div>
+### 테스트 계정
+
+- ID: **jindding**
+- Password: **1234**
+
+### 주의사항
+
+- 카카오 로그인 기능은 현재 심사 중으로 사용이 불가능합니다.
+- 실제 금전적 거래는 이루어지지 않는 모의투자 서비스입니다.
+
+## ⭐️ 프로젝트 기능 소개 
+
+### 주식 차트
+![화면 기록 2024-11-28 오후 6 40 30](https://github.com/user-attachments/assets/6d36b0d9-2db2-4018-a7f3-2c12fb586fd0)
+
+- 일, 별, 월, 년 단위로 주식 차트를 확인할 수 있습니다.   
+- 이동평균선 정보를 활용해 해당 주식의 추이를 더 자세히 확인할 수 있습니다.   
+- 라이브러리를 사용하지 않고 canvas를 활용해 직접 구현했습니다.   
+
+### 로그인
+![image (14)](https://github.com/user-attachments/assets/9968ef08-cbf8-41fd-bfdc-8ca25dd8d80c)
+
+- 로그인 모달창에서 로그인을 할 수 있습니다.
+- 카카오 oAuth 로그인으로 간편하게 로그인할 수 있습니다.
+
+
+### 랭킹
+![image (15)](https://github.com/user-attachments/assets/251821a9-63d9-4f23-9178-2f8f3d8c608d)
+
+- 하루 단위로 랭킹이 갱신됩니다.
+- 수익률순, 자산순을 기준으로 랭킹을 확인할 수 있습니다.
+- 자신의 오늘 랭킹을 확인할 수 있습니다.
+
 
 ## 🏛️ 소프트웨어 아키텍처
-![아키텍처 2 0](https://github.com/user-attachments/assets/e0c33dfc-7495-48bf-ba4a-5fd911f66f9a)
+<img width="2336" alt="소프트웨어 아키텍처 3 0" src="https://github.com/user-attachments/assets/3e4d5e3c-3fc5-44a5-8a8e-77bd704e22f2">
+
 
 ## 🧑🏻 팀원 소개
 | 🖥️ Web FE | ⚙️ Web BE | ⚙️ Web BE | 🖥️ Web FE | ⚙️ Web BE |

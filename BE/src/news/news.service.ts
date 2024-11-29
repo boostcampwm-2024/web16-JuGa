@@ -49,9 +49,17 @@ export class NewsService {
   @Cron('*/1 8-16 * * 1-5')
   async cronNewsData() {
     await this.newsRepository.delete({ query: In(['증권', '주식']) });
-    await this.getNewsDataByQuery('주식');
-    await this.getNewsDataByQuery('증권');
+    const stockNews = await this.getNewsDataByQuery('주식');
+    const securityNews = await this.getNewsDataByQuery('증권');
 
+    const allNews = [...stockNews, ...securityNews];
+    const uniqueNews = allNews.filter(
+      (news, index) =>
+        allNews.findIndex((i) => i.originallink === news.originallink) ===
+        index,
+    );
+
+    await this.newsRepository.save(uniqueNews);
     await this.newsRepository.update(
       {},
       {
@@ -67,13 +75,16 @@ export class NewsService {
 
     const response =
       await this.naverApiDomainService.requestApi<NewsApiResponse>(queryParams);
-    const formattedData = this.formatNewsData(value, response.items);
-
-    return this.newsRepository.save(formattedData);
+    return this.newsRepository.save(this.formatNewsData(value, response.items));
   }
 
   private formatNewsData(query: string, items: NewsDataOutputDto[]) {
-    return items.slice(0, 10).map((item) => {
+    const uniqueItems = items.filter(
+      (item, index) =>
+        items.findIndex((i) => i.originallink === item.originallink) === index,
+    );
+
+    return uniqueItems.slice(0, 10).map((item) => {
       const result = new NewsItemDataDto();
 
       result.title = this.htmlEncode(item.title);
