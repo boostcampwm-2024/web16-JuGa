@@ -30,7 +30,7 @@ export const drawXAxis = (
 
   const barWidth = Math.floor(width / data.length);
   data.forEach((item, i) => {
-    if (labels.includes(item.stck_bsop_date) || i === data.length - 1) {
+    if (labels.includes(item.stck_bsop_date)) {
       ctx.fillText(
         formatTime(item.stck_bsop_date),
         padding.left + (width * i) / (data.length - 1) + barWidth / 2,
