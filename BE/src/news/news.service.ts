@@ -48,7 +48,7 @@ export class NewsService {
     };
   }
 
-  @Cron('*/1 * * * *')
+  @Cron('*/30 8-16 * * 1-5')
   async cronNewsData() {
     const queryRunner = this.dataSource.createQueryRunner();
 
