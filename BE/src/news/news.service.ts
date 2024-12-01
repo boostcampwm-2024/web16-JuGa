@@ -46,7 +46,7 @@ export class NewsService {
     };
   }
 
-  // @Cron('*/1 8-16 * * 1-5')
+  @Cron('*/1 8-16 * * 1-5')
   async cronNewsData() {
     await this.newsRepository.delete({ query: In(['증권', '주식']) });
     await this.getNewsDataByQuery('주식');
