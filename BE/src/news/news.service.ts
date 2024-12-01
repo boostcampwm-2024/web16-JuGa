@@ -51,11 +51,12 @@ export class NewsService {
   @Cron('*/1 * * * *')
   async cronNewsData() {
     const queryRunner = this.dataSource.createQueryRunner();
-    if (!queryRunner.isTransactionActive) {
-      await queryRunner.startTransaction('SERIALIZABLE');
-    }
 
     try {
+      if (!queryRunner.isTransactionActive) {
+        await queryRunner.startTransaction('SERIALIZABLE');
+      }
+
       await this.newsRepository.delete({ query: In(['증권', '주식']) });
       const stockNews = await this.getNewsDataByQuery('주식');
       const securityNews = await this.getNewsDataByQuery('증권');
@@ -74,6 +75,8 @@ export class NewsService {
           updatedAt: new Date(),
         },
       );
+
+      await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException(err);
