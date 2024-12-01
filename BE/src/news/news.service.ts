@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { In } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, In } from 'typeorm';
 import { NaverApiDomianService } from './naver-api-domian.service';
 import { NewsApiResponse } from './interface/news-value.interface';
 import { NewsDataOutputDto } from './dto/news-data-output.dto';
@@ -14,6 +15,7 @@ export class NewsService {
   constructor(
     private readonly naverApiDomainService: NaverApiDomianService,
     private readonly newsRepository: NewsRepository,
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   async getNews(): Promise<NewsResponseDto> {
@@ -46,18 +48,41 @@ export class NewsService {
     };
   }
 
-  @Cron('*/1 8-16 * * 1-5')
+  @Cron('*/1 * * * *')
   async cronNewsData() {
-    await this.newsRepository.delete({ query: In(['증권', '주식']) });
-    await this.getNewsDataByQuery('주식');
-    await this.getNewsDataByQuery('증권');
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    await this.newsRepository.update(
-      {},
-      {
-        updatedAt: new Date(),
-      },
-    );
+    try {
+      if (!queryRunner.isTransactionActive) {
+        await queryRunner.startTransaction('SERIALIZABLE');
+      }
+
+      await this.newsRepository.delete({ query: In(['증권', '주식']) });
+      const stockNews = await this.getNewsDataByQuery('주식');
+      const securityNews = await this.getNewsDataByQuery('증권');
+
+      const allNews = [...stockNews, ...securityNews];
+      const uniqueNews = allNews.filter(
+        (news, index) =>
+          allNews.findIndex((i) => i.originallink === news.originallink) ===
+          index,
+      );
+
+      await this.newsRepository.save(uniqueNews);
+      await this.newsRepository.update(
+        {},
+        {
+          updatedAt: new Date(),
+        },
+      );
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException(err);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async getNewsDataByQuery(value: string) {
@@ -67,9 +92,7 @@ export class NewsService {
 
     const response =
       await this.naverApiDomainService.requestApi<NewsApiResponse>(queryParams);
-    const formattedData = this.formatNewsData(value, response.items);
-
-    return this.newsRepository.save(formattedData);
+    return this.newsRepository.save(this.formatNewsData(value, response.items));
   }
 
   private formatNewsData(query: string, items: NewsDataOutputDto[]) {
