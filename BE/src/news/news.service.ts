@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { In } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, In } from 'typeorm';
 import { NaverApiDomianService } from './naver-api-domian.service';
 import { NewsApiResponse } from './interface/news-value.interface';
 import { NewsDataOutputDto } from './dto/news-data-output.dto';
@@ -14,6 +15,7 @@ export class NewsService {
   constructor(
     private readonly naverApiDomainService: NaverApiDomianService,
     private readonly newsRepository: NewsRepository,
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   async getNews(): Promise<NewsResponseDto> {
@@ -46,26 +48,38 @@ export class NewsService {
     };
   }
 
-  @Cron('*/1 8-16 * * 1-5')
+  @Cron('*/1 * * * *')
   async cronNewsData() {
-    await this.newsRepository.delete({ query: In(['증권', '주식']) });
-    const stockNews = await this.getNewsDataByQuery('주식');
-    const securityNews = await this.getNewsDataByQuery('증권');
+    const queryRunner = this.dataSource.createQueryRunner();
+    if (!queryRunner.isTransactionActive) {
+      await queryRunner.startTransaction('SERIALIZABLE');
+    }
 
-    const allNews = [...stockNews, ...securityNews];
-    const uniqueNews = allNews.filter(
-      (news, index) =>
-        allNews.findIndex((i) => i.originallink === news.originallink) ===
-        index,
-    );
+    try {
+      await this.newsRepository.delete({ query: In(['증권', '주식']) });
+      const stockNews = await this.getNewsDataByQuery('주식');
+      const securityNews = await this.getNewsDataByQuery('증권');
 
-    await this.newsRepository.save(uniqueNews);
-    await this.newsRepository.update(
-      {},
-      {
-        updatedAt: new Date(),
-      },
-    );
+      const allNews = [...stockNews, ...securityNews];
+      const uniqueNews = allNews.filter(
+        (news, index) =>
+          allNews.findIndex((i) => i.originallink === news.originallink) ===
+          index,
+      );
+
+      await this.newsRepository.save(uniqueNews);
+      await this.newsRepository.update(
+        {},
+        {
+          updatedAt: new Date(),
+        },
+      );
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException(err);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async getNewsDataByQuery(value: string) {
@@ -79,12 +93,7 @@ export class NewsService {
   }
 
   private formatNewsData(query: string, items: NewsDataOutputDto[]) {
-    const uniqueItems = items.filter(
-      (item, index) =>
-        items.findIndex((i) => i.originallink === item.originallink) === index,
-    );
-
-    return uniqueItems.slice(0, 10).map((item) => {
+    return items.slice(0, 10).map((item) => {
       const result = new NewsItemDataDto();
 
       result.title = this.htmlEncode(item.title);
