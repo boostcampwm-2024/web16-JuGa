@@ -476,24 +476,37 @@ export default function Chart({ code }: StocksDeatailChartProps) {
               </button>
               <div className='text-xs text-black'>이동평균선</div>
               <div className='flex gap-1'>
-                <span className='text-xs text-orange-500'>5</span>
-                {mouseIndex !== null && data ? (
-                  <span className={'text-xs'}>
-                    {Math.floor(
-                      Number(data[mouseIndex].mov_avg_5),
-                    ).toLocaleString()}
-                    원
-                  </span>
-                ) : null}
-                <span className='text-xs text-green-600'>20</span>
-                {mouseIndex !== null && data ? (
-                  <span className={'text-xs'}>
-                    {Math.floor(
-                      Number(data[mouseIndex].mov_avg_20),
-                    ).toLocaleString()}
-                    원
-                  </span>
-                ) : null}
+                {mouseIndex !== null ? (
+                  data && !isNaN(Number(data[mouseIndex].mov_avg_5)) ? (
+                    <>
+                      <span className='text-xs text-orange-500'>5</span>
+                      <span className='text-xs'>
+                        {Math.floor(
+                          Number(data[mouseIndex].mov_avg_5),
+                        ).toLocaleString()}
+                        원
+                      </span>
+                    </>
+                  ) : null
+                ) : (
+                  <span className='text-xs text-orange-500'>5</span>
+                )}
+
+                {mouseIndex !== null ? (
+                  data && !isNaN(Number(data[mouseIndex].mov_avg_20)) ? (
+                    <>
+                      <span className='text-xs text-green-600'>20</span>
+                      <span className={'text-xs'}>
+                        {Math.floor(
+                          Number(data[mouseIndex].mov_avg_20),
+                        ).toLocaleString()}
+                        원
+                      </span>
+                    </>
+                  ) : null
+                ) : (
+                  <span className='text-xs text-green-600'>20</span>
+                )}
               </div>
             </div>
           </div>

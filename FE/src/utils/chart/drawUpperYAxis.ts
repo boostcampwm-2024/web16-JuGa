@@ -36,7 +36,11 @@ export const drawUpperYAxis = (
     const valueRatio = (label - yMin) / (yMax - yMin);
     const yPos = height - valueRatio * height;
     const formattedValue = label.toLocaleString();
-    ctx.fillText(formattedValue, width / 2 + padding.left, yPos + padding.top);
+    ctx.fillText(
+      formattedValue,
+      width / 2 + padding.left / 2,
+      yPos + padding.top,
+    );
   });
 
   if (
@@ -58,7 +62,7 @@ export const drawUpperYAxis = (
     const textWidth = ctx.measureText(valueText).width;
 
     ctx.fillStyle = '#2175F3';
-    const boxX = width / 2 + padding.left - 12;
+    const boxX = width / 2 + padding.left / 2 - 12;
     const boxY = mousePosition.y - boxHeight / 2;
 
     ctx.fillRect(boxX, boxY, textWidth + boxPadding * 2, boxHeight);
