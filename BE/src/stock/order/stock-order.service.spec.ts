@@ -12,9 +12,6 @@ import { AssetRepository } from '../../asset/asset.repository';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
 
-jest.mock('../../asset/asset.repository');
-jest.mock('./stock-order.repository');
-
 describe('stock order test', () => {
   let stockOrderService: StockOrderService;
   let stockOrderRepository: StockOrderRepository;
