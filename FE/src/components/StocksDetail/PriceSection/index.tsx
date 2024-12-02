@@ -4,39 +4,38 @@ import TableLiveCard from './TableLiveCard.tsx';
 import TableDayCard from './TableDayCard.tsx';
 import { useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-
-import { getTradeHistory } from 'service/getTradeHistory.ts';
+import { getTradeHistory } from 'service/tradeHistory.ts';
 import { socket } from 'utils/socket.ts';
 import { DailyPriceDataType, PriceDataType } from './type.ts';
+import { PriceSectionViewType } from 'types.ts';
 
-export default function Index() {
+export default function PriceSection() {
   const { id } = useParams();
-  const [buttonFlag, setButtonFlag] = useState(true);
+  const [viewMode, setViewMode] = useState<PriceSectionViewType>('today');
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const queryClient = useQueryClient();
 
   const { data: tradeData = [], isLoading } = useQuery({
-    queryKey: ['detail', id, buttonFlag],
-    queryFn: () => getTradeHistory(id as string, buttonFlag),
-    cacheTime: 30000,
-    staleTime: 1000,
+    queryKey: ['detail', id, viewMode],
+    queryFn: () => getTradeHistory(id as string, viewMode),
+    staleTime: 1000 * 60 * 3,
   });
 
   const addData = useCallback(
     (newData: PriceDataType) => {
       queryClient.setQueryData(
-        ['detail', id, buttonFlag],
+        ['detail', id, viewMode],
         (old: PriceDataType[] = []) => {
           return [newData, ...old].slice(0, 30);
         },
       );
     },
-    [id, buttonFlag],
+    [id, viewMode, queryClient],
   );
 
   useEffect(() => {
-    if (!buttonFlag) return;
+    if (viewMode === 'daily') return;
     const handleTradeHistory = (chartData: PriceDataType) => {
       addData(chartData);
     };
@@ -45,10 +44,10 @@ export default function Index() {
     return () => {
       socket.off(`trade-history/${id}`, handleTradeHistory);
     };
-  }, [id, addData, buttonFlag]);
+  }, [id, addData, viewMode]);
 
   useEffect(() => {
-    const tmpIndex = buttonFlag ? 0 : 1;
+    const tmpIndex = viewMode === 'today' ? 0 : 1;
     const currentButton = buttonRefs.current[tmpIndex];
     const indicator = indicatorRef.current;
 
@@ -56,7 +55,7 @@ export default function Index() {
       indicator.style.left = `${currentButton.offsetLeft}px`;
       indicator.style.width = `${currentButton.offsetWidth}px`;
     }
-  }, [buttonFlag]);
+  }, [viewMode]);
 
   return (
     <div
@@ -84,22 +83,20 @@ export default function Index() {
           />
           <button
             className={`z-7 relative w-full rounded-lg px-4 py-1 ${
-              buttonFlag
-                ? 'text-juga-grayscale-black'
-                : 'text-juga-grayscale-400'
+              viewMode ? 'text-juga-grayscale-black' : 'text-juga-grayscale-400'
             }`}
-            onClick={() => setButtonFlag(true)}
+            onClick={() => setViewMode('today')}
             ref={(el) => (buttonRefs.current[0] = el)}
           >
             실시간
           </button>
           <button
             className={`z-7 relative w-full rounded-lg ${
-              !buttonFlag
+              !viewMode
                 ? 'text-juga-grayscale-black'
                 : 'text-juga-grayscale-400'
             } z-7 relative w-full rounded-lg px-4 py-1`}
-            onClick={() => setButtonFlag(false)}
+            onClick={() => setViewMode('daily')}
             ref={(el) => (buttonRefs.current[1] = el)}
           >
             일별
@@ -108,7 +105,7 @@ export default function Index() {
 
         <div className={'flex-1 overflow-y-auto'}>
           <table className={'w-full table-fixed text-xs font-normal'}>
-            <TableColumn viewMode={buttonFlag} />
+            <TableColumn viewMode={viewMode} />
             <tbody>
               {isLoading ? (
                 <tr>
@@ -118,7 +115,7 @@ export default function Index() {
                 <tr>
                   <td>No data available</td>
                 </tr>
-              ) : buttonFlag ? (
+              ) : viewMode === 'today' ? (
                 tradeData.map((eachData: PriceDataType, index: number) => (
                   <TableLiveCard
                     key={`${eachData.stck_cntg_hour}-${index}`}

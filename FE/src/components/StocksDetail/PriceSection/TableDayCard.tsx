@@ -1,4 +1,4 @@
-import { formatTime } from 'utils/formatTime.ts';
+import { formatTime } from 'utils/format.ts';
 import { DailyPriceDataType } from './type.ts';
 
 type PriceTableDayCardProps = {

@@ -91,3 +91,5 @@ export type BookmakredStock = {
   prdy_vrss_sign: string;
   prdy_ctrt: string;
 };
+
+export type PriceSectionViewType = 'today' | 'daily';

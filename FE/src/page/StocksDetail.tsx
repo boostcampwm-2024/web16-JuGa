@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import Chart from 'components/StocksDetail/Chart';
 import Header from 'components/StocksDetail/Header';
-import Index from 'components/StocksDetail/PriceSection';
+import PriceSection from 'components/StocksDetail/PriceSection';
 import TradeSection from 'components/StocksDetail/TradeSection';
 import { useParams } from 'react-router-dom';
 import { getStocksByCode } from 'service/stocks';
@@ -26,7 +26,7 @@ export default function StocksDetail() {
       <div className='flex h-[500px]'>
         <div className='flex min-w-[850px] flex-col'>
           <Chart code={code} />
-          <Index />
+          <PriceSection />
         </div>
         <TradeSection code={code} data={data} />
       </div>

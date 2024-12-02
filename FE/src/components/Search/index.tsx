@@ -7,11 +7,11 @@ import SearchList from './SearchList.tsx';
 import useSearchInputStore from 'store/useSearchInputStore.ts';
 import { useDebounce } from 'hooks/useDebounce.ts';
 import { useQuery } from '@tanstack/react-query';
-import { getSearchResults } from 'service/getSearchResults.ts';
 import Lottie from 'lottie-react';
 import searchAnimation from 'assets/searchAnimation.json';
-import { useSearchHistory } from '../../hooks/searchHistoryHook.ts';
-import { formatNoSpecialChar } from '../../utils/formatNoSpecialChar.ts';
+import { useSearchHistory } from 'hooks/useSearchHistoryHook.ts';
+import { getSearchResults } from 'service/search.ts';
+import { formatNoSpecialChar } from 'utils/format.ts';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
@@ -36,7 +36,7 @@ export default function SearchModal() {
     if (data && data.length > 0 && debounceValue && !isLoading) {
       addSearchHistory(formatNoSpecialChar(debounceValue));
     }
-  }, [data, debounceValue]);
+  }, [data, debounceValue, addSearchHistory, isLoading]);
 
   if (!isOpen) return null;
 

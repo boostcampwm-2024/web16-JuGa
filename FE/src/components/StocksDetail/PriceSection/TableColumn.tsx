@@ -1,6 +1,9 @@
+import { PriceSectionViewType } from 'types';
+
 type Props = {
-  viewMode: boolean;
+  viewMode: PriceSectionViewType;
 };
+
 export default function TableColumn({ viewMode }: Props) {
   if (!viewMode) {
     return (

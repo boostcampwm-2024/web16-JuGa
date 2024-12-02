@@ -1,5 +1,5 @@
 import Card from './Card.tsx';
-import useAuthStore from '../../store/authStore.ts';
+import useAuthStore from '../../store/useAuthStore.ts';
 import { RankingCategory } from './type.ts';
 
 type Props = {
@@ -12,18 +12,14 @@ export default function List({ title, data }: Props) {
   const { isLogin } = useAuthStore();
   return (
     <div className={'flex flex-col gap-5'}>
-      <div className='w-full rounded-lg bg-white p-2 shadow-lg'>
-        <div className='mb-1 border-b pb-1'>
+      <div className='w-full p-2 bg-white rounded-lg shadow-lg'>
+        <div className='pb-1 mb-1 border-b'>
           <h3 className='text-base font-bold text-gray-800'>{title}</h3>
         </div>
 
         <div className='space-y-1'>
           {topRank.map((item, index) => (
-            <Card
-              key={`${item.nickname}-${index}`}
-              item={item}
-              type={title}
-            />
+            <Card key={`${item.nickname}-${index}`} item={item} type={title} />
           ))}
         </div>
       </div>

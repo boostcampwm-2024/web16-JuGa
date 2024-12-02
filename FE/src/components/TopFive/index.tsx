@@ -2,12 +2,11 @@ import List from './List';
 import Nav from './Nav';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-
-import { getTopFiveStocks } from 'service/getTopFiveStocks.ts';
 import { MarketType } from './type.ts';
 import { stockIndexMap } from 'constants.ts';
+import { getTopFiveStocks } from 'service/stocks.ts';
 
-export default function Index() {
+export default function TopFive() {
   const [searchParams] = useSearchParams();
   const currentMarket = (searchParams.get('top') || '전체') as MarketType;
 

@@ -1,5 +1,5 @@
 import Overay from 'components/ModalOveray';
-import useOrderCancelAlertModalStore from 'store/orderCancleAlertModalStore';
+import useOrderCancelAlertModalStore from 'store/useOrderCancleAlertModalStore';
 
 export default function CancleAlertModal() {
   const { close, onSuccess, order } = useOrderCancelAlertModalStore();
@@ -17,7 +17,7 @@ export default function CancleAlertModal() {
         </div>
         <div className='flex justify-center gap-2'>
           <button
-            className='w-24 px-6 py-2 text-white transition rounded-xl bg-juga-grayscale-500 hover:bg-juga-grayscale-black'
+            className='w-24 rounded-xl bg-juga-grayscale-500 px-6 py-2 text-white transition hover:bg-juga-grayscale-black'
             onClick={() => {
               onSuccess();
               close();
@@ -26,7 +26,7 @@ export default function CancleAlertModal() {
             네
           </button>
           <button
-            className='w-24 px-6 py-2 text-gray-800 rounded-xl bg-juga-grayscale-100 hover:bg-juga-grayscale-200'
+            className='w-24 rounded-xl bg-juga-grayscale-100 px-6 py-2 text-gray-800 hover:bg-juga-grayscale-200'
             onClick={close}
           >
             아니오
