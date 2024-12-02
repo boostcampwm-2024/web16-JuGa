@@ -1,5 +1,4 @@
-import { Padding } from 'types.ts';
-import { MousePositionType } from 'components/StocksDetail/Chart.tsx';
+import { MousePositionType, Padding } from 'types.ts';
 
 export const drawMouseGrid = (
   upperChartCtx: CanvasRenderingContext2D,

@@ -1,6 +1,5 @@
-import { Padding, StockChartUnit } from 'types.ts';
+import { MousePositionType, Padding, StockChartUnit } from 'types.ts';
 import { makeXLabels } from './makeLabels.ts';
-import { MousePositionType } from '../../components/StocksDetail/Chart.tsx';
 import { formatTime } from 'utils/format.ts';
 
 export const drawXAxis = (

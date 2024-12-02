@@ -93,3 +93,8 @@ export type BookmakredStock = {
 };
 
 export type PriceSectionViewType = 'today' | 'daily';
+
+export type MousePositionType = {
+  x: number;
+  y: number;
+};

@@ -1,6 +1,5 @@
-import { Padding, StockChartUnit } from 'types.ts';
+import { MousePositionType, Padding, StockChartUnit } from 'types.ts';
 import { makeYLabels } from './makeLabels.ts';
-import { MousePositionType } from 'components/StocksDetail/Chart.tsx';
 import { makeChartDataFlat } from './makeChartDataFlat.ts';
 
 export const drawUpperYAxis = (

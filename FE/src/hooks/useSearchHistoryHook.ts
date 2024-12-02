@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HistoryType } from '../components/Search/type.ts';
 
 const STORAGE_KEY = import.meta.env.VITE_STORAGE_KEY;
@@ -13,7 +13,7 @@ export function useSearchHistory() {
     }
   }, []);
 
-  const addSearchHistory = (keyword: string) => {
+  const addSearchHistory = useCallback((keyword: string) => {
     if (!keyword.trim()) return;
 
     setSearchHistory((prev) => {
@@ -32,7 +32,7 @@ export function useSearchHistory() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
       return newHistory;
     });
-  };
+  }, []);
 
   const deleteSearchHistory = (text: string) => {
     setSearchHistory((prev) => {

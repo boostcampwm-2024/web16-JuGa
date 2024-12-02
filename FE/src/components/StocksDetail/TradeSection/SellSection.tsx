@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import { StockDetailType } from 'types';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { calcYield, isNumericString } from 'utils/common';
 import TradeAlertModal from './TradeAlertModal';

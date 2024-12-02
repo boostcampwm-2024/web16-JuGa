@@ -3,7 +3,7 @@ import Toast from 'components/Toast';
 import { useEffect, useState } from 'react';
 import { bookmark, unbookmark } from 'service/bookmark';
 import { unsubscribe } from 'service/stocks';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import useLoginModalStore from 'store/useLoginModalStore';
 import { StockDetailType } from 'types';
 import { stringToLocaleString } from 'utils/common';
@@ -95,7 +95,7 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
     currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
 
   return (
-    <div className='flex items-center justify-between w-full h-16 px-2'>
+    <div className='flex h-16 w-full items-center justify-between px-2'>
       <div className='flex flex-col font-semibold'>
         <div className='flex gap-2 text-sm'>
           <h2>{hts_kor_isnm}</h2>

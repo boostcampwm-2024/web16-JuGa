@@ -1,6 +1,5 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { MousePositionType, Padding, StockChartUnit } from 'types.ts';
 import { makeYLabels } from './makeLabels.ts';
-import { MousePositionType } from '../../components/StocksDetail/Chart.tsx';
 import { formatNumber } from 'utils/format.ts';
 
 export const drawLowerYAxis = (

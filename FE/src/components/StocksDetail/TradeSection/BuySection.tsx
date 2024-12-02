@@ -9,7 +9,7 @@ import {
 import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { StockDetailType } from 'types';
 import { isNumericString } from 'utils/common';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import { useQuery } from '@tanstack/react-query';
 import { getCash } from 'service/assets';
 import TradeAlertModal from './TradeAlertModal';
