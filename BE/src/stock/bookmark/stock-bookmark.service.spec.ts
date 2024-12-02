@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { StockBookmarkRepository } from './stock-bookmark.repository';
 import { StockDetailService } from '../detail/stock-detail.service';
 import { StockBookmarkService } from './stock-bookmark.service';
@@ -14,6 +15,8 @@ describe('stock bookmark test', () => {
       existsBy: jest.fn(),
       create: jest.fn(),
       insert: jest.fn(),
+      findOneBy: jest.fn(),
+      remove: jest.fn(),
     };
     const mockStockDetailService = { getInquirePrice: jest.fn() };
 
@@ -62,5 +65,32 @@ describe('stock bookmark test', () => {
     await expect(
       stockBookmarkService.registerBookmark(1, '005930'),
     ).rejects.toThrow(BadRequestException);
+  });
+
+  it('존재하는 즐겨찾기를 취소할 경우, DB에서 해당 즐겨찾기가 삭제된다.', async () => {
+    jest.spyOn(stockBookmarkRepository, 'findOneBy').mockResolvedValue({
+      id: 1,
+      stock_code: '005930',
+      user_id: 1,
+    });
+
+    const removeMock = jest.fn();
+    jest
+      .spyOn(stockBookmarkRepository, 'remove')
+      .mockImplementation(removeMock);
+
+    await stockBookmarkService.unregisterBookmark(1, '005930');
+
+    expect(removeMock).toHaveBeenCalled();
+  });
+
+  it('존재하지 않는 즐겨찾기를 취소할 경우, NotFound 예외가 발생한다.', async () => {
+    jest
+      .spyOn(stockBookmarkRepository, 'findOneBy')
+      .mockResolvedValue(undefined);
+
+    await expect(
+      stockBookmarkService.unregisterBookmark(1, '005930'),
+    ).rejects.toThrow(NotFoundException);
   });
 });
