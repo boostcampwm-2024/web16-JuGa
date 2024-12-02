@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { StockBookmarkRepository } from './stock-bookmark.repository';
 import { StockDetailService } from '../detail/stock-detail.service';
 import { StockBookmarkService } from './stock-bookmark.service';
+import { StockBookmarkResponseDto } from './dto/stock-bookmark-response,dto';
 
 describe('stock bookmark test', () => {
   let stockBookmarkService: StockBookmarkService;
@@ -17,6 +17,7 @@ describe('stock bookmark test', () => {
       insert: jest.fn(),
       findOneBy: jest.fn(),
       remove: jest.fn(),
+      findBookmarkWithNameByUserId: jest.fn(),
     };
     const mockStockDetailService = { getInquirePrice: jest.fn() };
 
@@ -92,5 +93,47 @@ describe('stock bookmark test', () => {
     await expect(
       stockBookmarkService.unregisterBookmark(1, '005930'),
     ).rejects.toThrow(NotFoundException);
+  });
+
+  it('즐겨찾기를 조회할 경우, 해당 종목들의 현재가를 포함한 데이터가 반환된다.', async () => {
+    jest
+      .spyOn(stockBookmarkRepository, 'findBookmarkWithNameByUserId')
+      .mockResolvedValue([
+        {
+          b_id: 1,
+          b_user_id: 1,
+          b_stock_code: '005930',
+          s_code: '005930',
+          s_name: '삼성전자',
+          s_market: 'KOSPI',
+        },
+      ]);
+
+    jest.spyOn(stockDetailService, 'getInquirePrice').mockResolvedValue({
+      hts_kor_isnm: '삼성전자',
+      stck_shrn_iscd: '005930',
+      stck_prpr: '53600',
+      prdy_vrss: '-600',
+      prdy_vrss_sign: '5',
+      prdy_ctrt: '-1.11',
+      hts_avls: '3199803',
+      per: '25.15',
+      stck_mxpr: '70400',
+      stck_llam: '38000',
+      is_bookmarked: true,
+    });
+
+    const stockBookmarkResponse = new StockBookmarkResponseDto(
+      '삼성전자',
+      '005930',
+      '53600',
+      '-600',
+      '5',
+      '-1.11',
+    );
+
+    expect(await stockBookmarkService.getBookmarkList(1)).toEqual([
+      stockBookmarkResponse,
+    ]);
   });
 });
