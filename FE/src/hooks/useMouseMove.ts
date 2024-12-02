@@ -1,5 +1,5 @@
 import { MouseEvent, RefObject, useRef, useState } from 'react';
-import { MousePositionType } from '../components/StocksDetail/Chart.tsx';
+import { MousePositionType } from '../types.ts';
 
 export const useMouseMove = (containerRef: RefObject<HTMLDivElement>) => {
   const rafRef = useRef<number>();
