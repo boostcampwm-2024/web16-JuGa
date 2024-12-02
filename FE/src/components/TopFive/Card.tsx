@@ -50,7 +50,7 @@ export default function Card({
       <div className={`w-[150px] text-right ${color}`}>
         <p className='font-normal'>
           {plusOrMinus}
-          {Math.abs(Number(changePrice))}({percentAbsolute}
+          {Math.abs(Number(changePrice)).toLocaleString()}({percentAbsolute}
           %)
         </p>
       </div>

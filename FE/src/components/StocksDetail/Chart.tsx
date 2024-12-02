@@ -1,4 +1,11 @@
-import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  WheelEvent,
+} from 'react';
 import {
   ChartSizeConfigType,
   Padding,
@@ -65,6 +72,11 @@ export default function Chart({ code }: StocksDeatailChartProps) {
     y: 0,
   });
   const [mouseIndex, setMouseIndex] = useState<number | null>(null);
+  const [dataRange, setDataRange] = useState({
+    start: 0,
+    end: 0,
+  });
+  const minDisplayData = 20;
 
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
@@ -178,7 +190,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       const UpperYCtx = upperChartYCanvas.getContext('2d');
       const LowerYCtx = lowerChartYCanvas.getContext('2d');
       const ChartXCtx = chartXCanvas.getContext('2d');
-
+      const displayData = chartData.slice(dataRange.start, dataRange.end + 1);
       if (
         !UpperChartCtx ||
         !LowerChartCtx ||
@@ -197,14 +209,14 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         lowerChartCanvas.width - padding.left - padding.right,
         lowerChartCanvas.height - padding.top - padding.bottom,
         lowerLabelNum,
-        chartData,
+        displayData,
         padding,
       );
 
       if (moveAverageToggle) {
         drawLineChart(
           UpperChartCtx,
-          chartData,
+          displayData,
           0,
           0,
           upperChartCanvas.width - padding.left - padding.right,
@@ -216,7 +228,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
       drawCandleChart(
         UpperChartCtx,
-        chartData,
+        displayData,
         0,
         0,
         upperChartCanvas.width - padding.left - padding.right,
@@ -227,7 +239,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
       drawBarChart(
         LowerChartCtx,
-        chartData,
+        displayData,
         lowerChartCanvas.width - padding.left - padding.right,
         lowerChartCanvas.height - padding.top - padding.bottom,
         padding,
@@ -235,7 +247,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
       drawUpperYAxis(
         UpperYCtx,
-        chartData,
+        displayData,
         upperChartYCanvas.width - padding.left - padding.right,
         upperChartYCanvas.height - padding.top - padding.bottom,
         upperLabelNum,
@@ -248,7 +260,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
       drawLowerYAxis(
         LowerYCtx,
-        chartData,
+        displayData,
         lowerChartYCanvas.width - padding.left - padding.right,
         lowerChartYCanvas.height - padding.top - padding.bottom,
         lowerLabelNum,
@@ -261,7 +273,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
 
       drawXAxis(
         ChartXCtx,
-        chartData,
+        displayData,
         chartXCanvas.width - padding.left - padding.right,
         chartXCanvas.height,
         padding,
@@ -300,8 +312,52 @@ export default function Chart({ code }: StocksDeatailChartProps) {
       drawLowerYAxis,
       drawXAxis,
       moveAverageToggle,
+      dataRange,
     ],
   );
+  const handleWheel = useCallback(
+    (e: WheelEvent<HTMLDivElement>) => {
+      if (!data) return;
+
+      const wheelPower = 0.1;
+      const curRange = dataRange.end - dataRange.start;
+
+      // 축소
+      if (e.deltaY > 0) {
+        // 늘어나야함 & 데이터 최대 갯수보다 작아야함.
+        const newRange = Math.min(curRange * (1 + wheelPower), data.length);
+        const newStart = Math.max(data.length - newRange, 0);
+
+        setDataRange({
+          start: newStart,
+          end: data.length - 1,
+        });
+      }
+
+      // 확대
+      if (e.deltaY < 0) {
+        // 줄어야함 & 최소 데이터 갯수보단 커야함.
+        const newRange = Math.max(curRange * (1 - wheelPower), minDisplayData);
+        const newStart = Math.max(data.length - newRange, 0);
+
+        setDataRange({
+          start: newStart,
+          end: data.length - 1,
+        });
+      }
+    },
+    [data, dataRange],
+  );
+
+  useEffect(() => {
+    if (data) {
+      setDataRange((prev) => ({
+        ...prev,
+        start: 0,
+        end: data.length - 1,
+      }));
+    }
+  }, [data]);
 
   useEffect(() => {
     if (isLoading || !data) return;
@@ -382,6 +438,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
         ref={containerRef}
         className='mt-2 flex h-[200px] w-full flex-col'
         onMouseMove={getCanvasMousePosition}
+        onWheel={handleWheel}
       >
         {/* Upper 차트 영역 */}
         <div className='flex flex-row'>
@@ -419,24 +476,37 @@ export default function Chart({ code }: StocksDeatailChartProps) {
               </button>
               <div className='text-xs text-black'>이동평균선</div>
               <div className='flex gap-1'>
-                <span className='text-xs text-orange-500'>5</span>
-                {mouseIndex !== null && data ? (
-                  <span className={'text-xs'}>
-                    {Math.floor(
-                      Number(data[mouseIndex].mov_avg_5),
-                    ).toLocaleString()}
-                    원
-                  </span>
-                ) : null}
-                <span className='text-xs text-green-600'>20</span>
-                {mouseIndex !== null && data ? (
-                  <span className={'text-xs'}>
-                    {Math.floor(
-                      Number(data[mouseIndex].mov_avg_20),
-                    ).toLocaleString()}
-                    원
-                  </span>
-                ) : null}
+                {mouseIndex !== null ? (
+                  data && !isNaN(Number(data[mouseIndex].mov_avg_5)) ? (
+                    <>
+                      <span className='text-xs text-orange-500'>5</span>
+                      <span className='text-xs'>
+                        {Math.floor(
+                          Number(data[mouseIndex].mov_avg_5),
+                        ).toLocaleString()}
+                        원
+                      </span>
+                    </>
+                  ) : null
+                ) : (
+                  <span className='text-xs text-orange-500'>5</span>
+                )}
+
+                {mouseIndex !== null ? (
+                  data && !isNaN(Number(data[mouseIndex].mov_avg_20)) ? (
+                    <>
+                      <span className='text-xs text-green-600'>20</span>
+                      <span className={'text-xs'}>
+                        {Math.floor(
+                          Number(data[mouseIndex].mov_avg_20),
+                        ).toLocaleString()}
+                        원
+                      </span>
+                    </>
+                  ) : null
+                ) : (
+                  <span className='text-xs text-green-600'>20</span>
+                )}
               </div>
             </div>
           </div>
