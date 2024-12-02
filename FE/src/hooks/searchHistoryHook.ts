@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { HistoryType } from './searchDataType';
+import { HistoryType } from '../components/Search/type.ts';
 
 const STORAGE_KEY = import.meta.env.VITE_STORAGE_KEY;
 const MAX_HISTORY_ITEMS = import.meta.env.VITE_MAX_HISTORY_ITEMS;

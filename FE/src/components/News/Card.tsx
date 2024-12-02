@@ -1,4 +1,4 @@
-import { NewsDataType } from './NewsDataType.ts';
+import { NewsDataType } from './type.ts';
 import { formatDate } from '../../utils/formatTime.ts';
 
 type CardWithImageProps = {

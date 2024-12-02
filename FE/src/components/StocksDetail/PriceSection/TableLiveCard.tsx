@@ -1,9 +1,9 @@
-import { PriceDataType } from './PriceDataType.ts';
+import { PriceDataType } from './type.ts';
 
 type PriceTableLiveCardProps = {
   data: PriceDataType;
 };
-export default function PriceTableLiveCard({ data }: PriceTableLiveCardProps) {
+export default function TableLiveCard({ data }: PriceTableLiveCardProps) {
   const color =
     data.prdy_vrss_sign === '3'
       ? ''

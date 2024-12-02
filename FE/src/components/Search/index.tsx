@@ -5,12 +5,12 @@ import { SearchInput } from './SearchInput';
 import { SearchHistoryList } from './SearchHistoryList';
 import SearchList from './SearchList.tsx';
 import useSearchInputStore from 'store/useSearchInputStore.ts';
-import { useDebounce } from 'utils/useDebounce.ts';
+import { useDebounce } from 'hooks/useDebounce.ts';
 import { useQuery } from '@tanstack/react-query';
 import { getSearchResults } from 'service/getSearchResults.ts';
 import Lottie from 'lottie-react';
 import searchAnimation from 'assets/searchAnimation.json';
-import { useSearchHistory } from './searchHistoryHook.ts';
+import { useSearchHistory } from '../../hooks/searchHistoryHook.ts';
 import { formatNoSpecialChar } from '../../utils/formatNoSpecialChar.ts';
 
 export default function SearchModal() {

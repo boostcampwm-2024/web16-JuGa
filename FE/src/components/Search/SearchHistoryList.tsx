@@ -1,5 +1,5 @@
 import { SearchHistoryItem } from './SearchHistoryItem.tsx';
-import { HistoryType } from './searchDataType.ts';
+import { HistoryType } from './type.ts';
 
 type SearchHistoryListProps = {
   searchHistory: HistoryType[];

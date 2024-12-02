@@ -43,8 +43,6 @@ export type StockChartUnit = {
   mov_avg_20?: string;
 };
 
-export type MypageSectionType = 'account' | 'order' | 'bookmark' | 'info';
-
 export type Asset = {
   cash_balance: string;
   stock_balance: string;
@@ -78,14 +76,6 @@ export type Order = {
   price: number;
   trade_type: 'BUY' | 'SELL';
   created_at: string;
-};
-
-export type ChartSizeConfigType = {
-  upperHeight: number;
-  lowerHeight: number;
-  chartWidth: number;
-  yAxisWidth: number;
-  xAxisHeight: number;
 };
 
 export type Profile = {

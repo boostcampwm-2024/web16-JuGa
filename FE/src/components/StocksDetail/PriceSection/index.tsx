@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import PriceTableColumn from './PriceTableColumn.tsx';
-import PriceTableLiveCard from './PriceTableLiveCard.tsx';
-import PriceTableDayCard from './PriceTableDayCard.tsx';
+import TableColumn from './TableColumn.tsx';
+import TableLiveCard from './TableLiveCard.tsx';
+import TableDayCard from './TableDayCard.tsx';
 import { useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { DailyPriceDataType, PriceDataType } from './PriceDataType.ts';
+
 import { getTradeHistory } from 'service/getTradeHistory.ts';
 import { socket } from 'utils/socket.ts';
+import { DailyPriceDataType, PriceDataType } from './type.ts';
 
-export default function PriceSection() {
+export default function Index() {
   const { id } = useParams();
   const [buttonFlag, setButtonFlag] = useState(true);
   const indicatorRef = useRef<HTMLDivElement>(null);
@@ -107,7 +108,7 @@ export default function PriceSection() {
 
         <div className={'flex-1 overflow-y-auto'}>
           <table className={'w-full table-fixed text-xs font-normal'}>
-            <PriceTableColumn viewMode={buttonFlag} />
+            <TableColumn viewMode={buttonFlag} />
             <tbody>
               {isLoading ? (
                 <tr>
@@ -119,14 +120,14 @@ export default function PriceSection() {
                 </tr>
               ) : buttonFlag ? (
                 tradeData.map((eachData: PriceDataType, index: number) => (
-                  <PriceTableLiveCard
+                  <TableLiveCard
                     key={`${eachData.stck_cntg_hour}-${index}`}
                     data={eachData}
                   />
                 ))
               ) : (
                 tradeData.map((eachData: DailyPriceDataType, index: number) => (
-                  <PriceTableDayCard
+                  <TableDayCard
                     key={`${eachData.stck_bsop_date}-${index}`}
                     data={eachData}
                   />

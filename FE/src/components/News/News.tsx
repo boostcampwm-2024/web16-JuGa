@@ -1,7 +1,7 @@
 import Card from './Card.tsx';
 import { useQuery } from '@tanstack/react-query';
 import { getNewsData } from '../../service/getNewsData.ts';
-import { NewsDataType } from './NewsDataType.ts';
+import { NewsDataType } from './type.ts';
 
 export default function News() {
   const { data, isLoading, isError } = useQuery({

@@ -6,12 +6,7 @@ import {
   useState,
   WheelEvent,
 } from 'react';
-import {
-  ChartSizeConfigType,
-  Padding,
-  StockChartUnit,
-  TiemCategory,
-} from 'types';
+import { Padding, StockChartUnit, TiemCategory } from 'types';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
 import { drawLineChart } from 'utils/chart/drawLineChart.ts';
@@ -23,6 +18,7 @@ import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
 import { drawChartGrid } from 'utils/chart/drawChartGrid.ts';
 import { drawMouseGrid } from 'utils/chart/drawMouseGrid.ts';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/16/solid';
+import { ChartSizeConfigType } from './type.ts';
 
 const categories: { label: string; value: TiemCategory }[] = [
   { label: '일', value: 'D' },

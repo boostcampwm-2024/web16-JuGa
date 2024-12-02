@@ -1,6 +1,6 @@
 import { Card } from './Card.tsx';
 import { useQuery } from '@tanstack/react-query';
-import { getStockIndex } from '../../service/getStockIndex.ts';
+import { getStockIndex } from 'service/getStockIndex.ts';
 
 export default function StockIndex() {
   const { data, isLoading, isError } = useQuery({

@@ -1,13 +1,13 @@
-import RankCard from './RankCard';
+import Card from './Card.tsx';
 import useAuthStore from '../../store/authStore.ts';
-import { RankingCategory } from './RankType.ts';
+import { RankingCategory } from './type.ts';
 
 type Props = {
   title: '수익률순' | '자산순';
   data: RankingCategory;
 };
 
-export default function RankList({ title, data }: Props) {
+export default function List({ title, data }: Props) {
   const { topRank, userRank } = data;
   const { isLogin } = useAuthStore();
   return (
@@ -19,7 +19,7 @@ export default function RankList({ title, data }: Props) {
 
         <div className='space-y-1'>
           {topRank.map((item, index) => (
-            <RankCard
+            <Card
               key={`${item.nickname}-${index}`}
               item={item}
               type={title}
@@ -34,7 +34,7 @@ export default function RankList({ title, data }: Props) {
           </div>
 
           <div className={'space-y-1'}>
-            <RankCard item={userRank} type={title} />
+            <Card item={userRank} type={title} />
           </div>
         </div>
       ) : null}

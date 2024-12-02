@@ -1,7 +1,7 @@
 import SearchCard from './SearchCard.tsx';
-import { SearchDataType } from './searchDataType.ts';
 import Lottie from 'lottie-react';
 import noResultAnimation from 'assets/noResultAnimation.json';
+import { SearchDataType } from './type.ts';
 
 type SearchListProps = {
   searchData: SearchDataType[];

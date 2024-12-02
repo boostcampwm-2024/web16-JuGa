@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { MypageSectionType } from 'types';
+import { MypageSectionType } from './type.ts';
 
 const mapping = {
   account: '보유 자산 현황',
@@ -18,7 +18,7 @@ export default function Nav() {
   };
 
   return (
-    <div className='flex flex-col w-48 rounded-lg h-fit'>
+    <div className='flex h-fit w-48 flex-col rounded-lg'>
       {sections.map((e, idx) => (
         <button
           key={`assetNav${idx}`}
