@@ -1,5 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { StockOrderService } from './stock-order.service';
 import { StockOrderRepository } from './stock-order.repository';
 import { StockPriceSocketService } from '../../stockSocket/stock-price-socket.service';
@@ -22,9 +26,15 @@ describe('stock order test', () => {
       findBy: jest.fn(),
       save: jest.fn(),
       create: jest.fn(),
+      findOneBy: jest.fn(),
+      remove: jest.fn(),
+      existsBy: jest.fn(),
     };
     const mockAssetRepository = { findOneBy: jest.fn() };
-    const mockStockPriceSocketService = { subscribeByCode: jest.fn() };
+    const mockStockPriceSocketService = {
+      subscribeByCode: jest.fn(),
+      unsubscribeByCode: jest.fn(),
+    };
     const mockUserStockRepository = { findOneBy: jest.fn() };
 
     const module = await Test.createTestingModule({
@@ -180,5 +190,65 @@ describe('stock order test', () => {
         amount: 1,
       }),
     ).rejects.toThrow(BadRequestException);
+  });
+
+  it('사용자 본인의 미체결된 주문에 대해 취소를 요청할 경우, 해당 주문이 DB에서 삭제된다.', async () => {
+    jest.spyOn(stockOrderRepository, 'findOneBy').mockResolvedValue({
+      id: 1,
+      user_id: 1,
+      stock_code: '005930',
+      trade_type: TradeType.SELL,
+      amount: 1,
+      price: 1000,
+      status: StatusType.PENDING,
+      created_at: new Date(),
+    });
+
+    const removeMock = jest.fn();
+    jest.spyOn(stockOrderRepository, 'remove').mockImplementation(removeMock);
+
+    await stockOrderService.cancel(1, 1);
+
+    expect(removeMock).toHaveBeenCalled();
+  });
+
+  it('사용자 본인의 주문이 아닌 주문에 대해 취소를 요청할 경우, Forbidden 예외가 발생한다.', async () => {
+    jest.spyOn(stockOrderRepository, 'findOneBy').mockResolvedValue({
+      id: 1,
+      user_id: 2,
+      stock_code: '005930',
+      trade_type: TradeType.SELL,
+      amount: 1,
+      price: 1000,
+      status: StatusType.PENDING,
+      created_at: new Date(),
+    });
+
+    const removeMock = jest.fn();
+    jest.spyOn(stockOrderRepository, 'remove').mockImplementation(removeMock);
+
+    await expect(stockOrderService.cancel(1, 1)).rejects.toThrow(
+      ForbiddenException,
+    );
+  });
+
+  it('이미 체결된 주문에 대해 취소를 요청할 경우, Conflict 예외가 발생한다.', async () => {
+    jest.spyOn(stockOrderRepository, 'findOneBy').mockResolvedValue({
+      id: 1,
+      user_id: 1,
+      stock_code: '005930',
+      trade_type: TradeType.SELL,
+      amount: 1,
+      price: 1000,
+      status: StatusType.COMPLETE,
+      created_at: new Date(),
+    });
+
+    const removeMock = jest.fn();
+    jest.spyOn(stockOrderRepository, 'remove').mockImplementation(removeMock);
+
+    await expect(stockOrderService.cancel(1, 1)).rejects.toThrow(
+      ConflictException,
+    );
   });
 });
