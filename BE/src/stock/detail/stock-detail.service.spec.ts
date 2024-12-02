@@ -6,7 +6,7 @@ import { STOCK_DETAIL_MOCK } from './mockdata/stock-detail.mockdata';
 import { STOCK_DETAIL_CHART_MOCK } from './mockdata/stock-detail-chart.mockdata';
 import { Stocks } from './stock-detail.entity';
 
-describe('stock trade history test', () => {
+describe('stock detail test', () => {
   let stockDetailService: StockDetailService;
   let koreaInvestmentDomainService: KoreaInvestmentDomainService;
   let stockDetailRepository: StockDetailRepository;
@@ -69,7 +69,7 @@ describe('stock trade history test', () => {
     expect(response).toEqual(expected);
   });
 
-  it('특정 주식의 일자별 체결 데이터를 반환한다.', async () => {
+  it('특정 주식의 차트 데이터를 반환한다.', async () => {
     jest
       .spyOn(koreaInvestmentDomainService, 'requestApi')
       .mockResolvedValueOnce(STOCK_DETAIL_CHART_MOCK);
