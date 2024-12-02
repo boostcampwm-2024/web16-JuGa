@@ -81,7 +81,7 @@ export default function Chart({ code }: StocksDeatailChartProps) {
   const { data, isLoading } = useQuery(
     ['stocksChartData', code, timeCategory],
     () => getStocksChartDataByCode(code, timeCategory),
-    { staleTime: 1000 },
+    { staleTime: 1000 * 60 },
   );
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
