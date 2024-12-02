@@ -1,11 +1,11 @@
-import { DailyPriceDataType } from './PriceDataType.ts';
-import { formatTime } from '../../utils/formatTime.ts';
+import { formatTime } from 'utils/format.ts';
+import { DailyPriceDataType } from './type.ts';
 
 type PriceTableDayCardProps = {
   data: DailyPriceDataType;
 };
 
-export default function PriceTableDayCard({ data }: PriceTableDayCardProps) {
+export default function TableDayCard({ data }: PriceTableDayCardProps) {
   const color =
     data.prdy_vrss_sign === '3'
       ? ''

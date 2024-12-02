@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { Padding, StockChartUnit } from 'types.ts';
 import { makeChartDataFlat } from './makeChartDataFlat.ts';
 
 export function drawCandleChart(

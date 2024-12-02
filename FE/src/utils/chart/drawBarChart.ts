@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { Padding, StockChartUnit } from 'types.ts';
 
 export function drawBarChart(
   ctx: CanvasRenderingContext2D,

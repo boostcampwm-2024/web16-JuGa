@@ -1,8 +1,8 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import useLoginModalStore from 'store/useLoginModalStore';
-import useSearchModalStore from '../store/useSearchModalStore.ts';
-import useSearchInputStore from '../store/useSearchInputStore.ts';
+import useSearchModalStore from 'store/useSearchModalStore.ts';
+import useSearchInputStore from 'store/useSearchInputStore.ts';
 import logoPng from 'assets/logo.png';
 import logoWebp from 'assets/logo.webp';
 import { checkAuth, logout } from 'service/auth.ts';

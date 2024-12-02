@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { Padding, StockChartUnit } from 'types.ts';
 import { makeXLabels, makeYLabels } from './makeLabels.ts';
 
 export const drawChartGrid = (

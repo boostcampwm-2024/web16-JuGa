@@ -11,8 +11,8 @@ import {
   useState,
 } from 'react';
 import { StockDetailType } from 'types';
-import useAuthStore from 'store/authStore';
-import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import useAuthStore from 'store/useAuthStore.ts';
+import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { calcYield, isNumericString } from 'utils/common';
 import TradeAlertModal from './TradeAlertModal';
 
@@ -120,10 +120,10 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
 
   if (!isLogin || quantity === 0) {
     return (
-      <div className='flex flex-col items-center justify-center h-full'>
+      <div className='flex h-full flex-col items-center justify-center'>
         <Lottie
           animationData={emptyAnimation}
-          className='w-40 h-40'
+          className='h-40 w-40'
           loop={false}
         />
         <p>매도할 주식이 없어요</p>
@@ -135,14 +135,14 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
     <>
       <form className='flex flex-col' onSubmit={handleSell}>
         <div className='my-4'>
-          <div className='flex items-center justify-between h-12'>
+          <div className='flex h-12 items-center justify-between'>
             <p className='mr-3 w-14'>매도 가격</p>
             <input
               type='text'
               value={(+currPrice).toLocaleString()}
               onChange={handlePriceChange}
               onBlur={handlePriceInputBlur}
-              className='flex-1 py-1 rounded-lg'
+              className='flex-1 rounded-lg py-1'
             />
           </div>
           {lowerLimitFlag && (
@@ -155,14 +155,14 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
               이 주식의 최대 가격은 {(+stck_mxpr).toLocaleString()}입니다.
             </div>
           )}
-          <div className='flex items-center justify-between h-12'>
+          <div className='flex h-12 items-center justify-between'>
             <p className='mr-3 w-14'> 수량</p>
             <input
               type='text'
               value={count}
               onChange={handleCountChange}
               onBlur={handleCntInputBlur}
-              className='flex-1 py-1 rounded-lg'
+              className='flex-1 rounded-lg py-1'
               min={1}
               max={quantity}
             />
@@ -198,7 +198,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
             <p>{totalPrice.toLocaleString()}원</p>
           </div>
         </div>
-        <div className='flex flex-col justify-center h-10'></div>
+        <div className='flex h-10 flex-col justify-center'></div>
         <button
           className={
             'rounded-lg bg-juga-blue-50 py-2 text-white disabled:bg-juga-grayscale-100'

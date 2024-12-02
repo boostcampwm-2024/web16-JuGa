@@ -1,7 +1,7 @@
 import Card from './Card.tsx';
 import { useQuery } from '@tanstack/react-query';
-import { getNewsData } from '../../service/getNewsData.ts';
-import { NewsDataType } from './NewsDataType.ts';
+import { getNewsData } from '../../service/news.ts';
+import { NewsDataType } from './type.ts';
 
 export default function News() {
   const { data, isLoading, isError } = useQuery({
@@ -17,7 +17,7 @@ export default function News() {
 
   return (
     <div className='w-full'>
-      <div className='mb-4 flex items-center justify-between'>
+      <div className='flex items-center justify-between mb-4'>
         <h2 className='text-xl font-bold'>주요 뉴스</h2>
       </div>
 

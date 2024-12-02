@@ -1,6 +1,6 @@
 import Nav from 'components/Rank/Nav.tsx';
-import RankList from '../components/Rank/RankList.tsx';
-import { getRanking } from '../service/getRanking.ts';
+import List from '../components/Rank/List.tsx';
+import { getRanking } from '../service/ranking.ts';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Rank() {
@@ -13,14 +13,14 @@ export default function Rank() {
   if (isError) return <div>Error!!</div>;
 
   return (
-    <div className='rounded-xl px-4'>
+    <div className='px-4 rounded-xl'>
       <div className='mb-2'>
         <Nav />
       </div>
 
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-        <RankList title='수익률순' data={data.profitRateRanking} />
-        <RankList title='자산순' data={data.assetRanking} />
+        <List title='수익률순' data={data.profitRateRanking} />
+        <List title='자산순' data={data.assetRanking} />
       </div>
     </div>
   );

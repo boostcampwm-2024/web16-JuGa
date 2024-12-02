@@ -1,4 +1,4 @@
-import { StockChartUnit } from '../../types.ts';
+import { StockChartUnit } from 'types.ts';
 
 export const makeYLabels = (
   yMax: number,

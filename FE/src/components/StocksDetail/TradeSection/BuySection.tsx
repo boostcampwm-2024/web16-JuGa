@@ -6,10 +6,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { StockDetailType } from 'types';
 import { isNumericString } from 'utils/common';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import { useQuery } from '@tanstack/react-query';
 import { getCash } from 'service/assets';
 import TradeAlertModal from './TradeAlertModal';
@@ -109,14 +109,14 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
     <>
       <form className='flex flex-col' onSubmit={handleBuy}>
         <div className='my-4'>
-          <div className='flex items-center justify-between h-12'>
+          <div className='flex h-12 items-center justify-between'>
             <p className='mr-3 w-14'>매수 가격</p>
             <input
               type='text'
               value={(+currPrice).toLocaleString()}
               onChange={handlePriceChange}
               onBlur={handlePriceInputBlur}
-              className='flex-1 py-1 rounded-lg'
+              className='flex-1 rounded-lg py-1'
             />
           </div>
           {lowerLimitFlag && (
@@ -129,13 +129,13 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
               이 주식의 최대 가격은 {(+stck_mxpr).toLocaleString()}입니다.
             </div>
           )}
-          <div className='flex items-center justify-between h-12'>
+          <div className='flex h-12 items-center justify-between'>
             <p className='mr-3 w-14'> 수량</p>
             <input
               type='text'
               value={count}
               onChange={handleCountChange}
-              className='flex-1 py-1 rounded-lg'
+              className='flex-1 rounded-lg py-1'
               min={1}
             />
           </div>
@@ -154,7 +154,7 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
           </div>
         </div>
 
-        <div className='flex flex-col justify-center h-10'>
+        <div className='flex h-10 flex-col justify-center'>
           {lackAssetFlag && (
             <p className='text-xs text-juga-red-60'>잔액이 부족해요!</p>
           )}

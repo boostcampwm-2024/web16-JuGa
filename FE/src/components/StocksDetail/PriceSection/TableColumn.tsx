@@ -1,7 +1,10 @@
+import { PriceSectionViewType } from 'types';
+
 type Props = {
-  viewMode: boolean;
+  viewMode: PriceSectionViewType;
 };
-export default function PriceTableColumn({ viewMode }: Props) {
+
+export default function TableColumn({ viewMode }: Props) {
   if (!viewMode) {
     return (
       <thead className={'z-1 sticky top-0 bg-white'}>

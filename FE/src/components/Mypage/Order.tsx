@@ -1,7 +1,7 @@
 import useOrders from 'hooks/useOrder';
-import useOrderCancelAlertModalStore from 'store/orderCancleAlertModalStore';
-import { parseTimestamp } from 'utils/common';
+import useOrderCancelAlertModalStore from 'store/useOrderCancleAlertModalStore';
 import CancleAlertModal from './CancleAlertModal';
+import { formatTimestamp } from 'utils/format';
 
 export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
@@ -54,7 +54,7 @@ export default function Order() {
               <p className='w-1/4 text-center truncate'>{amount}</p>
               <p className='w-1/4 text-center'>{price.toLocaleString()}원</p>
               <p className='w-1/4 text-right truncate'>
-                {parseTimestamp(created_at)}
+                {formatTimestamp(created_at)}
               </p>
               <p className='w-1/6 text-right'>
                 <button

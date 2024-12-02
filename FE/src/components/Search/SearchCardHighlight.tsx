@@ -1,4 +1,4 @@
-import { formatNoSpecialChar } from '../../utils/formatNoSpecialChar.ts';
+import { formatNoSpecialChar } from 'utils/format.ts';
 
 type SearchCardHighLightProps = {
   text: string;
