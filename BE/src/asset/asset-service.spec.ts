@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { ApiProperty } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
 import { AssetService } from './asset.service';
 import { UserStockRepository } from './user-stock.repository';
@@ -18,7 +17,6 @@ describe('asset test', () => {
   let userStockRepository: UserStockRepository;
   let assetRepository: AssetRepository;
   let stockDetailService: StockDetailService;
-  let stockPriceSocketService: StockPriceSocketService;
 
   beforeEach(async () => {
     const mockUserStockRepository = {
@@ -55,7 +53,6 @@ describe('asset test', () => {
     userStockRepository = module.get(UserStockRepository);
     assetRepository = module.get(AssetRepository);
     stockDetailService = module.get(StockDetailService);
-    stockPriceSocketService = module.get(StockPriceSocketService);
   });
 
   it('보유 주식과 미체결 주문을 모두 반영한 매도 가능 주식 수를 반환한다.', async () => {
