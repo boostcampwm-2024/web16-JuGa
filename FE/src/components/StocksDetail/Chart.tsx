@@ -1,23 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { MousePositionType, StockChartUnit, TiemCategory } from 'types';
+import { useEffect, useRef, useState } from 'react';
+import { TiemCategory } from 'types';
 import { useQuery } from '@tanstack/react-query';
 import { getStocksChartDataByCode } from 'service/stocks';
-import { drawLineChart } from 'utils/chart/drawLineChart.ts';
-import { drawCandleChart } from 'utils/chart/drawCandleChart.ts';
-import { drawBarChart } from 'utils/chart/drawBarChart.ts';
-import { drawXAxis } from 'utils/chart/drawXAxis.ts';
-import { drawUpperYAxis } from 'utils/chart/drawUpperYAxis.ts';
-import { drawLowerYAxis } from 'utils/chart/drawLowerYAxis.ts';
-import { drawChartGrid } from 'utils/chart/drawChartGrid.ts';
-import { drawMouseGrid } from 'utils/chart/drawMouseGrid.ts';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/16/solid';
 import { setCanvasSize } from 'utils/chart/setCanvasSize.ts';
 import { useMouseMove } from 'hooks/useMouseMove.ts';
 import { useMouseUpDown } from 'hooks/useMouseUpDown.ts';
 import { useMouseWheel } from 'hooks/useMouseWheel.ts';
-import { categories, padding } from 'constants.ts';
+import { categories } from 'constants.ts';
 import { useCanvasRef } from 'hooks/useCanvasRef.ts';
 import { useCanvasResize } from 'hooks/useCanvasResize.ts';
+import { renderChart } from 'utils/renderChart.ts';
 
 type StocksDetailChartProps = {
   code: string;
@@ -59,147 +52,6 @@ export default function Chart({ code }: StocksDetailChartProps) {
     containerRef,
   );
 
-  const renderChart = useCallback(
-    (
-      upperChartCanvas: HTMLCanvasElement,
-      lowerChartCanvas: HTMLCanvasElement,
-      upperChartYCanvas: HTMLCanvasElement,
-      lowerChartYCanvas: HTMLCanvasElement,
-      chartXCanvas: HTMLCanvasElement,
-      chartData: StockChartUnit[],
-      mousePosition: MousePositionType,
-    ) => {
-      const UpperChartCtx = upperChartCanvas.getContext('2d');
-      const LowerChartCtx = lowerChartCanvas.getContext('2d');
-      const UpperYCtx = upperChartYCanvas.getContext('2d');
-      const LowerYCtx = lowerChartYCanvas.getContext('2d');
-      const ChartXCtx = chartXCanvas.getContext('2d');
-      const displayData = chartData.slice(dataRange.start, dataRange.end + 1);
-      if (
-        !UpperChartCtx ||
-        !LowerChartCtx ||
-        !UpperYCtx ||
-        !LowerYCtx ||
-        !ChartXCtx
-      )
-        return;
-
-      drawChartGrid(
-        UpperChartCtx,
-        upperChartCanvas.width - padding.left - padding.right,
-        upperChartCanvas.height - padding.top - padding.bottom,
-        upperLabelNum,
-        LowerChartCtx,
-        lowerChartCanvas.width - padding.left - padding.right,
-        lowerChartCanvas.height - padding.top - padding.bottom,
-        lowerLabelNum,
-        displayData,
-        padding,
-      );
-
-      if (moveAverageToggle) {
-        drawLineChart(
-          UpperChartCtx,
-          displayData,
-          0,
-          0,
-          upperChartCanvas.width - padding.left - padding.right,
-          upperChartCanvas.height - padding.top - padding.bottom,
-          padding,
-          0.1,
-        );
-      }
-
-      drawCandleChart(
-        UpperChartCtx,
-        displayData,
-        0,
-        0,
-        upperChartCanvas.width - padding.left - padding.right,
-        upperChartCanvas.height - padding.top - padding.bottom,
-        padding,
-        0.1,
-      );
-
-      drawBarChart(
-        LowerChartCtx,
-        displayData,
-        lowerChartCanvas.width - padding.left - padding.right,
-        lowerChartCanvas.height - padding.top - padding.bottom,
-        padding,
-      );
-
-      drawUpperYAxis(
-        UpperYCtx,
-        displayData,
-        upperChartYCanvas.width - padding.left - padding.right,
-        upperChartYCanvas.height - padding.top - padding.bottom,
-        upperLabelNum,
-        padding,
-        0.1,
-        mousePosition,
-        upperChartCanvas.width,
-        upperChartCanvas.height,
-      );
-
-      drawLowerYAxis(
-        LowerYCtx,
-        displayData,
-        lowerChartYCanvas.width - padding.left - padding.right,
-        lowerChartYCanvas.height - padding.top - padding.bottom,
-        lowerLabelNum,
-        padding,
-        mousePosition,
-        lowerChartCanvas.width,
-        lowerChartCanvas.height,
-        upperChartCanvas.height,
-      );
-
-      drawXAxis(
-        ChartXCtx,
-        displayData,
-        chartXCanvas.width - padding.left - padding.right,
-        chartXCanvas.height,
-        padding,
-        mousePosition,
-        upperChartCanvas.height + lowerChartCanvas.height,
-        setMouseIndex,
-      );
-
-      if (
-        mousePosition.x > padding.left &&
-        mousePosition.x < upperChartCanvas.width &&
-        mousePosition.y > padding.top &&
-        mousePosition.y < upperChartCanvas.height + lowerChartCanvas.height
-      ) {
-        drawMouseGrid(
-          UpperChartCtx,
-          upperChartCanvas.width - padding.left - padding.right,
-          upperChartCanvas.height - padding.top - padding.bottom,
-          LowerChartCtx,
-          lowerChartCanvas.width - padding.left - padding.right,
-          lowerChartCanvas.height - padding.top - padding.bottom,
-          padding,
-          mousePosition,
-        );
-      }
-    },
-    [
-      padding,
-      upperLabelNum,
-      lowerLabelNum,
-      drawChartGrid,
-      drawLineChart,
-      drawCandleChart,
-      drawBarChart,
-      drawUpperYAxis,
-      drawLowerYAxis,
-      drawXAxis,
-      moveAverageToggle,
-      dataRange,
-    ],
-  );
-
   useEffect(() => {
     if (isLoading || !data) return;
 
@@ -222,6 +74,11 @@ export default function Chart({ code }: StocksDetailChartProps) {
       chartX.current,
       data,
       mousePosition,
+      dataRange,
+      upperLabelNum,
+      lowerLabelNum,
+      moveAverageToggle,
+      setMouseIndex,
     );
   }, [
     timeCategory,
@@ -231,6 +88,11 @@ export default function Chart({ code }: StocksDetailChartProps) {
     renderChart,
     chartSizeConfig,
     mousePosition,
+    dataRange,
+    upperLabelNum,
+    lowerLabelNum,
+    moveAverageToggle,
+    setMouseIndex,
   ]);
 
   return (
