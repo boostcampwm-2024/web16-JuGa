@@ -73,14 +73,16 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
     this.connection[trKey] = 1;
   }
 
-  unsubscribeByCode(trKey: string) {
-    if (!this.connection[trKey]) return;
-    if (this.connection[trKey] > 1) {
-      this.connection[trKey] -= 1;
-      return;
-    }
-    delete this.connection[trKey];
-    this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
+  unsubscribeByCode(trKeys: string[]) {
+    trKeys.forEach((trKey) => {
+      if (!this.connection[trKey]) return;
+      if (this.connection[trKey] > 1) {
+        this.connection[trKey] -= 1;
+        return;
+      }
+      delete this.connection[trKey];
+      this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
+    });
   }
 
   private async checkExecutableOrder(stockCode: string, value) {
@@ -103,6 +105,6 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
         status: StatusType.PENDING,
       }))
     )
-      this.unsubscribeByCode(stockCode);
+      this.unsubscribeByCode([stockCode]);
   }
 }
