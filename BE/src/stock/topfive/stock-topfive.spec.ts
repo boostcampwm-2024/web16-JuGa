@@ -2,8 +2,8 @@ import { Test } from '@nestjs/testing';
 import { KoreaInvestmentDomainService } from '../../common/koreaInvestment/korea-investment.domain-service';
 import { StockTopfiveService } from './stock-topfive.service';
 import { StockRankingDataDto } from './dto/stock-ranking-data.dto';
-import { STOCK_TOP_FIVE_HIGH_MOCK } from './stock-topfive-high.mock-data';
-import { STOCK_TOP_FIVE_LOW_MOCK } from './stock-topfive-low.mock-data';
+import { STOCK_TOP_FIVE_HIGH_MOCK } from './mockdata/stock-topfive-high.mockdata';
+import { STOCK_TOP_FIVE_LOW_MOCK } from './mockdata/stock-topfive-low.mockdata';
 import { MarketType } from '../enum/market-type';
 
 jest.mock('axios');
