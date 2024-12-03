@@ -54,7 +54,9 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    await this.stockPriceSocketService.subscribeByCode(
+      stockOrderRequest.stock_code,
+    );
   }
 
   async sell(userId: number, stockOrderRequest: StockOrderRequestDto) {
@@ -89,7 +91,9 @@ export class StockOrderService {
     });
 
     await this.stockOrderRepository.save(order);
-    this.stockPriceSocketService.subscribeByCode(stockOrderRequest.stock_code);
+    await this.stockPriceSocketService.subscribeByCode(
+      stockOrderRequest.stock_code,
+    );
   }
 
   async cancel(userId: number, orderId: number) {
