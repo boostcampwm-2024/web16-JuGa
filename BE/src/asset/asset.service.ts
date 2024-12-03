@@ -157,7 +157,7 @@ export class AssetService {
     const userStocks: UserStock[] =
       await this.userStockRepository.findAllDistinctCode(userId);
 
-    this.stockPriceSocketService.unsubscribeByCode(
+    await this.stockPriceSocketService.unsubscribeByCode(
       userStocks.map((userStock) => userStock.stock_code),
     );
   }

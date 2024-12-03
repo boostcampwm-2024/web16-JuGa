@@ -111,7 +111,7 @@ export class StockOrderService {
         status: StatusType.PENDING,
       }))
     )
-      this.stockPriceSocketService.unsubscribeByCode([order.stock_code]);
+      await this.stockPriceSocketService.unsubscribeByCode([order.stock_code]);
   }
 
   async getPendingListByUserId(userId: number) {
@@ -135,7 +135,7 @@ export class StockOrderService {
     const orders: Order[] =
       await this.stockOrderRepository.findAllCodeByStatus();
 
-    this.stockPriceSocketService.unsubscribeByCode(
+    await this.stockPriceSocketService.unsubscribeByCode(
       orders.map((order) => order.stock_code),
     );
 
