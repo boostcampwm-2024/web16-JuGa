@@ -3,9 +3,11 @@ import AccountCondition from './AccountCondition';
 import MyStocksList from './MyStocksList';
 import { getAssets } from 'service/assets';
 import { isWithinTimeRange } from 'utils/common';
+import useAuthStore from 'store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function Account() {
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading } = useQuery(
     ['account', 'assets'],
     () => getAssets(),
     {
@@ -14,9 +16,14 @@ export default function Account() {
     },
   );
 
+  const navigate = useNavigate();
+  const { isLogin } = useAuthStore();
+  if (!isLogin) {
+    navigate('/');
+  }
+
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
 
   const { asset, stocks } = data;
 
