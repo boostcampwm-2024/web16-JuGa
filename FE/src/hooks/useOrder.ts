@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Toast from 'components/Toast';
 import {
   deleteOrder,
   getOrders,
@@ -11,6 +12,7 @@ export default function useOrders() {
 
   const orderQuery = useQuery(['account', 'order'], () => getOrders(), {
     staleTime: 1000,
+    suspense: true,
   });
 
   const removeOrder = useMutation((id: number) => deleteOrder(id), {
@@ -20,15 +22,28 @@ export default function useOrders() {
   const orderBuy = useMutation(
     ({ code, price, count }: { code: string; price: number; count: number }) =>
       orderBuyStock(code, price, count),
-    { onSuccess: () => queryClient.invalidateQueries(['detail', 'cash']) },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['detail', 'cash']);
+        Toast({
+          message: '매수 요청되었습니다.',
+          type: 'success',
+        });
+      },
+    },
   );
 
   const orderSell = useMutation(
     ({ code, price, count }: { code: string; price: number; count: number }) =>
       orderSellStock(code, price, count),
     {
-      onSuccess: (_, { code }) =>
-        queryClient.invalidateQueries(['detail', 'sellPosiible', code]),
+      onSuccess: (_, { code }) => {
+        queryClient.invalidateQueries(['detail', 'sellPosiible', code]);
+        Toast({
+          message: '매도 요청되었습니다.',
+          type: 'success',
+        });
+      },
     },
   );
 

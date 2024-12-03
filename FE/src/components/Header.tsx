@@ -7,6 +7,7 @@ import logoPng from 'assets/logo.png';
 import logoWebp from 'assets/logo.webp';
 import { checkAuth, logout } from 'service/auth.ts';
 import { useEffect } from 'react';
+import Toast from './Toast';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
@@ -29,6 +30,7 @@ export default function Header() {
   const handleLogout = () => {
     logout().then(() => {
       setIsLogin(false);
+      Toast({ message: '로그아웃 되었습니다!', type: 'success' });
     });
   };
 
@@ -49,7 +51,7 @@ export default function Header() {
               type='image/webp'
               className={'h-[32px]'}
             />
-            <img src={logoPng} className={'h-[32px]'} />
+            <img src={logoPng} alt={'Logo'} className={'h-[32px]'} />
           </picture>
           <h1 className='text-xl font-bold text-juga-grayscale-black'>JuGa</h1>
         </Link>
@@ -58,20 +60,20 @@ export default function Header() {
           <nav className='flex items-center gap-6 text-sm font-bold text-juga-grayscale-500'>
             <div
               onClick={() => handleLink('/')}
-              className='cursor-pointer px-1 py-2'
+              className='px-1 py-2 cursor-pointer'
             >
               홈
             </div>
             <div
               onClick={() => handleLink('/rank')}
-              className='cursor-pointer px-1 py-2'
+              className='px-1 py-2 cursor-pointer'
             >
               랭킹
             </div>
             {isLogin && (
               <div
                 onClick={() => handleLink('/mypage')}
-                className='cursor-pointer px-1 py-2'
+                className='px-1 py-2 cursor-pointer'
               >
                 마이페이지
               </div>

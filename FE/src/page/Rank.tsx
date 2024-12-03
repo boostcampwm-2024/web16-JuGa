@@ -2,18 +2,22 @@ import Nav from 'components/Rank/Nav.tsx';
 import List from '../components/Rank/List.tsx';
 import { getRanking } from '../service/ranking.ts';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 
 export default function Rank() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ['Rank'],
     queryFn: () => getRanking(),
+    suspense: true,
   });
 
-  if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error!!</div>;
-
   return (
-    <div className='px-4 rounded-xl'>
+    <div className='rounded-xl px-4'>
+      <Helmet>
+        <meta name='description' content='랭킹입니다.' />
+        <title>JuGa | Ranking</title>
+      </Helmet>
       <div className='mb-2'>
         <Nav />
       </div>

@@ -1,7 +1,7 @@
 import Overay from 'components/ModalOveray';
 import useOrderCancelAlertModalStore from 'store/useOrderCancleAlertModalStore';
 
-export default function CancleAlertModal() {
+export default function CancelAlertModal() {
   const { close, onSuccess, order } = useOrderCancelAlertModalStore();
   if (!order) return;
 

@@ -1,12 +1,21 @@
 export function SkeletonCard() {
   return (
-    <li className='animate-pulse px-4 py-3'>
-      <div className='flex items-center space-x-4'>
-        <div className='h-4 w-4 rounded bg-gray-200'></div>
-        <div className='h-4 w-[200px] rounded bg-gray-200'></div>
-        <div className='ml-auto h-4 w-[100px] rounded bg-gray-200'></div>
-        <div className='h-4 w-[80px] rounded bg-gray-200'></div>
+    <div className='flex flex-row items-center justify-between py-3'>
+      <div className='ml-2'>
+        <div className='h-4 w-4 animate-pulse rounded bg-gray-200' />
       </div>
-    </li>
+
+      <div className='ml-4 w-[180px]'>
+        <div className='h-4 w-32 animate-pulse rounded bg-gray-200' />
+      </div>
+
+      <div className='w-[120px] text-right'>
+        <div className='ml-auto h-4 w-24 animate-pulse rounded bg-gray-200' />
+      </div>
+
+      <div className='w-[150px] text-right'>
+        <div className='ml-auto h-4 w-28 animate-pulse rounded bg-gray-200' />
+      </div>
+    </div>
   );
 }

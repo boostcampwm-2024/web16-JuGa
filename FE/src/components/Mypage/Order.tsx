@@ -1,22 +1,18 @@
 import useOrders from 'hooks/useOrder';
 import useOrderCancelAlertModalStore from 'store/useOrderCancleAlertModalStore';
-import CancleAlertModal from './CancleAlertModal';
+import CancelAlertModal from './CancelAlertModal.tsx';
 import { formatTimestamp } from 'utils/format';
 
 export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
 
-  const { data, isLoading, isError } = orderQuery;
+  const { data } = orderQuery;
   const { isOpen, open } = useOrderCancelAlertModalStore();
-
-  if (isLoading) return <div>loading</div>;
-  if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
 
   return (
     <div className='mx-auto flex min-h-[500px] w-full flex-col rounded-md bg-white p-4 shadow-md'>
-      <div className='flex pb-2 text-sm font-bold border-b'>
-        <p className='w-1/3 text-left truncate'>종목</p>
+      <div className='flex border-b pb-2 text-sm font-bold'>
+        <p className='w-1/3 truncate text-left'>종목</p>
         <p className='w-1/4 text-center'>요청 유형</p>
         <p className='w-1/4 text-center'>수량</p>
         <p className='w-1/4 text-center'>요청 가격</p>
@@ -24,8 +20,8 @@ export default function Order() {
         <p className='w-1/6 text-right'></p>
       </div>
 
-      <ul className='flex flex-col text-sm divide-y'>
-        {data.map((order) => {
+      <ul className='flex flex-col divide-y text-sm'>
+        {data?.map((order) => {
           const {
             id,
             stock_code,
@@ -38,7 +34,7 @@ export default function Order() {
 
           return (
             <li className='flex py-2' key={id}>
-              <div className='flex w-1/3 gap-2 text-left truncate'>
+              <div className='flex w-1/3 gap-2 truncate text-left'>
                 <p className='font-semibold'>{stock_name}</p>
                 <p className='text-gray-500'>{stock_code}</p>
               </div>
@@ -51,15 +47,15 @@ export default function Order() {
               >
                 {trade_type === 'BUY' ? '매수' : '매도'}
               </p>
-              <p className='w-1/4 text-center truncate'>{amount}</p>
+              <p className='w-1/4 truncate text-center'>{amount}</p>
               <p className='w-1/4 text-center'>{price.toLocaleString()}원</p>
-              <p className='w-1/4 text-right truncate'>
+              <p className='w-1/4 truncate text-right'>
                 {formatTimestamp(created_at)}
               </p>
               <p className='w-1/6 text-right'>
                 <button
                   onClick={() => open(order, () => removeOrder.mutate(id))}
-                  className='px-2 py-1 text-xs text-white transition rounded-lg bg-juga-grayscale-500 hover:bg-juga-grayscale-black'
+                  className='rounded-lg bg-juga-grayscale-500 px-2 py-1 text-xs text-white transition hover:bg-juga-grayscale-black'
                 >
                   취소
                 </button>
@@ -68,7 +64,7 @@ export default function Order() {
           );
         })}
       </ul>
-      {isOpen && <CancleAlertModal />}
+      {isOpen && <CancelAlertModal />}
     </div>
   );
 }
