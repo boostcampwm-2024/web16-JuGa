@@ -6,9 +6,7 @@ import { STOCK_TOP_FIVE_HIGH_MOCK } from './mockdata/stock-topfive-high.mockdata
 import { STOCK_TOP_FIVE_LOW_MOCK } from './mockdata/stock-topfive-low.mockdata';
 import { MarketType } from '../enum/market-type';
 
-jest.mock('axios');
-
-describe('stock index list test', () => {
+describe('stock topfive test', () => {
   let stockTopfiveService: StockTopfiveService;
   let koreaInvestmentDomainService: KoreaInvestmentDomainService;
   let highResponse: StockRankingDataDto[];
