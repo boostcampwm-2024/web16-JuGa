@@ -1,5 +1,4 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { filter, map, Observable, Subject } from 'rxjs';
 import { BaseSocketDomainService } from '../common/websocket/base-socket.domain-service';
 import { SocketGateway } from '../common/websocket/socket.gateway';
 import { BaseStockSocketDomainService } from './base-stock-socket.domain-service';
@@ -8,12 +7,10 @@ import { StatusType } from '../stock/order/enum/status-type';
 import { TodayStockTradeHistoryDataDto } from '../stock/trade/history/dto/today-stock-trade-history-data.dto';
 import { StockDetailSocketDataDto } from '../stock/trade/history/dto/stock-detail-socket-data.dto';
 import { StockExecuteOrderRepository } from './stock-execute-order.repository';
-import { SseEvent } from '../stock/trade/history/interface/sse-event';
 
 @Injectable()
 export class StockPriceSocketService extends BaseStockSocketDomainService {
   private connection: { [key: string]: number } = {};
-  private eventSubject = new Subject<SseEvent>();
 
   constructor(
     protected readonly socketGateway: SocketGateway,
@@ -55,12 +52,6 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
       prdy_ctrt: data[5],
     };
 
-    this.eventSubject.next({
-      data: JSON.stringify({
-        tradeData,
-      }),
-    });
-
     this.socketGateway.sendStockIndexValueToClient(
       `trade-history/${data[0]}`,
       tradeData,
@@ -69,16 +60,6 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
     this.socketGateway.sendStockIndexValueToClient(
       `detail/${data[0]}`,
       detailData,
-    );
-  }
-
-  getTradeDataStream(targetStockCode: string): Observable<SseEvent> {
-    return this.eventSubject.pipe(
-      filter((event: SseEvent) => {
-        const parsed = JSON.parse(event.data);
-        return parsed.tradeData.stck_shrn_iscd === targetStockCode;
-      }),
-      map((event: SseEvent) => event),
     );
   }
 
@@ -92,14 +73,16 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
     this.connection[trKey] = 1;
   }
 
-  unsubscribeByCode(trKey: string) {
-    if (!this.connection[trKey]) return;
-    if (this.connection[trKey] > 1) {
-      this.connection[trKey] -= 1;
-      return;
-    }
-    delete this.connection[trKey];
-    this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
+  unsubscribeByCode(trKeys: string[]) {
+    trKeys.forEach((trKey) => {
+      if (!this.connection[trKey]) return;
+      if (this.connection[trKey] > 1) {
+        this.connection[trKey] -= 1;
+        return;
+      }
+      delete this.connection[trKey];
+      this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
+    });
   }
 
   private async checkExecutableOrder(stockCode: string, value) {
@@ -122,6 +105,6 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
         status: StatusType.PENDING,
       }))
     )
-      this.unsubscribeByCode(stockCode);
+      this.unsubscribeByCode([stockCode]);
   }
 }
