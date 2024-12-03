@@ -204,7 +204,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           className={
             'rounded-lg bg-juga-blue-50 py-2 text-white disabled:bg-juga-grayscale-100'
           }
-          disabled={!isLogin}
+          disabled={!isLogin || count === 0}
         >
           매도하기
         </button>
