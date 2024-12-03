@@ -39,21 +39,21 @@
 
 
 ### 메인 페이지
-![juga_main](https://github.com/user-attachments/assets/abb04197-ae88-4877-be53-2ca71ad3e57b)
+<img src="https://github.com/user-attachments/assets/abb04197-ae88-4877-be53-2ca71ad3e57b" width="800" />
 
 - 메인 페이지에서 코스피, 코스닥 등 실시간 주가 지수를 확인할 수 있습니다.
 - 상승률/하락률 TOP5 종목을 주가지수 별로 확인할 수 있습니다.
 - 오늘 실시간 주요 뉴스를 확인할 수 있습니다.
 
 ### 주식 상세 페이지
-![juga_detail](https://github.com/user-attachments/assets/14ed36ae-085e-4899-a314-8ece85236a55)
+<img src="https://github.com/user-attachments/assets/14ed36ae-085e-4899-a314-8ece85236a55" width="800" />
 
 - 해당 주식에 대한 정보를 차트로 확인할 수 있습니다.
 - 일별, 실시간 시세를 확인할 수 있습니다.
 - 매수, 매도 요청을 할 수 있습니다.
 
 ### 주식 차트 
-![화면 기록 2024-11-28 오후 6 40 30](https://github.com/user-attachments/assets/6d36b0d9-2db2-4018-a7f3-2c12fb586fd0)
+<img src="https://github.com/user-attachments/assets/6d36b0d9-2db2-4018-a7f3-2c12fb586fd0" width="800" />
 
 - 일, 주, 월, 년 단위로 주식 차트를 확인할 수 있습니다.   
 - 이동평균선 정보를 활용해 해당 주식의 추이를 더 자세히 확인할 수 있습니다.   
@@ -62,7 +62,7 @@
  
 
 ### 마이페이지
-![juga_mypage](https://github.com/user-attachments/assets/8cdfa089-ac26-40a0-8d19-7a56a0f3c6e7)
+<img src="https://github.com/user-attachments/assets/8cdfa089-ac26-40a0-8d19-7a56a0f3c6e7" width="800" />
 
 - 현재 자산 현황, 투자 성과를 확인할 수 있습니다.
 - 자신이 매수한 주식 정보들을 확인할 수 있습니다.
@@ -72,14 +72,14 @@
 
 
 ### 로그인
-![image (14)](https://github.com/user-attachments/assets/9968ef08-cbf8-41fd-bfdc-8ca25dd8d80c)
+<img src="https://github.com/user-attachments/assets/9968ef08-cbf8-41fd-bfdc-8ca25dd8d80c" width="800" />
 
 - 로그인 모달창에서 로그인을 할 수 있습니다.
 - 카카오 oAuth 로그인으로 간편하게 로그인할 수 있습니다.
 
 
 ### 랭킹
-![image (15)](https://github.com/user-attachments/assets/251821a9-63d9-4f23-9178-2f8f3d8c608d)
+<img src="https://github.com/user-attachments/assets/251821a9-63d9-4f23-9178-2f8f3d8c608d" width="800" />
 
 - 하루 단위로 랭킹이 갱신됩니다.
 - 수익률순, 자산순을 기준으로 랭킹을 확인할 수 있습니다.
