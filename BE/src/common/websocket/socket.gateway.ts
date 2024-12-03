@@ -1,8 +1,10 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, UseFilters } from '@nestjs/common';
+import { WebSocketExceptionFilter } from '../filters/websocket-exception.filter';
 
 @WebSocketGateway({ namespace: 'socket', cors: { origin: '*' } })
+@UseFilters(new WebSocketExceptionFilter())
 export class SocketGateway {
   @WebSocketServer()
   private server: Server;
