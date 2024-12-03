@@ -14,8 +14,8 @@ export default function Login() {
   const { setIsLogin } = useAuthStore();
 
   useEffect(() => {
-    setEmail('');
-    setPassword('');
+    setEmail('jindding');
+    setPassword('1234');
   }, [isOpen]);
 
   if (!isOpen) return;
