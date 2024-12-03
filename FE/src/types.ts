@@ -3,9 +3,10 @@ export type LoginSuccessResponse = {
 };
 
 export type LoginFailResponse = {
-  error: string;
-  message: string[];
+  message: string;
   statusCode: number;
+  timestamp: string;
+  path: string;
 };
 
 export type TiemCategory = 'D' | 'W' | 'M' | 'Y';
