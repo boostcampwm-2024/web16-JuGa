@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   FocusEvent,
   FormEvent,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -44,17 +45,17 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
   const [lackAssetFlag, setLackAssetFlag] = useState<boolean>(false);
   const timerRef = useRef<number | null>(null);
 
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePriceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const s = e.target.value.replace(/,/g, '');
     if (!isNumericString(s)) return;
     setCurrPrice(s);
-  };
+  }, []);
 
-  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCountChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const s = e.target.value;
     if (!isNumericString(s)) return;
     setCount(+s);
-  };
+  }, []);
 
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;

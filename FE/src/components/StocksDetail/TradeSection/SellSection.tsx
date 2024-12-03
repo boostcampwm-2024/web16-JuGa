@@ -6,6 +6,7 @@ import {
   ChangeEvent,
   FocusEvent,
   FormEvent,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -56,17 +57,17 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   const totalPrice = +currPrice * count;
   const plRate = calcYield(avg_price, +currPrice);
 
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePriceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const s = e.target.value.replace(/,/g, '');
     if (!isNumericString(s)) return;
     setCurrPrice(s);
-  };
+  }, []);
 
-  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCountChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const s = e.target.value;
     if (!isNumericString(s)) return;
     setCount(+s);
-  };
+  }, []);
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
     const n = +e.target.value.replace(/,/g, '');
