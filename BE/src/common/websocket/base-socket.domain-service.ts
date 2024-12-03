@@ -6,6 +6,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { SocketTokenDomainService } from './socket-token.domain-service';
+import { RedisDomainService } from '../redis/redis.domain-service';
 
 @Injectable()
 export class BaseSocketDomainService implements OnModuleInit {
@@ -20,6 +21,7 @@ export class BaseSocketDomainService implements OnModuleInit {
 
   constructor(
     private readonly socketTokenDomainService: SocketTokenDomainService,
+    private readonly redisDomainService: RedisDomainService,
   ) {}
 
   async onModuleInit() {
@@ -56,11 +58,19 @@ export class BaseSocketDomainService implements OnModuleInit {
       }
 
       const dataList = data[3].split('^');
-
       if (Number(dataList[1]) % 500 === 0)
         this.logger.log(`한국투자증권 데이터 수신 성공 (5분 단위)`, data[1]);
 
-      this.socketDataHandlers[data[1]](dataList);
+      if (data[1] === 'H0UPCNT0') {
+        this.socketDataHandlers.H0UPCNT0(dataList);
+        return;
+      }
+
+      this.redisDomainService
+        .publish(`stock/${dataList[0]}`, data[3])
+        .catch((err) => {
+          throw new InternalServerErrorException(err);
+        });
     };
 
     this.socket.onclose = () => {
@@ -71,6 +81,11 @@ export class BaseSocketDomainService implements OnModuleInit {
         });
       }, 60000);
     };
+
+    this.redisDomainService.on((message) => {
+      const dataList = message.split('^');
+      this.socketDataHandlers.H0STCNT0(dataList);
+    });
   }
 
   registerCode(trId: string, trKey: string) {
