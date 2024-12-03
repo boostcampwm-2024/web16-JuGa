@@ -71,6 +71,7 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
     // 아무 서버도 한투와 구독 중이지 않을때
     if (!(await this.redisDomainService.exists(trKey))) {
       this.baseSocketDomainService.registerCode(this.TR_ID, trKey);
+      await this.redisDomainService.subscribe(`stock/${trKey}`);
       this.register.push(trKey);
       await this.redisDomainService.set(trKey, 1);
       this.connection[trKey] = 1;
