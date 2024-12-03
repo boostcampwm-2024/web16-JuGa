@@ -52,12 +52,14 @@
 - 일별, 실시간 시세를 확인할 수 있습니다.
 - 매수, 매도 요청을 할 수 있습니다.
 
-### 주식 차트
+### 주식 차트 
 ![화면 기록 2024-11-28 오후 6 40 30](https://github.com/user-attachments/assets/6d36b0d9-2db2-4018-a7f3-2c12fb586fd0)
 
 - 일, 주, 월, 년 단위로 주식 차트를 확인할 수 있습니다.   
 - 이동평균선 정보를 활용해 해당 주식의 추이를 더 자세히 확인할 수 있습니다.   
 - 라이브러리를 사용하지 않고 canvas를 활용해 직접 구현했습니다.
+- [라이브러리 없이 구현한 이유.](https://github.com/boostcampwm-2024/web16-JuGa/wiki/라이브러리-없이-차트를-직접-구현한-이유)
+ 
 
 ### 마이페이지
 ![juga_mypage](https://github.com/user-attachments/assets/8cdfa089-ac26-40a0-8d19-7a56a0f3c6e7)
