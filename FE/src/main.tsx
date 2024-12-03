@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import FallbackUI from 'components/FallbackUI.tsx';
+import { HelmetProvider } from 'react-helmet-async';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +25,9 @@ createRoot(document.getElementById('root')!).render(
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary onReset={reset} FallbackComponent={FallbackUI}>
-            <App />
+            <HelmetProvider>
+              <App />
+            </HelmetProvider>
           </ErrorBoundary>
         )}
       </QueryErrorResetBoundary>

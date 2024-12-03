@@ -5,7 +5,7 @@ import PriceSection from 'components/StocksDetail/PriceSection';
 import TradeSection from 'components/StocksDetail/TradeSection';
 import { useParams } from 'react-router-dom';
 import { getStocksByCode } from 'service/stocks';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export default function StocksDetail() {
   const params = useParams();

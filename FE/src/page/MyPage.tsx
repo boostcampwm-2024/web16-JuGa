@@ -4,7 +4,7 @@ import MyInfo from 'components/Mypage/MyInfo';
 import Nav from 'components/Mypage/Nav';
 import Order from 'components/Mypage/Order';
 import { useSearchParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export default function MyPage() {
   const [searchParams] = useSearchParams();

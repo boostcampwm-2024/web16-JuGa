@@ -14,7 +14,7 @@ import MyPage from 'page/MyPage';
 import Rank from 'page/Rank.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 function App() {
   return (

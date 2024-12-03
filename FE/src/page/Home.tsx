@@ -1,7 +1,7 @@
 import TopFive from 'components/TopFive';
 import StockIndex from 'components/StockIndex/index.tsx';
 import News from 'components/News/News.tsx';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export default function Home() {
   return (

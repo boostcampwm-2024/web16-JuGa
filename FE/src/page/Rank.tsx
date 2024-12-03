@@ -2,7 +2,7 @@ import Nav from 'components/Rank/Nav.tsx';
 import List from '../components/Rank/List.tsx';
 import { getRanking } from '../service/ranking.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export default function Rank() {
   const { data, isLoading, isError } = useQuery({
