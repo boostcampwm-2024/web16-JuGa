@@ -63,7 +63,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   if (isError) return <div>error</div>;
 
   const quantity = data.quantity;
-  const avg_price = data.avg_price;
+  const avg_price = Math.floor(data.avg_price);
 
   const pl = (+currPrice - avg_price) * count;
   const totalPrice = +currPrice * count;
