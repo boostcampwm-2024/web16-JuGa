@@ -3,12 +3,19 @@ import BookMark from 'components/Mypage/BookMark';
 import MyInfo from 'components/Mypage/MyInfo';
 import Nav from 'components/Mypage/Nav';
 import Order from 'components/Mypage/Order';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import useAuthStore from '../store/useAuthStore.ts';
 
 export default function MyPage() {
   const [searchParams] = useSearchParams();
   const currentPage = searchParams.get('section') || 'account';
+
+  const navigate = useNavigate();
+  const { isLogin } = useAuthStore();
+  if (!isLogin) {
+    navigate('/');
+  }
 
   return (
     <div className='flex gap-5'>
