@@ -37,9 +37,7 @@ describe('stock trade history test', () => {
     jest
       .spyOn(koreaInvestmentDomainService, 'requestApi')
       .mockResolvedValueOnce(STOCK_TRADE_HISTORY_TODAY_MOCK);
-    jest
-      .spyOn(stockPriceSocketService, 'subscribeByCode')
-      .mockImplementation(() => {});
+    jest.spyOn(stockPriceSocketService, 'subscribeByCode').mockResolvedValue();
 
     const response =
       await stockTradeHistoryService.getTodayStockTradeHistory('005930');
