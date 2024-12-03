@@ -49,7 +49,7 @@ export default function Header() {
               type='image/webp'
               className={'h-[32px]'}
             />
-            <img src={logoPng} className={'h-[32px]'} />
+            <img src={logoPng} alt={'Logo'} className={'h-[32px]'} />
           </picture>
           <h1 className='text-xl font-bold text-juga-grayscale-black'>JuGa</h1>
         </Link>

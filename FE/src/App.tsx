@@ -14,6 +14,7 @@ import MyPage from 'page/MyPage';
 import Rank from 'page/Rank.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Helmet } from 'react-helmet';
 
 function App() {
   return (
@@ -35,6 +36,14 @@ export default App;
 function Layout() {
   return (
     <>
+      <Helmet>
+        <meta charSet='utf-8' />
+        <meta
+          name='description'
+          content='실시간 주식 데이터를 활용한 모의투자 경험을 통해 주식 투자에 대해 배울 수 있는 서비스.'
+        />
+        <title>JuGa</title>
+      </Helmet>
       <Header />
       <main className='mt-[60px] flex flex-col gap-4'>
         <Outlet />

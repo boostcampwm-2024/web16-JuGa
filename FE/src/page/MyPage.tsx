@@ -4,6 +4,7 @@ import MyInfo from 'components/Mypage/MyInfo';
 import Nav from 'components/Mypage/Nav';
 import Order from 'components/Mypage/Order';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 export default function MyPage() {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,10 @@ export default function MyPage() {
 
   return (
     <div className='flex gap-5'>
+      <Helmet>
+        <meta name='description' content='마이페이지입니다.' />
+        <title>JuGa | MyPage</title>
+      </Helmet>
       <Nav />
       <div className='flex-1'>
         {
