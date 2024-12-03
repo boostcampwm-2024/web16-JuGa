@@ -1,39 +1,28 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpStatus,
-  Logger,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
 
-import { Request, Response } from 'express';
-
-@Catch(InternalServerErrorException)
+@Catch()
 export class WebSocketExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(WebSocketExceptionFilter.name);
 
-  catch(exception: InternalServerErrorException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
+  catch(exception: Error, host: ArgumentsHost) {
+    const ctx = host.switchToWs();
+    const client = ctx.getClient();
 
-    const request = ctx.getRequest<Request>();
-    const response = ctx.getResponse<Response>();
-
-    const status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const { message } = exception;
+    const message =
+      exception instanceof WsException
+        ? exception.message
+        : 'Internal WebSocket Error';
 
     const errorResponse = {
-      statusCode: status,
+      event: 'error',
       message,
       timestamp: new Date().toISOString(),
-      path: request.url,
     };
 
-    this.logger.error(
-      `[${request.method}] ${request.url} - Status: ${status} - Error: ${exception.message}`,
-    );
+    this.logger.error(`WebSocket Error: ${message}`, exception.stack);
 
-    response.status(status).json(errorResponse);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    client.send(JSON.stringify(errorResponse));
   }
 }
