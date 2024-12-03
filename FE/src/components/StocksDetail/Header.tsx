@@ -35,6 +35,23 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   const { isLogin } = useAuthStore();
   const { toggleModal } = useLoginModalStore();
 
+  const stockInfo: { label: string; value: string }[] = [
+    { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
+    { label: 'PER', value: `${per}배` },
+  ];
+
+  const colorStyleBySign =
+    currPrdyVrssSign === '3'
+      ? ''
+      : currPrdyVrssSign < '3'
+        ? 'text-juga-red-60'
+        : 'text-juga-blue-40';
+
+  const percentAbsolute = Math.abs(Number(currPrdyRate)).toFixed(2);
+
+  const plusOrMinus =
+    currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
+
   // const { debounceValue } = useDebounce(isBookmarked, 1000);
   // const isInitialMount = useRef(true);
 
@@ -50,6 +67,9 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   //     unbookmark(code);
   //   }
   // }, [code, debounceValue]);
+  useEffect(() => {
+    setIsBookmarked(is_bookmarked);
+  }, [is_bookmarked]);
 
   useEffect(() => {
     setCurrPrice(stck_prpr);
@@ -76,23 +96,6 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
       unsubscribe(code);
     };
   }, [code]);
-
-  const stockInfo: { label: string; value: string }[] = [
-    { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
-    { label: 'PER', value: `${per}배` },
-  ];
-
-  const colorStyleBySign =
-    currPrdyVrssSign === '3'
-      ? ''
-      : currPrdyVrssSign < '3'
-        ? 'text-juga-red-60'
-        : 'text-juga-blue-40';
-
-  const percentAbsolute = Math.abs(Number(currPrdyRate)).toFixed(2);
-
-  const plusOrMinus =
-    currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
 
   return (
     <div className='flex h-16 w-full items-center justify-between px-2'>

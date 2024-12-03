@@ -30,7 +30,7 @@ export async function getStocksChartDataByCode(
 
 export async function unsubscribe(code: string) {
   return fetch(
-    `${import.meta.env.VITE_API_URL}/stocks/trade-history/${code}/unsubscribe`,
+    `${import.meta.env.VITE_API_URL}/stocks/trade-history/unsubscribe?stockCode=${code}`,
     {
       headers: { 'Content-Type': 'application/json' },
     },
