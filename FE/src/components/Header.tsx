@@ -19,9 +19,12 @@ export default function Header() {
 
   useEffect(() => {
     const check = async () => {
-      const res = await checkAuth();
-      if (res.ok) setIsLogin(true);
-      else setIsLogin(false);
+      try {
+        const res = await checkAuth();
+        setIsLogin(res.isLogin);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     check();

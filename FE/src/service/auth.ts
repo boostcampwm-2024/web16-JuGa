@@ -14,7 +14,7 @@ export async function login(
   }).then((res) => res.json());
 }
 
-export async function checkAuth() {
+export async function checkAuth(): Promise<{ isLogin: boolean }> {
   const url = import.meta.env.PROD
     ? `${import.meta.env.VITE_API_URL}/auth/check`
     : '/api/auth/check';
@@ -22,7 +22,7 @@ export async function checkAuth() {
   return fetch(url, {
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-  });
+  }).then((res) => res.json());
 }
 
 export async function logout() {
