@@ -5,14 +5,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 
 export default function Rank() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ['Rank'],
     queryFn: () => getRanking(),
+    suspense: true,
   });
 
-  if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error!!</div>;
-
   return (
     <div className='rounded-xl px-4'>
       <Helmet>

@@ -6,6 +6,8 @@ import TradeSection from 'components/StocksDetail/TradeSection';
 import { useParams } from 'react-router-dom';
 import { getStocksByCode } from 'service/stocks';
 import { Helmet } from 'react-helmet-async';
+import { Suspense } from 'react';
+import ChartSkeleton from 'components/StocksDetail/ChartSkeleton.tsx';
 
 export default function StocksDetail() {
   const params = useParams();
@@ -30,7 +32,9 @@ export default function StocksDetail() {
       <Header code={code} data={data} />
       <div className='flex h-[500px]'>
         <div className='flex min-w-[850px] flex-col'>
-          <Chart code={code} />
+          <Suspense fallback={<ChartSkeleton />}>
+            <Chart code={code} />
+          </Suspense>
           <PriceSection />
         </div>
         <TradeSection code={code} data={data} />

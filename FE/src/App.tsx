@@ -15,6 +15,8 @@ import Rank from 'page/Rank.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Helmet } from 'react-helmet-async';
+import { Suspense } from 'react';
+import { RankingSkeleton } from './components/Rank/RankingSkeleton.tsx';
 
 function App() {
   return (
@@ -24,7 +26,14 @@ function App() {
           <Route index element={<Home />} />
           <Route path='stocks/:id' element={<StocksDetail />} />
           <Route path='mypage' element={<MyPage />} />
-          <Route path='rank' element={<Rank />} />
+          <Route
+            path='rank'
+            element={
+              <Suspense fallback={<RankingSkeleton />}>
+                <Rank />
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
     </Router>

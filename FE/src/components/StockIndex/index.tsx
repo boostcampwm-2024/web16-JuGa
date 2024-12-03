@@ -8,6 +8,7 @@ export default function StockIndex() {
     queryFn: () => getStockIndex(),
     staleTime: 1000,
     cacheTime: 60000,
+    suspense: true,
   });
 
   if (isLoading) return <div>Loading...</div>;
@@ -16,7 +17,7 @@ export default function StockIndex() {
   const { KOSPI, KOSDAQ, KOSPI200, KSQ150 } = data;
 
   return (
-    <div className='flex items-center justify-between w-full gap-2 my-2'>
+    <div className='my-2 flex w-full items-center justify-between gap-2'>
       <Card name='코스피' id='KOSPI' initialData={KOSPI} />
       <Card name='코스닥' id='KOSDAQ' initialData={KOSDAQ} />
       <Card name='코스피200' id='KOSPI200' initialData={KOSPI200} />

@@ -30,10 +30,10 @@ export default function Chart({ code }: StocksDetailChartProps) {
 
   const [mouseIndex, setMouseIndex] = useState<number | null>(null);
 
-  const { data, isLoading } = useQuery(
+  const { data } = useQuery(
     ['stocksChartData', code, timeCategory],
     () => getStocksChartDataByCode(code, timeCategory),
-    { staleTime: 1000 * 60 },
+    { staleTime: 1000 * 60, suspense: true, keepPreviousData: true },
   );
 
   const { mousePosition, getCanvasMousePosition } = useMouseMove(containerRef);
@@ -53,7 +53,7 @@ export default function Chart({ code }: StocksDetailChartProps) {
   );
 
   useEffect(() => {
-    if (isLoading || !data) return;
+    if (!data) return;
 
     if (
       !upperChartCanvasRef.current ||
@@ -83,7 +83,6 @@ export default function Chart({ code }: StocksDetailChartProps) {
   }, [
     timeCategory,
     data,
-    isLoading,
     setCanvasSize,
     renderChart,
     chartSizeConfig,
