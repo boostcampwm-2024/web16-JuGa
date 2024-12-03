@@ -6,12 +6,8 @@ import { formatTimestamp } from 'utils/format';
 export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
 
-  const { data, isLoading, isError } = orderQuery;
+  const { data } = orderQuery;
   const { isOpen, open } = useOrderCancelAlertModalStore();
-
-  if (isLoading) return <div>loading</div>;
-  if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
 
   return (
     <div className='mx-auto flex min-h-[500px] w-full flex-col rounded-md bg-white p-4 shadow-md'>
@@ -25,7 +21,7 @@ export default function Order() {
       </div>
 
       <ul className='flex flex-col divide-y text-sm'>
-        {data.map((order) => {
+        {data?.map((order) => {
           const {
             id,
             stock_code,

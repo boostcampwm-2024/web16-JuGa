@@ -7,11 +7,12 @@ export default function useUser() {
 
   const userQuery = useQuery(['myInfo', 'profile'], () => getMyProfile(), {
     staleTime: 1000,
+    suspense: true,
   });
 
   const updateNickame = useMutation((nickname: string) => rename(nickname), {
     onSuccess: () => queryClient.invalidateQueries(['myInfo', 'profile']),
   });
 
-  return { userQuery, updateNickame };
+  return { userQuery, updateNickname: updateNickame };
 }

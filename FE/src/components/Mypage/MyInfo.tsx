@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 
 export default function MyInfo() {
   const [isEditMode, setIsEditMode] = useState(false);
-  const { userQuery, updateNickame } = useUser();
+  const { userQuery, updateNickname } = useUser();
 
-  const { data, isLoading, isError } = userQuery;
+  const { data } = userQuery;
 
   const [nickname, setNickname] = useState('');
 
@@ -17,17 +17,13 @@ export default function MyInfo() {
     setNickname(data.name);
   }, [data]);
 
-  if (isLoading) return <div>loading</div>;
-  if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
-
-  const handeleEditBtnClick = () => {
-    if (nickname === data.name) {
+  const handleEditBtnClick = () => {
+    if (nickname === data?.name) {
       setIsEditMode(false);
       return;
     }
 
-    updateNickame.mutate(nickname, {
+    updateNickname.mutate(nickname, {
       onSuccess: (res) => {
         if (res.statusCode === 400) {
           Toast({ message: res.message, type: 'error' });
@@ -41,7 +37,7 @@ export default function MyInfo() {
   return (
     <div className='flex flex-col items-center p-6 text-lg'>
       <div className='flex w-full max-w-[600px] items-center gap-2 py-2 sm:w-[80%] lg:w-[50%]'>
-        <div className='flex items-center justify-between w-full'>
+        <div className='flex w-full items-center justify-between'>
           <p className='w-28 min-w-[80px] truncate font-medium text-juga-grayscale-black sm:min-w-[100px]'>
             닉네임
           </p>
@@ -56,17 +52,19 @@ export default function MyInfo() {
                   autoFocus
                 />
                 <button
-                  onClick={handeleEditBtnClick}
-                  className='w-10 p-1 text-sm font-semibold text-white rounded-lg bg-juga-blue-40'
+                  onClick={handleEditBtnClick}
+                  className='w-10 rounded-lg bg-juga-blue-40 p-1 text-sm font-semibold text-white'
                 >
                   수정
                 </button>
                 <button
                   onClick={() => {
-                    setNickname(data.name);
+                    if (data) {
+                      setNickname(data.name);
+                    }
                     setIsEditMode(false);
                   }}
-                  className='w-10 p-1 text-sm font-semibold text-white rounded-lg bg-juga-grayscale-500'
+                  className='w-10 rounded-lg bg-juga-grayscale-500 p-1 text-sm font-semibold text-white'
                 >
                   취소
                 </button>
@@ -76,9 +74,9 @@ export default function MyInfo() {
                 <p className='min-w-[60px] truncate font-semibold text-juga-grayscale-500 sm:min-w-[80px]'>
                   {nickname}
                 </p>
-                <div className='flex items-center justify-end w-9'>
+                <div className='flex w-9 items-center justify-end'>
                   <button onClick={() => setIsEditMode(true)}>
-                    <PencilSquareIcon className='w-5 h-5' />
+                    <PencilSquareIcon className='h-5 w-5' />
                   </button>
                 </div>
               </>

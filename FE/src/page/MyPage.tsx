@@ -6,6 +6,11 @@ import Order from 'components/Mypage/Order';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import useAuthStore from '../store/useAuthStore.ts';
+import { Suspense } from 'react';
+import { AccountSkeleton } from '../components/Mypage/AccountSkeleton.tsx';
+import { BookmarkSkeleton } from '../components/Mypage/BookMarkSkeleton.tsx';
+import { OrderSkeleton } from '../components/Mypage/OrderSkeleton.tsx';
+import { MyInfoSkeleton } from '../components/Mypage/MyInfoSkeleton.tsx';
 
 export default function MyPage() {
   const [searchParams] = useSearchParams();
@@ -27,10 +32,26 @@ export default function MyPage() {
       <div className='flex-1'>
         {
           {
-            account: <Account />,
-            order: <Order />,
-            bookmark: <BookMark />,
-            info: <MyInfo />,
+            account: (
+              <Suspense fallback={<AccountSkeleton />}>
+                <Account />
+              </Suspense>
+            ),
+            order: (
+              <Suspense fallback={<OrderSkeleton />}>
+                <Order />
+              </Suspense>
+            ),
+            bookmark: (
+              <Suspense fallback={<BookmarkSkeleton />}>
+                <BookMark />
+              </Suspense>
+            ),
+            info: (
+              <Suspense fallback={<MyInfoSkeleton />}>
+                <MyInfo />
+              </Suspense>
+            ),
           }[currentPage]
         }
       </div>

@@ -12,6 +12,7 @@ export default function useOrders() {
 
   const orderQuery = useQuery(['account', 'order'], () => getOrders(), {
     staleTime: 1000,
+    suspense: true,
   });
 
   const removeOrder = useMutation((id: number) => deleteOrder(id), {
