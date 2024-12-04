@@ -56,7 +56,7 @@ export default function SearchModal() {
       !!convertedSearch &&
       originalData !== undefined &&
       originalData.length === 0,
-    staleTime: 1000,
+    staleTime: 10000,
     cacheTime: 1000 * 60,
   });
 
