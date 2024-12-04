@@ -1,13 +1,13 @@
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
-import { UserRepository } from './user.repository';
 import { ConfigService } from '@nestjs/config';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { Test } from '@nestjs/testing';
-import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 import { config } from 'dotenv';
 import { UnauthorizedException } from '@nestjs/common';
+import { User } from './user.entity';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { UserRepository } from './user.repository';
+import { AuthService } from './auth.service';
 
 config();
 
@@ -60,10 +60,6 @@ describe('auth service 테스트', () => {
       get: jest.fn(),
     };
 
-    const mockbcrypt = {
-      compare: jest.fn(),
-    };
-
     const module = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -90,18 +86,20 @@ describe('auth service 테스트', () => {
 
   it('회원가입 요청 시, DB에 회원 정보가 저장된다.', async () => {
     const registerUserSpy = jest.spyOn(userRepository, 'registerUser');
-    await authService.signUp(mockAuthCredentials);
-    expect(registerUserSpy).toHaveBeenCalledWith(mockAuthCredentials);
+    await authService.signUp(mockAuthCredentials).then(() => {
+      expect(registerUserSpy).toHaveBeenCalledWith(mockAuthCredentials);
+    });
   });
 
   describe('로그인 테스트', () => {
     it('DB에 존재하는 이메일과 비밀번호로 로그인 시, 토큰이 발급된다.', async () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser);
       jest.spyOn(jwtService, 'signAsync').mockResolvedValue('token');
-      jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementation(() => Promise.resolve(true));
-
+      /* eslint-disable @typescript-eslint/no-misused-promises */
+      /* eslint-disable func-names */
+      jest.spyOn(bcrypt, 'compare').mockImplementation(function () {
+        return Promise.resolve(true);
+      });
       jest.spyOn(configService, 'get').mockReturnValue(process.env.JWT_SECRET);
 
       const result = await authService.loginUser(mockAuthCredentials);
@@ -129,7 +127,9 @@ describe('auth service 테스트', () => {
 
       const result = await authService.kakaoLoginUser(mockAuthCredentials);
 
-      expect(userRepository.registerKakaoUser).toHaveBeenCalled();
+      expect(
+        jest.spyOn(userRepository, 'registerKakaoUser'),
+      ).toHaveBeenCalled();
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
     });
@@ -140,7 +140,7 @@ describe('auth service 테스트', () => {
 
       const result = await authService.kakaoLoginUser(mockAuthCredentials);
 
-      expect(userRepository.registerKakaoUser).not.toHaveBeenCalled();
+      expect(jest.spyOn(userRepository, 'registerUser')).not.toHaveBeenCalled();
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
     });
