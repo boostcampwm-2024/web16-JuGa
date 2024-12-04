@@ -4,7 +4,7 @@ import { RedisDomainService } from '../common/redis/redis.domain-service';
 import { AssetRepository } from '../asset/asset.repository';
 import { SortType } from './enum/sort-type.enum';
 
-describe('Ranking Service 테스트', () => {
+describe('랭킹 서비스 테스트', () => {
   let rankingService: RankingService;
   let assetRepository: AssetRepository;
   let redisDomainService: RedisDomainService;
