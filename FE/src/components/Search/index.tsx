@@ -36,7 +36,7 @@ export default function SearchModal() {
     queryKey: ['search', debounceValue],
     queryFn: () => getSearchResults(formatNoSpecialChar(debounceValue)),
     enabled: !!debounceValue && !isDebouncing,
-    staleTime: 1000,
+    staleTime: 10000,
     cacheTime: 1000 * 60,
   });
   const convertedSearch = debounceValue
