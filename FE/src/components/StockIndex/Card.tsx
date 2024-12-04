@@ -48,7 +48,7 @@ export function Card({ name, id, initialData }: StockIndexChartProps) {
   }, [prices]);
 
   return (
-    <div className='flex h-[100px] w-full items-center justify-between rounded-lg bg-juga-grayscale-50 p-3'>
+    <div className='flex h-[100px] w-full flex-1 items-center justify-between rounded-lg bg-juga-grayscale-50 p-3'>
       <div className='flex h-full w-[108px] flex-1 flex-col items-start justify-center text-sm'>
         <p className='font-semibold'>{name}</p>
         <p className='text-lg font-bold'>{stockIndexValue.curr_value}</p>
