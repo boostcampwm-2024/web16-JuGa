@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RedisDomainService } from 'src/common/redis/redis.domain-service';
+import { RedisDomainService } from '../../common/redis/redis.domain-service';
 import { StockListRepository } from './stock-list.repostiory';
 import { Stocks } from './stock-list.entity';
 import { StockListResponseDto } from './dto/stock-list-response.dto';
