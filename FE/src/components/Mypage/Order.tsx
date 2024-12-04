@@ -43,7 +43,10 @@ export default function Order() {
             <li
               className='flex py-2 transition-colors hover:cursor-pointer hover:bg-gray-50'
               key={id}
-              onClick={() => handleClick(stock_code)}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest('button')) return;
+                handleClick(stock_code);
+              }}
             >
               <div className='flex w-1/3 gap-2 text-left truncate'>
                 <p className='font-semibold'>{stock_name}</p>
