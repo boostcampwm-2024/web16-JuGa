@@ -74,8 +74,8 @@ export class StockTradeHistoryController {
     status: 200,
     description: '구독 취소 성공',
   })
-  unsubscribeCode(@Query('stockCode') stockCode: string | string[]) {
+  async unsubscribeCode(@Query('stockCode') stockCode: string | string[]) {
     const stockCodeArray = Array.isArray(stockCode) ? stockCode : [stockCode];
-    this.stockPriceSocketService.unsubscribeByCode(stockCodeArray);
+    await this.stockPriceSocketService.unsubscribeByCode(stockCodeArray);
   }
 }
