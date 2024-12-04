@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity('bookmarks')
+@Unique(['user_id', 'stock_code'])
 export class Bookmark {
   @PrimaryGeneratedColumn()
   id: number;

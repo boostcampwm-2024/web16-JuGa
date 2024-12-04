@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TradeType } from './enum/trade-type';
@@ -12,9 +13,11 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index()
   @Column({ nullable: false })
   user_id: number;
 
+  @Index()
   @Column({ nullable: false })
   stock_code: string;
 
