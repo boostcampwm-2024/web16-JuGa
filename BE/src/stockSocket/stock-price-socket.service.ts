@@ -69,11 +69,11 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
 
   async subscribeByCode(trKey: string) {
     // 아무 서버도 한투와 구독 중이지 않을때
-    if (!(await this.redisDomainService.exists(trKey))) {
+    if (!(await this.redisDomainService.existsConnection(trKey))) {
       this.baseSocketDomainService.registerCode(this.TR_ID, trKey);
       await this.redisDomainService.subscribe(`stock/${trKey}`);
       this.register.push(trKey);
-      await this.redisDomainService.set(trKey, 1);
+      await this.redisDomainService.setConnection(trKey, 1);
       this.connection[trKey] = 1;
 
       return;
@@ -113,8 +113,8 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
       }
 
       // 레디스 내에서 모든 연결이 종료됐을 경우
-      if ((await this.redisDomainService.get(trKey)) === 0) {
-        await this.redisDomainService.del(trKey);
+      if ((await this.redisDomainService.getConnection(trKey)) === 0) {
+        await this.redisDomainService.delConnection(trKey);
       }
     }
   }
@@ -122,7 +122,7 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
   @Cron('*/5 * * * *')
   async checkConnection() {
     for (const trKey of this.register) {
-      if (!(await this.redisDomainService.exists(trKey))) {
+      if (!(await this.redisDomainService.existsConnection(trKey))) {
         this.baseSocketDomainService.unregisterCode(this.TR_ID, trKey);
         const idx = this.register.indexOf(trKey);
         if (idx) this.register.splice(idx, 1);
