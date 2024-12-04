@@ -15,6 +15,7 @@ import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { OptionalAuthGuard } from './optional-auth-guard';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -83,13 +84,14 @@ export class AuthController {
 
   @ApiOperation({ summary: '로그인 상태 확인 API' })
   @Get('/check')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(OptionalAuthGuard)
   @ApiResponse({
     status: 200,
     description: '로그인 상태 조회 성공',
     example: { isLogin: true },
   })
-  check() {
+  check(@Req() req: Request) {
+    if (!req.user) return { isLogin: false };
     return { isLogin: true };
   }
 

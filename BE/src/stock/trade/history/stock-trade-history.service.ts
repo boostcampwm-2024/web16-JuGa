@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { KoreaInvestmentDomainService } from '../../../common/koreaInvestment/korea-investment.domain-service';
 import { InquireCCNLApiResponse } from './interface/Inquire-ccnl.interface';
 import { TodayStockTradeHistoryOutputDto } from './dto/today-stock-trade-history-output.dto';
@@ -35,7 +35,12 @@ export class StockTradeHistoryService {
         queryParams,
       );
 
-    await this.stockPriceSocketService.subscribeByCode(stockCode);
+    try {
+      await this.stockPriceSocketService.subscribeByCode(stockCode);
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
+
     return this.formatTodayStockTradeHistoryData(response.output);
   }
 

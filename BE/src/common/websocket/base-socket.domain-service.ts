@@ -47,11 +47,12 @@ export class BaseSocketDomainService implements OnModuleInit {
 
       if (data.length < 2) {
         const json = JSON.parse(data[0]);
-        if (json.body)
+        if (json.body) {
           this.logger.log(
             `한국투자증권 웹소켓 연결: ${json.body.msg1}`,
             json.header.tr_id,
           );
+        }
         if (json.header.tr_id === 'PINGPONG')
           this.socket.pong(JSON.stringify(json));
         return;
