@@ -19,9 +19,12 @@ export default function Header() {
 
   useEffect(() => {
     const check = async () => {
-      const res = await checkAuth();
-      if (res.ok) setIsLogin(true);
-      else setIsLogin(false);
+      try {
+        const res = await checkAuth();
+        setIsLogin(res.isLogin);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     check();
@@ -42,7 +45,7 @@ export default function Header() {
   };
 
   return (
-    <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
+    <header className='fixed left-0 top-0 z-50 h-[60px] w-full bg-white'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
         <Link to={'/'} className='flex items-center gap-2'>
           <picture>

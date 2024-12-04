@@ -38,7 +38,7 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
 
   const { isOpen, toggleModal } = useTradeAlertModalStore();
 
-  const [count, setCount] = useState<number>(0);
+  const [count, setCount] = useState<number>(1);
 
   const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
@@ -110,14 +110,14 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
     <>
       <form className='flex flex-col' onSubmit={handleBuy}>
         <div className='my-4'>
-          <div className='flex h-12 items-center justify-between'>
+          <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'>매수 가격</p>
             <input
               type='text'
               value={(+currPrice).toLocaleString()}
               onChange={handlePriceChange}
               onBlur={handlePriceInputBlur}
-              className='flex-1 rounded-lg py-1'
+              className='flex-1 py-1 rounded-lg'
             />
           </div>
           {lowerLimitFlag && (
@@ -130,13 +130,13 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
               이 주식의 최대 가격은 {(+stck_mxpr).toLocaleString()}입니다.
             </div>
           )}
-          <div className='flex h-12 items-center justify-between'>
+          <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'> 수량</p>
             <input
               type='text'
               value={count}
               onChange={handleCountChange}
-              className='flex-1 rounded-lg py-1'
+              className='flex-1 py-1 rounded-lg'
               min={1}
             />
           </div>
@@ -155,7 +155,7 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
           </div>
         </div>
 
-        <div className='flex h-10 flex-col justify-center'>
+        <div className='flex flex-col justify-center h-10'>
           {lackAssetFlag && (
             <p className='text-xs text-juga-red-60'>잔액이 부족해요!</p>
           )}
@@ -164,7 +164,7 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
           className={
             'rounded-lg bg-juga-red-60 py-2 text-white disabled:bg-juga-grayscale-100'
           }
-          disabled={!isLogin}
+          disabled={!isLogin || count === 0}
         >
           매수하기
         </button>

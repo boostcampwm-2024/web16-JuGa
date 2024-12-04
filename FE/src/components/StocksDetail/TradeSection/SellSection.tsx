@@ -63,7 +63,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
   if (isError) return <div>error</div>;
 
   const quantity = data.quantity;
-  const avg_price = data.avg_price;
+  const avg_price = Math.floor(data.avg_price);
 
   const pl = (+currPrice - avg_price) * count;
   const totalPrice = +currPrice * count;
@@ -204,7 +204,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           className={
             'rounded-lg bg-juga-blue-50 py-2 text-white disabled:bg-juga-grayscale-100'
           }
-          disabled={!isLogin}
+          disabled={!isLogin || count === 0}
         >
           매도하기
         </button>
