@@ -5,6 +5,9 @@ import PriceSection from 'components/StocksDetail/PriceSection';
 import TradeSection from 'components/StocksDetail/TradeSection';
 import { useParams } from 'react-router-dom';
 import { getStocksByCode } from 'service/stocks';
+import { Helmet } from 'react-helmet-async';
+import { Suspense } from 'react';
+import ChartSkeleton from 'components/StocksDetail/ChartSkeleton.tsx';
 
 export default function StocksDetail() {
   const params = useParams();
@@ -22,10 +25,16 @@ export default function StocksDetail() {
 
   return (
     <div className='flex flex-col'>
+      <Helmet>
+        <meta name='description' content='주식 상세페이지입니다.' />
+        <title>{`${(+data.stck_prpr).toLocaleString()}원 ${+data.prdy_ctrt}% | ${data.hts_kor_isnm}`}</title>
+      </Helmet>
       <Header code={code} data={data} />
       <div className='flex h-[500px]'>
         <div className='flex min-w-[850px] flex-col'>
-          <Chart code={code} />
+          <Suspense fallback={<ChartSkeleton />}>
+            <Chart code={code} />
+          </Suspense>
           <PriceSection />
         </div>
         <TradeSection code={code} data={data} />

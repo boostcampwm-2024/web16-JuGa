@@ -30,9 +30,27 @@ export async function getStocksChartDataByCode(
 
 export async function unsubscribe(code: string) {
   return fetch(
-    `${import.meta.env.VITE_API_URL}/stocks/trade-history/${code}/unsubscribe`,
+    `${import.meta.env.VITE_API_URL}/stocks/trade-history/unsubscribe?stockCode=${code}`,
     {
       headers: { 'Content-Type': 'application/json' },
     },
   );
 }
+
+export const getTopFiveStocks = async (market: string) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/stocks/topfive?market=${market}`,
+  );
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+export const getStockIndex = async () => {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/stocks/index`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};

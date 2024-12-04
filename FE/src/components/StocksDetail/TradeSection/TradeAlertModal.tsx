@@ -1,6 +1,6 @@
 import Overay from 'components/ModalOveray';
 import useOrders from 'hooks/useOrder';
-import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { getTradeCommision } from 'utils/common';
 
 type TradeAlertModalProps = {
@@ -42,7 +42,7 @@ export default function TradeAlertModal({
         <div className='self-start text-lg font-bold'>
           {stockName} {type === 'BUY' ? '매수' : '매도'} {count}주
         </div>
-        <div className='flex flex-col gap-2 my-5 text-juga-grayscale-500'>
+        <div className='my-5 flex flex-col gap-2 text-juga-grayscale-500'>
           <div className='flex justify-between'>
             <p>{count}주 희망가격</p>
             <p>{totalPrice.toLocaleString()}원</p>
@@ -59,7 +59,7 @@ export default function TradeAlertModal({
 
         <div className='flex justify-end gap-2'>
           <button
-            className='px-6 py-2 text-gray-800 rounded-xl bg-juga-grayscale-100'
+            className='rounded-xl bg-juga-grayscale-100 px-6 py-2 text-gray-800'
             onClick={toggleModal}
           >
             취소

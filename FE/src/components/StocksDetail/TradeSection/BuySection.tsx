@@ -2,14 +2,15 @@ import {
   ChangeEvent,
   FocusEvent,
   FormEvent,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { StockDetailType } from 'types';
 import { isNumericString } from 'utils/common';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import { useQuery } from '@tanstack/react-query';
 import { getCash } from 'service/assets';
 import TradeAlertModal from './TradeAlertModal';
@@ -37,24 +38,24 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
 
   const { isOpen, toggleModal } = useTradeAlertModalStore();
 
-  const [count, setCount] = useState<number>(0);
+  const [count, setCount] = useState<number>(1);
 
   const [upperLimitFlag, setUpperLimitFlag] = useState<boolean>(false);
   const [lowerLimitFlag, setLowerLimitFlag] = useState<boolean>(false);
   const [lackAssetFlag, setLackAssetFlag] = useState<boolean>(false);
   const timerRef = useRef<number | null>(null);
 
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePriceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const s = e.target.value.replace(/,/g, '');
     if (!isNumericString(s)) return;
     setCurrPrice(s);
-  };
+  }, []);
 
-  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCountChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const s = e.target.value;
     if (!isNumericString(s)) return;
     setCount(+s);
-  };
+  }, []);
 
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
@@ -163,7 +164,7 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
           className={
             'rounded-lg bg-juga-red-60 py-2 text-white disabled:bg-juga-grayscale-100'
           }
-          disabled={!isLogin}
+          disabled={!isLogin || count === 0}
         >
           매수하기
         </button>

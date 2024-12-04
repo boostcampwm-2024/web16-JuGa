@@ -1,6 +1,6 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { MousePositionType, Padding, StockChartUnit } from 'types.ts';
 import { makeYLabels } from './makeLabels.ts';
-import { MousePositionType } from '../../components/StocksDetail/Chart.tsx';
+import { makeChartDataFlat } from './makeChartDataFlat.ts';
 
 export const drawUpperYAxis = (
   ctx: CanvasRenderingContext2D,
@@ -14,41 +14,7 @@ export const drawUpperYAxis = (
   upperChartWidth: number,
   upperChartHeight: number,
 ) => {
-  const values = data
-    .map((d) => {
-
-      if (d.mov_avg_20 && d.mov_avg_5) {
-        return [
-          +d.stck_hgpr,
-          +d.stck_lwpr,
-          +d.stck_clpr,
-          +d.stck_oprc,
-          Math.floor(+d.mov_avg_5),
-          Math.floor(+d.mov_avg_20),
-        ];
-
-      } else if (d.mov_avg_5) {
-        return [
-          +d.stck_hgpr,
-          +d.stck_lwpr,
-          +d.stck_clpr,
-          +d.stck_oprc,
-          Math.floor(+d.mov_avg_5),
-        ];
-
-      } else if (d.mov_avg_20) {
-        return [
-          +d.stck_hgpr,
-          +d.stck_lwpr,
-          +d.stck_clpr,
-          +d.stck_oprc,
-          Math.floor(+d.mov_avg_20),
-        ];
-      } else {
-        return [+d.stck_hgpr, +d.stck_lwpr, +d.stck_clpr, +d.stck_oprc];
-      }
-    })
-    .flat();
+  const values = makeChartDataFlat(data);
   const yMax = Math.round(Math.max(...values) * (1 + weight));
   const yMin = Math.round(Math.min(...values) * (1 - weight));
   ctx.clearRect(
@@ -69,7 +35,11 @@ export const drawUpperYAxis = (
     const valueRatio = (label - yMin) / (yMax - yMin);
     const yPos = height - valueRatio * height;
     const formattedValue = label.toLocaleString();
-    ctx.fillText(formattedValue, width / 2 + padding.left, yPos + padding.top);
+    ctx.fillText(
+      formattedValue,
+      width / 2 + padding.left / 2,
+      yPos + padding.top,
+    );
   });
 
   if (
@@ -91,7 +61,7 @@ export const drawUpperYAxis = (
     const textWidth = ctx.measureText(valueText).width;
 
     ctx.fillStyle = '#2175F3';
-    const boxX = width / 2 + padding.left - 12;
+    const boxX = width / 2 + padding.left / 2 - 12;
     const boxY = mousePosition.y - boxHeight / 2;
 
     ctx.fillRect(boxX, boxY, textWidth + boxPadding * 2, boxHeight);

@@ -1,17 +1,15 @@
 import Card from './Card.tsx';
 import { useQuery } from '@tanstack/react-query';
-import { getNewsData } from '../../service/getNewsData.ts';
-import { NewsDataType } from './NewsDataType.ts';
+import { getNewsData } from '../../service/news.ts';
+import { NewsDataType } from './type.ts';
 
 export default function News() {
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ['News'],
     queryFn: () => getNewsData(),
     staleTime: 1000 * 60,
+    suspense: true,
   });
-
-  if (isError) return <div>Error!!</div>;
-  if (isLoading) return <div>Loading...</div>;
 
   const randomNewsIndex = Math.floor(Math.random() * 16);
 

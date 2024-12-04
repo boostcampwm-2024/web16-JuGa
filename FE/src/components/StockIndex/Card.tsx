@@ -1,17 +1,16 @@
-import {
-  ChartData,
-  StockIndexData,
-  StockIndexValue,
-} from 'components/TopFive/type';
 import { useEffect, useRef, useState } from 'react';
 import { socket } from 'utils/socket.ts';
 import { drawChart } from 'utils/chart/drawChart.ts';
-
-// const X_LENGTH = 79;
+import {
+  ChartData,
+  MarketType,
+  StockIndexData,
+  StockIndexValue,
+} from './type.ts';
 
 type StockIndexChartProps = {
   name: string;
-  id: 'KOSPI' | 'KOSDAQ' | 'KOSPI200' | 'KSQ150';
+  id: MarketType;
   initialData: StockIndexData;
 };
 

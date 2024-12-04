@@ -3,7 +3,7 @@ import Toast from 'components/Toast';
 import { useEffect, useState } from 'react';
 import { bookmark, unbookmark } from 'service/bookmark';
 import { unsubscribe } from 'service/stocks';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import useLoginModalStore from 'store/useLoginModalStore';
 import { StockDetailType } from 'types';
 import { stringToLocaleString } from 'utils/common';
@@ -35,6 +35,23 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   const { isLogin } = useAuthStore();
   const { toggleModal } = useLoginModalStore();
 
+  const stockInfo: { label: string; value: string }[] = [
+    { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
+    { label: 'PER', value: `${per}배` },
+  ];
+
+  const colorStyleBySign =
+    currPrdyVrssSign === '3'
+      ? ''
+      : currPrdyVrssSign < '3'
+        ? 'text-juga-red-60'
+        : 'text-juga-blue-40';
+
+  const percentAbsolute = Math.abs(Number(currPrdyRate)).toFixed(2);
+
+  const plusOrMinus =
+    currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
+
   // const { debounceValue } = useDebounce(isBookmarked, 1000);
   // const isInitialMount = useRef(true);
 
@@ -50,6 +67,9 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
   //     unbookmark(code);
   //   }
   // }, [code, debounceValue]);
+  useEffect(() => {
+    setIsBookmarked(is_bookmarked);
+  }, [is_bookmarked]);
 
   useEffect(() => {
     setCurrPrice(stck_prpr);
@@ -77,25 +97,8 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
     };
   }, [code]);
 
-  const stockInfo: { label: string; value: string }[] = [
-    { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
-    { label: 'PER', value: `${per}배` },
-  ];
-
-  const colorStyleBySign =
-    currPrdyVrssSign === '3'
-      ? ''
-      : currPrdyVrssSign < '3'
-        ? 'text-juga-red-60'
-        : 'text-juga-blue-40';
-
-  const percentAbsolute = Math.abs(Number(currPrdyRate)).toFixed(2);
-
-  const plusOrMinus =
-    currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
-
   return (
-    <div className='flex items-center justify-between w-full h-16 px-2'>
+    <div className='flex h-16 w-full items-center justify-between px-2'>
       <div className='flex flex-col font-semibold'>
         <div className='flex gap-2 text-sm'>
           <h2>{hts_kor_isnm}</h2>

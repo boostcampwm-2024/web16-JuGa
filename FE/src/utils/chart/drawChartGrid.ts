@@ -1,4 +1,4 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { Padding, StockChartUnit } from 'types.ts';
 import { makeXLabels, makeYLabels } from './makeLabels.ts';
 
 export const drawChartGrid = (
@@ -37,19 +37,11 @@ export const drawChartGrid = (
       );
     }
   });
-  lowerChartCtx.strokeStyle = '#D2DAE0';
-  lowerChartCtx.lineWidth = 1;
-  lowerChartCtx.stroke();
-  upperChartCtx.strokeStyle = '#D2DAE0';
-  upperChartCtx.lineWidth = 1;
-  upperChartCtx.stroke();
 
   const volumes = data.map((d) => +d.acml_vol);
   const volumeMax = Math.round(Math.max(...volumes) * 1.2);
   const volumeMin = Math.round(Math.min(...volumes) * 0.8);
   const lowerLabels = makeYLabels(volumeMax, volumeMin, lowerLabelsNum);
-
-  lowerChartCtx.beginPath();
 
   lowerLabels.forEach((label) => {
     const valueRatio = (label - volumeMin) / (volumeMax - volumeMin);
@@ -79,7 +71,6 @@ export const drawChartGrid = (
   const valueMin = Math.round(Math.min(...values) * (1 - 0.1));
 
   const upperLabels = makeYLabels(valueMax, valueMin, upperLabelsNum);
-  upperChartCtx.beginPath();
   upperLabels.forEach((label) => {
     const yPos =
       padding.top +

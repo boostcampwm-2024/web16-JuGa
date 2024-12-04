@@ -1,6 +1,6 @@
+import { getStockIndex } from 'service/stocks.ts';
 import { Card } from './Card.tsx';
 import { useQuery } from '@tanstack/react-query';
-import { getStockIndex } from '../../service/getStockIndex.ts';
 
 export default function StockIndex() {
   const { data, isLoading, isError } = useQuery({
@@ -8,6 +8,7 @@ export default function StockIndex() {
     queryFn: () => getStockIndex(),
     staleTime: 1000,
     cacheTime: 60000,
+    suspense: true,
   });
 
   if (isLoading) return <div>Loading...</div>;

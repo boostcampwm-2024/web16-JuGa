@@ -1,11 +1,11 @@
-import { RankingItem } from './RankType.ts';
+import { RankingItem } from './type.ts';
 
 type Props = {
   item: RankingItem;
   type: '수익률순' | '자산순';
 };
 
-export default function RankCard({ item, type }: Props) {
+export default function Card({ item, type }: Props) {
   return (
     <div
       className={

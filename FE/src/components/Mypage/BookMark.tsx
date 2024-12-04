@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { getBookmarkedStocks } from 'service/bookmark';
+import { HeartIcon } from '@heroicons/react/16/solid';
+import useBookmark from 'hooks/useBookmark';
 
 export default function BookMark() {
   const navigation = useNavigate();
@@ -9,17 +9,9 @@ export default function BookMark() {
     navigation(`/stocks/${code}`);
   };
 
-  const { data, isLoading, isError } = useQuery(
-    ['bookmark', 'stock'],
-    () => getBookmarkedStocks(),
-    {
-      staleTime: 1000,
-    },
-  );
+  const { bookmarkQuery, unlike } = useBookmark();
 
-  if (isLoading) return <div>loading</div>;
-  if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
+  const { data } = bookmarkQuery;
 
   return (
     <div className='mx-auto flex min-h-[500px] w-full flex-1 flex-col rounded-md bg-white p-4 shadow-md'>
@@ -27,17 +19,21 @@ export default function BookMark() {
         <p className='w-1/2 text-left truncate'>종목</p>
         <p className='w-1/4 text-center'>현재가</p>
         <p className='w-1/4 text-right'>등락률</p>
+        <p className='w-1/6 text-right'></p>
       </div>
 
       <ul className='flex flex-col text-sm divide-y'>
-        {data.map((stock) => {
+        {data?.map((stock) => {
           const { code, name, stck_prpr, prdy_ctrt, prdy_vrss_sign } = stock;
 
           return (
             <li
               className='flex py-2 transition-colors hover:cursor-pointer hover:bg-gray-50'
               key={code}
-              onClick={() => handleClick(code)}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest('button')) return;
+                handleClick(code);
+              }}
             >
               <div className='flex w-1/2 gap-2 text-left truncate'>
                 <p className='font-semibold'>{name}</p>
@@ -51,6 +47,11 @@ export default function BookMark() {
               >
                 {+prdy_vrss_sign < 3 && '+'}
                 {prdy_ctrt}%
+              </p>
+              <p className='w-1/6 text-right'>
+                <button onClick={() => unlike.mutate(code)}>
+                  <HeartIcon className='size-6 fill-juga-red-60' />
+                </button>
               </p>
             </li>
           );

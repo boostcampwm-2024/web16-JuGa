@@ -1,7 +1,6 @@
-import { Padding, StockChartUnit } from 'types.ts';
+import { MousePositionType, Padding, StockChartUnit } from 'types.ts';
 import { makeXLabels } from './makeLabels.ts';
-import { formatTime } from '../formatTime.ts';
-import { MousePositionType } from '../../components/StocksDetail/Chart.tsx';
+import { formatTime } from 'utils/format.ts';
 
 export const drawXAxis = (
   ctx: CanvasRenderingContext2D,
@@ -30,7 +29,7 @@ export const drawXAxis = (
 
   const barWidth = Math.floor(width / data.length);
   data.forEach((item, i) => {
-    if (labels.includes(item.stck_bsop_date) || i === data.length - 1) {
+    if (labels.includes(item.stck_bsop_date)) {
       ctx.fillText(
         formatTime(item.stck_bsop_date),
         padding.left + (width * i) / (data.length - 1) + barWidth / 2,
