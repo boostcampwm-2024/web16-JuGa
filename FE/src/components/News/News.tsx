@@ -19,7 +19,7 @@ export default function News() {
         <h2 className='text-xl font-bold'>주요 뉴스</h2>
       </div>
 
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {data.news
           .slice(randomNewsIndex, randomNewsIndex + 4)
           .map((news: NewsDataType, index: number) => (
