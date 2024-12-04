@@ -4,19 +4,20 @@ import Redis from 'ioredis';
 @Injectable()
 export class RedisDomainService {
   constructor(
-    @Inject('REDIS_CLIENT')
-    private readonly redis: Redis,
+    @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    @Inject('REDIS_PUBLISHER') private readonly publisher: Redis,
+    @Inject('REDIS_SUBSCRIBER') private readonly subscriber: Redis,
   ) {}
 
   async exists(key: string): Promise<number> {
     return this.redis.exists(key);
   }
 
-  async get(key: string): Promise<string | null> {
+  async get(key: string): Promise<string | number | null> {
     return this.redis.get(key);
   }
 
-  async set(key: string, value: string, expires?: number): Promise<'OK'> {
+  async set(key: string, value: number, expires?: number): Promise<'OK'> {
     if (expires) {
       return this.redis.set(key, value, 'EX', expires);
     }
@@ -61,5 +62,31 @@ export class RedisDomainService {
 
   async expire(key: string, seconds: number): Promise<number> {
     return this.redis.expire(key, seconds);
+  }
+
+  async publish(channel: string, message: string) {
+    return this.publisher.publish(channel, message);
+  }
+
+  async subscribe(channel: string) {
+    await this.subscriber.subscribe(channel);
+  }
+
+  on(callback: (message: string) => void) {
+    this.redis.on('message', (message) => {
+      callback(message);
+    });
+  }
+
+  async unsubscribe(channel: string) {
+    return this.redis.unsubscribe(channel);
+  }
+
+  async increment(key: string) {
+    return this.redis.incr(key);
+  }
+
+  async decrement(key: string) {
+    return this.redis.decr(key);
   }
 }

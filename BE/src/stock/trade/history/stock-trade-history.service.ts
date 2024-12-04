@@ -36,7 +36,7 @@ export class StockTradeHistoryService {
       );
 
     try {
-      this.stockPriceSocketService.subscribeByCode(stockCode);
+      await this.stockPriceSocketService.subscribeByCode(stockCode);
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
