@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { Cron } from '@nestjs/schedule';
 import { DataSource, In } from 'typeorm';
 import { NaverApiDomianService } from './naver-api-domian.service';
 import { NewsApiResponse } from './interface/news-value.interface';
@@ -47,7 +48,7 @@ export class NewsService {
     };
   }
 
-  // @Cron('*/1 * * * *')
+  @Cron('*/15 8-16 * * 1-5')
   async cronNewsData() {
     const queryRunner = this.dataSource.createQueryRunner();
 
