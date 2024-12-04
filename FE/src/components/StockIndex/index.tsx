@@ -6,7 +6,7 @@ export default function StockIndex() {
   const { data } = useQuery({
     queryKey: ['StockIndex'],
     queryFn: () => getStockIndex(),
-    staleTime: 1000,
+    staleTime: 10000,
     cacheTime: 60000,
     suspense: true,
   });
@@ -14,7 +14,7 @@ export default function StockIndex() {
   const { KOSPI, KOSDAQ, KOSPI200, KSQ150 } = data;
 
   return (
-    <div className='grid w-full grid-cols-1 gap-2 my-2 sm:grid-cols-2 lg:grid-cols-4'>
+    <div className='my-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4'>
       <Card name='코스피' id='KOSPI' initialData={KOSPI} />
       <Card name='코스닥' id='KOSDAQ' initialData={KOSDAQ} />
       <Card name='코스피200' id='KOSPI200' initialData={KOSPI200} />

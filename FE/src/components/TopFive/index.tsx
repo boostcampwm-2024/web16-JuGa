@@ -14,7 +14,7 @@ export default function TopFive() {
     queryKey: ['topfive', currentMarket],
     queryFn: () => getTopFiveStocks(stockIndexMap[currentMarket]),
     keepPreviousData: true,
-    staleTime: 1000,
+    staleTime: 10000,
     cacheTime: 30000,
     suspense: true,
   });
