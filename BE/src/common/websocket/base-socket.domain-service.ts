@@ -83,7 +83,7 @@ export class BaseSocketDomainService implements OnModuleInit {
       }, 60000);
     };
 
-    this.redisDomainService.on((message) => {
+    this.redisDomainService.on((channel, message) => {
       const dataList = message.split('^');
       this.socketDataHandlers.H0STCNT0(dataList);
     });

@@ -1,13 +1,18 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import Redis from 'ioredis';
 
 @Injectable()
-export class RedisDomainService {
+export class RedisDomainService implements OnModuleInit {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
     @Inject('REDIS_PUBLISHER') private readonly publisher: Redis,
     @Inject('REDIS_SUBSCRIBER') private readonly subscriber: Redis,
   ) {}
+
+  async onModuleInit() {
+    const keys = await this.redis.keys('connections:*');
+    if (keys.length > 0) await this.redis.del(keys);
+  }
 
   async exists(key: string): Promise<number> {
     return this.redis.exists(key);
@@ -72,9 +77,9 @@ export class RedisDomainService {
     await this.subscriber.subscribe(channel);
   }
 
-  on(callback: (message: string) => void) {
-    this.subscriber.on('message', (message) => {
-      callback(message);
+  on(callback: (channel: string, message: string) => void) {
+    this.subscriber.on('message', (channel, message) => {
+      callback(channel, message);
     });
   }
 
@@ -82,11 +87,27 @@ export class RedisDomainService {
     return this.subscriber.unsubscribe(channel);
   }
 
+  async setConnection(key: string, value: number) {
+    return this.redis.set(`connections:${key}`, value);
+  }
+
+  async getConnection(key: string): Promise<number> {
+    return Number(await this.redis.get(`connections:${key}`));
+  }
+
+  async delConnection(key: string) {
+    return this.redis.del(`connections:${key}`);
+  }
+
+  async existsConnection(key: string) {
+    return this.redis.exists(`connections:${key}`);
+  }
+
   async increment(key: string) {
-    return this.redis.incr(key);
+    return this.redis.incr(`connections:${key}`);
   }
 
   async decrement(key: string) {
-    return this.redis.decr(key);
+    return this.redis.decr(`connections:${key}`);
   }
 }
