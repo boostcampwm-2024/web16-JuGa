@@ -4,8 +4,9 @@ import Redis from 'ioredis';
 @Injectable()
 export class RedisDomainService {
   constructor(
-    @Inject('REDIS_CLIENT')
-    private readonly redis: Redis,
+    @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    @Inject('REDIS_PUBLISHER') private readonly publisher: Redis,
+    @Inject('REDIS_SUBSCRIBER') private readonly subscriber: Redis,
   ) {}
 
   async exists(key: string): Promise<number> {
@@ -64,11 +65,11 @@ export class RedisDomainService {
   }
 
   async publish(channel: string, message: string) {
-    return this.redis.publish(channel, message);
+    return this.publisher.publish(channel, message);
   }
 
   async subscribe(channel: string) {
-    await this.redis.subscribe(channel);
+    await this.subscriber.subscribe(channel);
   }
 
   on(callback: (message: string) => void) {
