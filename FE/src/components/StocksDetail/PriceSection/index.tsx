@@ -8,6 +8,7 @@ import { getTradeHistory } from 'service/tradeHistory.ts';
 import { socket } from 'utils/socket.ts';
 import { DailyPriceDataType, PriceDataType } from './type.ts';
 import { PriceSectionViewType } from 'types.ts';
+import Loading from 'components/Loading.tsx';
 
 export default function PriceSection() {
   const { id } = useParams();
@@ -109,7 +110,7 @@ export default function PriceSection() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td>Loading...</td>
+                  <Loading />
                 </tr>
               ) : !tradeData ? (
                 <tr>

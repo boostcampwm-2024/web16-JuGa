@@ -16,6 +16,7 @@ import useAuthStore from 'store/useAuthStore.ts';
 import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { calcYield, isNumericString } from 'utils/common';
 import TradeAlertModal from './TradeAlertModal';
+import Loading from 'components/Loading';
 
 type SellSectionProps = {
   code: string;
@@ -25,7 +26,7 @@ type SellSectionProps = {
 export default function SellSection({ code, detailInfo }: SellSectionProps) {
   const { stck_prpr, stck_mxpr, stck_llam, hts_kor_isnm } = detailInfo;
 
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading } = useQuery(
     ['detail', 'sellPosiible', code],
     () => getSellInfo(code),
     { staleTime: 1000 },
@@ -58,9 +59,8 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
     setCount(+s);
   }, []);
 
-  if (isLoading) return <div>loading</div>;
+  if (isLoading) return <Loading />;
   if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
 
   const quantity = data.quantity;
   const avg_price = Math.floor(data.avg_price);

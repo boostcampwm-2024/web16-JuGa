@@ -3,7 +3,7 @@ import { Card } from './Card.tsx';
 import { useQuery } from '@tanstack/react-query';
 
 export default function StockIndex() {
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ['StockIndex'],
     queryFn: () => getStockIndex(),
     staleTime: 1000,
@@ -11,13 +11,10 @@ export default function StockIndex() {
     suspense: true,
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading data</div>;
-
   const { KOSPI, KOSDAQ, KOSPI200, KSQ150 } = data;
 
   return (
-    <div className='my-2 flex w-full items-center justify-between gap-2'>
+    <div className='flex items-center justify-between w-full gap-2 my-2'>
       <Card name='코스피' id='KOSPI' initialData={KOSPI} />
       <Card name='코스닥' id='KOSDAQ' initialData={KOSDAQ} />
       <Card name='코스피200' id='KOSPI200' initialData={KOSPI200} />

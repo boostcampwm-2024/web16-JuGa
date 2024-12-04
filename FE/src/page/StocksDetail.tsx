@@ -8,6 +8,7 @@ import { getStocksByCode } from 'service/stocks';
 import { Helmet } from 'react-helmet-async';
 import { Suspense } from 'react';
 import ChartSkeleton from 'components/StocksDetail/ChartSkeleton.tsx';
+import Loading from 'components/Loading';
 
 export default function StocksDetail() {
   const params = useParams();
@@ -20,7 +21,7 @@ export default function StocksDetail() {
   );
 
   if (!code) return <div>Non code</div>;
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (!data) return <div>Non data</div>;
 
   return (
