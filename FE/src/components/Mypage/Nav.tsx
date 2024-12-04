@@ -1,12 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
-import { MypageSectionType } from 'types';
+import { MypageSectionType } from './type.ts';
 
 const mapping = {
   account: '보유 자산 현황',
   order: '주문 요청 현황',
+  bookmark: '즐겨찾기',
   info: '내 정보',
 };
-const sections: MypageSectionType[] = ['account', 'order', 'info'];
+const sections: MypageSectionType[] = ['account', 'order', 'bookmark', 'info'];
 
 export default function Nav() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,7 +18,7 @@ export default function Nav() {
   };
 
   return (
-    <div className='flex flex-col w-48 rounded-lg h-fit'>
+    <div className='flex h-fit w-48 flex-col rounded-lg'>
       {sections.map((e, idx) => (
         <button
           key={`assetNav${idx}`}

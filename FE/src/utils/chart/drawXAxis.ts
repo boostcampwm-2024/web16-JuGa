@@ -1,7 +1,6 @@
-import { Padding, StockChartUnit } from 'types.ts';
+import { MousePositionType, Padding, StockChartUnit } from 'types.ts';
 import { makeXLabels } from './makeLabels.ts';
-import { formatTime } from '../formatTime.ts';
-import { MousePositionType } from '../../components/StocksDetail/Chart.tsx';
+import { formatTime } from 'utils/format.ts';
 
 export const drawXAxis = (
   ctx: CanvasRenderingContext2D,
@@ -11,6 +10,9 @@ export const drawXAxis = (
   padding: Padding,
   mousePosition: MousePositionType,
   parentHeight: number,
+  setMouseIndex: (
+    value: ((prevState: number | null) => number | null) | number | null,
+  ) => void,
 ) => {
   const labels = makeXLabels(data);
 
@@ -27,7 +29,7 @@ export const drawXAxis = (
 
   const barWidth = Math.floor(width / data.length);
   data.forEach((item, i) => {
-    if (labels.includes(item.stck_bsop_date) || i === data.length - 1) {
+    if (labels.includes(item.stck_bsop_date)) {
       ctx.fillText(
         formatTime(item.stck_bsop_date),
         padding.left + (width * i) / (data.length - 1) + barWidth / 2,
@@ -44,8 +46,8 @@ export const drawXAxis = (
   ) {
     const mouseX = mousePosition.x - padding.left;
     const dataIndex = Math.floor((mouseX / width) * (data.length - 1));
-
     if (dataIndex >= 0 && dataIndex < data.length) {
+      setMouseIndex(dataIndex);
       const boxPadding = 10;
       const boxHeight = 30;
       const mouseDate = data[dataIndex].stck_bsop_date;
@@ -71,5 +73,5 @@ export const drawXAxis = (
         boxY + boxHeight / 2 + 8,
       );
     }
-  }
+  } else setMouseIndex(null);
 };

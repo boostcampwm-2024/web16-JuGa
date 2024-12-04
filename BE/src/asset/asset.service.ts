@@ -148,8 +148,10 @@ export class AssetService {
     const userStocks: UserStock[] =
       await this.userStockRepository.findAllDistinctCode(userId);
 
-    userStocks.map((userStock) =>
-      this.stockPriceSocketService.subscribeByCode(userStock.stock_code),
+    await Promise.all(
+      userStocks.map((userStock) =>
+        this.stockPriceSocketService.subscribeByCode(userStock.stock_code),
+      ),
     );
   }
 
@@ -157,8 +159,8 @@ export class AssetService {
     const userStocks: UserStock[] =
       await this.userStockRepository.findAllDistinctCode(userId);
 
-    userStocks.map((userStock) =>
-      this.stockPriceSocketService.unsubscribeByCode(userStock.stock_code),
+    await this.stockPriceSocketService.unsubscribeByCode(
+      userStocks.map((userStock) => userStock.stock_code),
     );
   }
 

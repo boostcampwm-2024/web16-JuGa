@@ -1,4 +1,4 @@
-import { StockChartUnit } from '../../types.ts';
+import { StockChartUnit } from 'types.ts';
 
 export const makeYLabels = (
   yMax: number,
@@ -21,20 +21,36 @@ export const makeYLabels = (
 export const makeXLabels = (data: StockChartUnit[]) => {
   const totalData = data.length;
 
-  // 데이터 양에 따른 표시 간격 결정
-  let interval: number;
-  if (totalData <= 10) {
-    interval = 1;
-  } else if (totalData <= 20) {
-    interval = 2;
-  } else if (totalData <= 30) {
-    interval = 5;
+  let desiredLabelCount: number;
+  if (totalData < 10) {
+    desiredLabelCount = 1;
+  } else if (totalData < 20) {
+    desiredLabelCount = 2;
+  } else if (totalData < 30) {
+    desiredLabelCount = 3;
   } else {
-    interval = 6;
+    desiredLabelCount = 5;
   }
 
-  // 선택된 날짜만 라벨로 반환
-  return data
-    .filter((_, index) => index % interval === 0)
-    .map((item) => item.stck_bsop_date);
+  if (totalData === 1) {
+    return [data[0].stck_bsop_date];
+  }
+
+  const interval = Math.max(
+    1,
+    Math.floor((totalData - 1) / (desiredLabelCount - 1)),
+  );
+  const labels: string[] = [];
+
+  labels.push(data[0].stck_bsop_date);
+
+  for (let i = interval; i < totalData - interval; i += interval) {
+    labels.push(data[i].stck_bsop_date);
+  }
+
+  if (totalData > 1) {
+    labels.push(data[totalData - 1].stck_bsop_date);
+  }
+
+  return labels;
 };

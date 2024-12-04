@@ -35,5 +35,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-assignment': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/naming-convention': 'off',
+    'no-restricted-syntax': 'off',
+    'no-await-in-loop': 'off'
   },
 };

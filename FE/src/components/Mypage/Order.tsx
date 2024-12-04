@@ -1,17 +1,20 @@
 import useOrders from 'hooks/useOrder';
-import useOrderCancelAlertModalStore from 'store/orderCancleAlertModalStore';
-import { parseTimestamp } from 'utils/common';
-import CancleAlertModal from './CancleAlertModal';
+import useOrderCancelAlertModalStore from 'store/useOrderCancleAlertModalStore';
+import CancelAlertModal from './CancelAlertModal.tsx';
+import { formatTimestamp } from 'utils/format';
+import { useNavigate } from 'react-router-dom';
 
 export default function Order() {
   const { orderQuery, removeOrder } = useOrders();
 
-  const { data, isLoading, isError } = orderQuery;
+  const { data } = orderQuery;
   const { isOpen, open } = useOrderCancelAlertModalStore();
 
-  if (isLoading) return <div>loading</div>;
-  if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
+  const navigation = useNavigate();
+
+  const handleClick = (code: string) => {
+    navigation(`/stocks/${code}`);
+  };
 
   return (
     <div className='mx-auto flex min-h-[500px] w-full flex-col rounded-md bg-white p-4 shadow-md'>
@@ -25,7 +28,7 @@ export default function Order() {
       </div>
 
       <ul className='flex flex-col text-sm divide-y'>
-        {data.map((order) => {
+        {data?.map((order) => {
           const {
             id,
             stock_code,
@@ -37,7 +40,14 @@ export default function Order() {
           } = order;
 
           return (
-            <li className='flex py-2' key={id}>
+            <li
+              className='flex py-2 transition-colors hover:cursor-pointer hover:bg-gray-50'
+              key={id}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest('button')) return;
+                handleClick(stock_code);
+              }}
+            >
               <div className='flex w-1/3 gap-2 text-left truncate'>
                 <p className='font-semibold'>{stock_name}</p>
                 <p className='text-gray-500'>{stock_code}</p>
@@ -54,7 +64,7 @@ export default function Order() {
               <p className='w-1/4 text-center truncate'>{amount}</p>
               <p className='w-1/4 text-center'>{price.toLocaleString()}원</p>
               <p className='w-1/4 text-right truncate'>
-                {parseTimestamp(created_at)}
+                {formatTimestamp(created_at)}
               </p>
               <p className='w-1/6 text-right'>
                 <button
@@ -68,7 +78,7 @@ export default function Order() {
           );
         })}
       </ul>
-      {isOpen && <CancleAlertModal />}
+      {isOpen && <CancelAlertModal />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import Overay from 'components/ModalOveray';
 import useOrders from 'hooks/useOrder';
-import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { getTradeCommision } from 'utils/common';
 
 type TradeAlertModalProps = {
@@ -36,7 +36,7 @@ export default function TradeAlertModal({
   };
 
   return (
-    <>
+    <div className='z-30'>
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-5 shadow-lg'>
         <div className='self-start text-lg font-bold'>
@@ -72,6 +72,6 @@ export default function TradeAlertModal({
           </button>
         </div>
       </section>
-    </>
+    </div>
   );
 }

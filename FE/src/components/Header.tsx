@@ -1,11 +1,13 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import useAuthStore from 'store/authStore';
+import useAuthStore from 'store/useAuthStore.ts';
 import useLoginModalStore from 'store/useLoginModalStore';
-import useSearchModalStore from '../store/useSearchModalStore.ts';
-import useSearchInputStore from '../store/useSearchInputStore.ts';
-import logo from 'assets/Logo.png';
+import useSearchModalStore from 'store/useSearchModalStore.ts';
+import useSearchInputStore from 'store/useSearchInputStore.ts';
+import logoPng from 'assets/logo.png';
+import logoWebp from 'assets/logo.webp';
 import { checkAuth, logout } from 'service/auth.ts';
 import { useEffect } from 'react';
+import Toast from './Toast';
 
 export default function Header() {
   const { toggleModal } = useLoginModalStore();
@@ -17,9 +19,12 @@ export default function Header() {
 
   useEffect(() => {
     const check = async () => {
-      const res = await checkAuth();
-      if (res.ok) setIsLogin(true);
-      else setIsLogin(false);
+      try {
+        const res = await checkAuth();
+        setIsLogin(res.isLogin);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     check();
@@ -28,6 +33,7 @@ export default function Header() {
   const handleLogout = () => {
     logout().then(() => {
       setIsLogin(false);
+      Toast({ message: '로그아웃 되었습니다!', type: 'success' });
     });
   };
 
@@ -39,10 +45,17 @@ export default function Header() {
   };
 
   return (
-    <header className='fixed left-0 top-0 h-[60px] w-full bg-white'>
+    <header className='fixed left-0 top-0 z-20 h-[60px] w-full bg-white'>
       <div className='mx-auto flex h-full max-w-[1280px] items-center justify-between px-8'>
         <Link to={'/'} className='flex items-center gap-2'>
-          <img src={logo} className={'h-[32px]'} />
+          <picture>
+            <source
+              srcSet={logoWebp}
+              type='image/webp'
+              className={'h-[32px]'}
+            />
+            <img src={logoPng} alt={'Logo'} className={'h-[32px]'} />
+          </picture>
           <h1 className='text-xl font-bold text-juga-grayscale-black'>JuGa</h1>
         </Link>
 
@@ -70,13 +83,15 @@ export default function Header() {
             )}
           </nav>
           <div className='relative'>
-            <input
-              type='text'
-              placeholder='Search...'
+            <button
               defaultValue={searchInput}
-              className='h-[36px] w-[280px] rounded-lg bg-juga-grayscale-50 px-4 py-2'
+              className='flex h-[36px] w-[280px] items-center rounded-lg bg-juga-grayscale-50 px-4 py-2'
               onClick={toggleSearchModal}
-            />
+            >
+              <div className={'text-juga-grayscale-200'}>
+                {searchInput ? searchInput : 'Search...'}
+              </div>
+            </button>
           </div>
         </div>
         <div className='flex items-center gap-4'>

@@ -5,13 +5,13 @@ import { SearchInput } from './SearchInput';
 import { SearchHistoryList } from './SearchHistoryList';
 import SearchList from './SearchList.tsx';
 import useSearchInputStore from 'store/useSearchInputStore.ts';
-import { useDebounce } from 'utils/useDebounce.ts';
+import { useDebounce } from 'hooks/useDebounce.ts';
 import { useQuery } from '@tanstack/react-query';
-import { getSearchResults } from 'service/getSearchResults.ts';
 import Lottie from 'lottie-react';
 import searchAnimation from 'assets/searchAnimation.json';
-import { useSearchHistory } from './searchHistoryHook.ts';
-import { formatNoSpecialChar } from '../../utils/formatNoSpecialChar.ts';
+import { useSearchHistory } from 'hooks/useSearchHistoryHook.ts';
+import { getSearchResults } from 'service/search.ts';
+import { formatNoSpecialChar } from 'utils/format.ts';
 
 export default function SearchModal() {
   const { isOpen, toggleSearchModal } = useSearchModalStore();
@@ -36,7 +36,7 @@ export default function SearchModal() {
     if (data && data.length > 0 && debounceValue && !isLoading) {
       addSearchHistory(formatNoSpecialChar(debounceValue));
     }
-  }, [data, debounceValue]);
+  }, [data, debounceValue, addSearchHistory, isLoading]);
 
   if (!isOpen) return null;
 
@@ -44,10 +44,10 @@ export default function SearchModal() {
   const showSearchResults = searchInput && !isSearching && data;
 
   return (
-    <>
+    <div className='z-30'>
       <Overlay onClick={() => toggleSearchModal()} />
       <section
-        className={`${searchInput.length ? 'h-[520px]' : 'h-[160px]'} fixed left-1/2 top-3 z-20 w-[640px] -translate-x-1/2 rounded-2xl bg-white shadow-xl`}
+        className={`${searchInput.length ? 'h-[520px]' : ''} fixed left-1/2 top-3 w-[640px] -translate-x-1/2 rounded-2xl bg-white shadow-xl`}
       >
         <div
           className={'absolute left-0 right-0 top-0 rounded-t-2xl bg-white p-3'}
@@ -70,8 +70,18 @@ export default function SearchModal() {
 
               <div className={'h-[400px] overflow-y-auto'}>
                 {isSearching ? (
-                  <div className={'flex h-full items-center justify-center'}>
-                    <Lottie animationData={searchAnimation} />
+                  <div
+                    className={
+                      'flex h-[320px] flex-col items-center justify-center'
+                    }
+                  >
+                    <Lottie
+                      animationData={searchAnimation}
+                      className='h-[200px]'
+                    />
+                    <p className='font-bold text-juga-grayscale-black'>
+                      두 글자 이상의 검색어를 입력해주세요.
+                    </p>
                   </div>
                 ) : (
                   showSearchResults && <SearchList searchData={data} />
@@ -81,6 +91,6 @@ export default function SearchModal() {
           )}
         </div>
       </section>
-    </>
+    </div>
   );
 }

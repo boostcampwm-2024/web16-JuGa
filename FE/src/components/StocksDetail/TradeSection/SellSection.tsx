@@ -2,10 +2,18 @@ import Lottie from 'lottie-react';
 import emptyAnimation from 'assets/emptyAnimation.json';
 import { useQuery } from '@tanstack/react-query';
 import { getSellInfo } from 'service/assets';
-import { ChangeEvent, FocusEvent, FormEvent, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FocusEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { StockDetailType } from 'types';
-import useAuthStore from 'store/authStore';
-import useTradeAlertModalStore from 'store/tradeAlertModalStore';
+import useAuthStore from 'store/useAuthStore.ts';
+import useTradeAlertModalStore from 'store/useTradeAlertModalStore';
 import { calcYield, isNumericString } from 'utils/common';
 import TradeAlertModal from './TradeAlertModal';
 
@@ -34,28 +42,32 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
 
   const { isOpen, toggleModal } = useTradeAlertModalStore();
 
+  useEffect(() => {
+    setCurrPrice(stck_prpr);
+  }, [stck_prpr]);
+
+  const handlePriceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const s = e.target.value.replace(/,/g, '');
+    if (!isNumericString(s)) return;
+    setCurrPrice(s);
+  }, []);
+
+  const handleCountChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const s = e.target.value;
+    if (!isNumericString(s)) return;
+    setCount(+s);
+  }, []);
+
   if (isLoading) return <div>loading</div>;
   if (!data) return <div>No data</div>;
   if (isError) return <div>error</div>;
 
   const quantity = data.quantity;
-  const avg_price = data.avg_price;
+  const avg_price = Math.floor(data.avg_price);
 
   const pl = (+currPrice - avg_price) * count;
   const totalPrice = +currPrice * count;
   const plRate = calcYield(avg_price, +currPrice);
-
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const s = e.target.value.replace(/,/g, '');
-    if (!isNumericString(s)) return;
-    setCurrPrice(s);
-  };
-
-  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const s = e.target.value;
-    if (!isNumericString(s)) return;
-    setCount(+s);
-  };
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
     const n = +e.target.value.replace(/,/g, '');
@@ -192,7 +204,7 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
           className={
             'rounded-lg bg-juga-blue-50 py-2 text-white disabled:bg-juga-grayscale-100'
           }
-          disabled={!isLogin}
+          disabled={!isLogin || count === 0}
         >
           매도하기
         </button>

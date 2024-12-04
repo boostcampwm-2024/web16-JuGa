@@ -6,6 +6,7 @@ type CardProps = {
   price: string;
   changePercentage: string;
   changePrice: string;
+  flag: string;
   index: number;
 };
 
@@ -15,14 +16,14 @@ export default function Card({
   price,
   changePercentage,
   changePrice,
+  flag,
   index,
 }: CardProps) {
-  const changeValue =
-    typeof changePercentage === 'string'
-      ? Number(changePercentage)
-      : changePercentage;
-  const changeColor =
-    changeValue > 0 ? 'text-juga-red-60' : 'text-juga-blue-50';
+  const color =
+    flag === '3' ? '' : flag < '3' ? 'text-juga-red-60' : 'text-juga-blue-40';
+  const percentAbsolute = Math.abs(Number(changePercentage)).toFixed(2);
+
+  const plusOrMinus = flag === '3' ? '' : flag < '3' ? '+' : '-';
 
   const navigation = useNavigate();
 
@@ -46,11 +47,11 @@ export default function Card({
           {Number(price).toLocaleString()}
         </p>
       </div>
-      <div className={`w-[150px] text-right ${changeColor}`}>
+      <div className={`w-[150px] text-right ${color}`}>
         <p className='font-normal'>
-          {changeValue > 0
-            ? `${Number(changePrice).toLocaleString()}(${changeValue}%)`
-            : `${Number(changePrice).toLocaleString()}(${Math.abs(changeValue)}%)`}
+          {plusOrMinus}
+          {Math.abs(Number(changePrice)).toLocaleString()}({percentAbsolute}
+          %)
         </p>
       </div>
     </div>

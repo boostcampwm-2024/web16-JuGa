@@ -44,7 +44,7 @@ export default function MyStocksList({ stocks }: MyStocksListProps) {
                 {(+stck_prpr).toLocaleString()}원
               </p>
               <p className='w-1/6 text-center'>
-                {avg_price.toLocaleString()}원
+                {Math.floor(avg_price).toLocaleString()}원
               </p>
               <p
                 className={`w-1/6 truncate text-right ${stockYield < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}

@@ -1,4 +1,5 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { Padding, StockChartUnit } from 'types.ts';
+import { makeChartDataFlat } from './makeChartDataFlat.ts';
 
 export function drawCandleChart(
   ctx: CanvasRenderingContext2D,
@@ -12,30 +13,11 @@ export function drawCandleChart(
 ) {
   const n = data.length;
 
-  const values = data
-    .map((d) => {
-      if (d.mov_avg_20) {
-        return [
-          +d.stck_hgpr,
-          +d.stck_lwpr,
-          +d.stck_clpr,
-          +d.stck_oprc,
-          Math.floor(+d.mov_avg_5),
-          Math.floor(+d.mov_avg_20),
-        ];
-      } else {
-        return [
-          +d.stck_hgpr,
-          +d.stck_lwpr,
-          +d.stck_clpr,
-          +d.stck_oprc,
-          Math.floor(+d.mov_avg_5),
-        ];
-      }
-    })
-    .flat();
+  const values = makeChartDataFlat(data);
   const yMax = Math.round(Math.max(...values) * (1 + weight));
   const yMin = Math.round(Math.min(...values) * (1 - weight));
+  const blue = '#2175F3';
+  const red = '#FF3700';
 
   data.forEach((e, i) => {
     ctx.beginPath();
@@ -52,9 +34,6 @@ export function drawCandleChart(
       y + padding.top + height - (height * (+stck_hgpr - yMin)) / (yMax - yMin);
     const lowY =
       y + padding.top + height - (height * (+stck_lwpr - yMin)) / (yMax - yMin);
-
-    const blue = '#2175F3';
-    const red = '#FF3700';
 
     if (+stck_oprc > +stck_clpr) {
       ctx.fillStyle = blue;

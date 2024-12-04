@@ -3,9 +3,10 @@ export type LoginSuccessResponse = {
 };
 
 export type LoginFailResponse = {
-  error: string;
-  message: string[];
+  message: string;
   statusCode: number;
+  timestamp: string;
+  path: string;
 };
 
 export type TiemCategory = 'D' | 'W' | 'M' | 'Y';
@@ -28,6 +29,7 @@ export type StockDetailType = {
   per: string;
   stck_mxpr: string;
   stck_llam: string;
+  is_bookmarked: boolean;
 };
 
 export type StockChartUnit = {
@@ -38,11 +40,9 @@ export type StockChartUnit = {
   stck_lwpr: string;
   acml_vol: string;
   prdy_vrss_sign: string;
-  mov_avg_5: string;
+  mov_avg_5?: string;
   mov_avg_20?: string;
 };
-
-export type MypageSectionType = 'account' | 'order' | 'info';
 
 export type Asset = {
   cash_balance: string;
@@ -79,15 +79,23 @@ export type Order = {
   created_at: string;
 };
 
-export type ChartSizeConfigType = {
-  upperHeight: number;
-  lowerHeight: number;
-  chartWidth: number;
-  yAxisWidth: number;
-  xAxisHeight: number;
-};
-
 export type Profile = {
   name: string;
   email: string;
+};
+
+export type BookmakredStock = {
+  name: string;
+  code: string;
+  stck_prpr: string;
+  prdy_vrss: string;
+  prdy_vrss_sign: string;
+  prdy_ctrt: string;
+};
+
+export type PriceSectionViewType = 'today' | 'daily';
+
+export type MousePositionType = {
+  x: number;
+  y: number;
 };

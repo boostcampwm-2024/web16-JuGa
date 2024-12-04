@@ -1,8 +1,14 @@
+import { HeartIcon } from '@heroicons/react/16/solid';
+import Toast from 'components/Toast';
 import { useEffect, useState } from 'react';
+import { bookmark, unbookmark } from 'service/bookmark';
 import { unsubscribe } from 'service/stocks';
+import useAuthStore from 'store/useAuthStore.ts';
+import useLoginModalStore from 'store/useLoginModalStore';
 import { StockDetailType } from 'types';
 import { stringToLocaleString } from 'utils/common';
 import { socket } from 'utils/socket';
+// import { useDebounce } from 'utils/useDebounce';
 
 type StocksDetailHeaderProps = {
   code: string;
@@ -18,12 +24,56 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
     prdy_ctrt,
     hts_avls,
     per,
+    is_bookmarked,
   } = data;
 
   const [currPrice, setCurrPrice] = useState(stck_prpr);
   const [currPrdyVrssSign, setCurrPrdyVrssSign] = useState(prdy_vrss_sign);
   const [currPrdyVrss, setCurrPrdyVrss] = useState(prdy_vrss);
   const [currPrdyRate, setCurrPrdyRate] = useState(prdy_ctrt);
+  const [isBookmarked, setIsBookmarked] = useState(is_bookmarked);
+  const { isLogin } = useAuthStore();
+  const { toggleModal } = useLoginModalStore();
+
+  const stockInfo: { label: string; value: string }[] = [
+    { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
+    { label: 'PER', value: `${per}배` },
+  ];
+
+  const colorStyleBySign =
+    currPrdyVrssSign === '3'
+      ? ''
+      : currPrdyVrssSign < '3'
+        ? 'text-juga-red-60'
+        : 'text-juga-blue-40';
+
+  const percentAbsolute = Math.abs(Number(currPrdyRate)).toFixed(2);
+
+  const plusOrMinus =
+    currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
+
+  // const { debounceValue } = useDebounce(isBookmarked, 1000);
+  // const isInitialMount = useRef(true);
+
+  // useEffect(() => {
+  //   if (isInitialMount.current) {
+  //     isInitialMount.current = false;
+  //     return;
+  //   }
+
+  //   if (debounceValue) {
+  //     bookmark(code);
+  //   } else {
+  //     unbookmark(code);
+  //   }
+  // }, [code, debounceValue]);
+  useEffect(() => {
+    setIsBookmarked(is_bookmarked);
+  }, [is_bookmarked]);
+
+  useEffect(() => {
+    setCurrPrice(stck_prpr);
+  }, [stck_prpr]);
 
   useEffect(() => {
     const handleSocketData = (data: {
@@ -47,23 +97,6 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
     };
   }, [code]);
 
-  const stockInfo: { label: string; value: string }[] = [
-    { label: '시총', value: `${Number(hts_avls).toLocaleString()}억원` },
-    { label: 'PER', value: `${per}배` },
-  ];
-
-  const colorStyleBySign =
-    currPrdyVrssSign === '3'
-      ? ''
-      : currPrdyVrssSign < '3'
-        ? 'text-juga-red-60'
-        : 'text-juga-blue-40';
-
-  const percentAbsolute = Math.abs(Number(currPrdyRate)).toFixed(2);
-
-  const plusOrMinus =
-    currPrdyVrssSign === '3' ? '' : currPrdyVrssSign < '3' ? '+' : '-';
-
   return (
     <div className='flex h-16 w-full items-center justify-between px-2'>
       <div className='flex flex-col font-semibold'>
@@ -81,13 +114,32 @@ export default function Header({ code, data }: StocksDetailHeaderProps) {
           </p>
         </div>
       </div>
-      <div className='flex gap-4 text-xs font-semibold'>
+      <div className='flex items-center gap-4 text-xs font-semibold'>
         {stockInfo.map((e, idx) => (
           <div key={`stockdetailinfo${idx}`} className='flex gap-2'>
             <p className='text-juga-grayscale-200'>{e.label}</p>
             <p>{e.value}</p>
           </div>
         ))}
+        <button
+          onClick={() => {
+            if (!isLogin) {
+              toggleModal();
+              Toast({ message: '로그인을 해주세요!', type: 'warning' });
+              return;
+            }
+            if (isBookmarked) unbookmark(code);
+            else bookmark(code);
+
+            setIsBookmarked((prev) => !prev);
+          }}
+        >
+          {isLogin && isBookmarked ? (
+            <HeartIcon className='size-6 fill-juga-red-60' />
+          ) : (
+            <HeartIcon className='size-6 fill-juga-grayscale-200' />
+          )}
+        </button>
       </div>
     </div>
   );

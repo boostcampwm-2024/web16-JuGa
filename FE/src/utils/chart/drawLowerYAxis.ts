@@ -1,6 +1,6 @@
-import { Padding, StockChartUnit } from '../../types.ts';
+import { MousePositionType, Padding, StockChartUnit } from 'types.ts';
 import { makeYLabels } from './makeLabels.ts';
-import { MousePositionType } from '../../components/StocksDetail/Chart.tsx';
+import { formatNumber } from 'utils/format.ts';
 
 export const drawLowerYAxis = (
   ctx: CanvasRenderingContext2D,
@@ -35,7 +35,11 @@ export const drawLowerYAxis = (
     const valueRatio = (label - yMin) / (yMax - yMin);
     const yPos = height - valueRatio * height;
     const formattedValue = formatNumber(label);
-    ctx.fillText(formattedValue, width / 2 + padding.left, yPos + padding.top);
+    ctx.fillText(
+      formattedValue,
+      width / 2 + padding.left / 2,
+      yPos + padding.top,
+    );
   });
 
   if (
@@ -58,7 +62,7 @@ export const drawLowerYAxis = (
     const textWidth = ctx.measureText(valueText).width;
 
     ctx.fillStyle = '#2175F3';
-    const boxX = width / 2 + padding.left - 12;
+    const boxX = width / 2 + padding.left / 2 - 12;
     const boxY =
       mousePosition.y - upperChartHeight - padding.bottom - boxHeight / 2;
 
@@ -72,34 +76,4 @@ export const drawLowerYAxis = (
       boxY + boxHeight / 2 + 2,
     );
   }
-};
-
-const formatNumber = (value: number) => {
-  const absValue = Math.abs(value);
-
-  if (absValue >= 1_000_000_000) {
-    const inBillions = value / 1_000_000_000;
-    const rounded = Math.round(inBillions * 10) / 10;
-    return rounded % 1 === 0
-      ? `${rounded.toFixed(0)}B`
-      : `${rounded.toFixed(1)}B`;
-  }
-
-  if (absValue >= 1_000_000) {
-    const inMillions = value / 1_000_000;
-    const rounded = Math.round(inMillions * 10) / 10;
-    return rounded % 1 === 0
-      ? `${rounded.toFixed(0)}M`
-      : `${rounded.toFixed(1)}M`;
-  }
-
-  if (absValue >= 1_000) {
-    const inThousands = value / 1_000;
-    const rounded = Math.round(inThousands * 10) / 10;
-    return rounded % 1 === 0
-      ? `${rounded.toFixed(0)}K`
-      : `${rounded.toFixed(1)}K`;
-  }
-
-  return value.toString();
 };
