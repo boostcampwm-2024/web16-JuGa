@@ -35,6 +35,11 @@ import { RedisDomainService } from './redis.domain-service';
     },
     RedisDomainService,
   ],
-  exports: [RedisDomainService, 'REDIS_CLIENT'],
+  exports: [
+    RedisDomainService,
+    'REDIS_CLIENT',
+    'REDIS_PUBLISHER',
+    'REDIS_SUBSCRIBER',
+  ],
 })
 export class RedisModule {}
