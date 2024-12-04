@@ -44,10 +44,10 @@ export default function SearchModal() {
   const showSearchResults = searchInput && !isSearching && data;
 
   return (
-    <>
+    <div className='z-30'>
       <Overlay onClick={() => toggleSearchModal()} />
       <section
-        className={`${searchInput.length ? 'h-[520px]' : ''} fixed left-1/2 top-3 z-20 w-[640px] -translate-x-1/2 rounded-2xl bg-white shadow-xl`}
+        className={`${searchInput.length ? 'h-[520px]' : ''} fixed left-1/2 top-3 w-[640px] -translate-x-1/2 rounded-2xl bg-white shadow-xl`}
       >
         <div
           className={'absolute left-0 right-0 top-0 rounded-t-2xl bg-white p-3'}
@@ -91,6 +91,6 @@ export default function SearchModal() {
           )}
         </div>
       </section>
-    </>
+    </div>
   );
 }
