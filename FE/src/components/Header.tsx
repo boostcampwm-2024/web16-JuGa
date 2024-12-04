@@ -63,33 +63,35 @@ export default function Header() {
           <nav className='flex items-center gap-6 text-sm font-bold text-juga-grayscale-500'>
             <div
               onClick={() => handleLink('/')}
-              className='px-1 py-2 cursor-pointer'
+              className='cursor-pointer px-1 py-2'
             >
               홈
             </div>
             <div
               onClick={() => handleLink('/rank')}
-              className='px-1 py-2 cursor-pointer'
+              className='cursor-pointer px-1 py-2'
             >
               랭킹
             </div>
             {isLogin && (
               <div
                 onClick={() => handleLink('/mypage')}
-                className='px-1 py-2 cursor-pointer'
+                className='cursor-pointer px-1 py-2'
               >
                 마이페이지
               </div>
             )}
           </nav>
           <div className='relative'>
-            <input
-              type='text'
-              placeholder='Search...'
+            <button
               defaultValue={searchInput}
-              className='h-[36px] w-[280px] rounded-lg bg-juga-grayscale-50 px-4 py-2'
+              className='flex h-[36px] w-[280px] items-center rounded-lg bg-juga-grayscale-50 px-4 py-2'
               onClick={toggleSearchModal}
-            />
+            >
+              <div className={'text-juga-grayscale-200'}>
+                {searchInput ? searchInput : 'Search...'}
+              </div>
+            </button>
           </div>
         </div>
         <div className='flex items-center gap-4'>

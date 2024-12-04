@@ -77,9 +77,9 @@ export class RedisDomainService implements OnModuleInit {
     await this.subscriber.subscribe(channel);
   }
 
-  on(callback: (message: string) => void) {
-    this.subscriber.on('message', (message) => {
-      callback(message);
+  on(callback: (channel: string, message: string) => void) {
+    this.subscriber.on('message', (channel, message) => {
+      callback(channel, message);
     });
   }
 
