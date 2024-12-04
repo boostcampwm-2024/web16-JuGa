@@ -25,7 +25,7 @@ export default function SearchCard({ data }: SearchCardProps) {
       className={
         'h-[52px] w-full rounded-xl hover:cursor-pointer hover:bg-gray-100'
       }
-      onClick={handleClick}
+      onMouseDown={handleClick}
     >
       <div className={'my-2 flex w-full items-center justify-between px-4'}>
         <div className={'flex-1 flex-col'}>
