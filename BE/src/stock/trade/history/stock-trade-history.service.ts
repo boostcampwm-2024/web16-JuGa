@@ -35,7 +35,7 @@ export class StockTradeHistoryService {
         queryParams,
       );
 
-    this.stockPriceSocketService.subscribeByCode(stockCode);
+    await this.stockPriceSocketService.subscribeByCode(stockCode);
     return this.formatTodayStockTradeHistoryData(response.output);
   }
 
