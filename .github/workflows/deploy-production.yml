@@ -152,6 +152,8 @@ jobs:
                 -p 6379:6379 \
                 -v redis_data:/data \
                 redis:latest redis-server --appendonly yes
+            
+              docker exec redis redis-cli EVAL "local keys = redis.call('keys', 'connections:*') for i=1,#keys do redis.call('del', keys[i]) end" 0
             fi
 
             docker pull ${{ env.DOCKER_IMAGE }}-${{ matrix.app.name }}:${{ env.DOCKER_TAG }}

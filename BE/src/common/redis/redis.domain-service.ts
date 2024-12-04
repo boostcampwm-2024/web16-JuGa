@@ -1,18 +1,13 @@
-import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import Redis from 'ioredis';
 
 @Injectable()
-export class RedisDomainService implements OnModuleInit {
+export class RedisDomainService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
     @Inject('REDIS_PUBLISHER') private readonly publisher: Redis,
     @Inject('REDIS_SUBSCRIBER') private readonly subscriber: Redis,
   ) {}
-
-  async onModuleInit() {
-    const keys = await this.redis.keys('connections:*');
-    if (keys.length > 0) await this.redis.del(keys);
-  }
 
   async exists(key: string): Promise<number> {
     return this.redis.exists(key);
