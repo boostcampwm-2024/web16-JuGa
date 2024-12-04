@@ -18,7 +18,9 @@ export default function Card({ data }: CardWithImageProps) {
             {data.title}
           </h3>
         </div>
-        <span className={'hidden w-fit text-sm text-gray-500 lg:block'}>
+        <span
+          className={'hidden w-full text-end text-sm text-gray-500 lg:block'}
+        >
           {formatDate(data.pubDate)}
         </span>
       </div>
