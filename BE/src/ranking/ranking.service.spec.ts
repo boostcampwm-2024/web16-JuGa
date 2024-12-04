@@ -1,6 +1,6 @@
+import { Test } from '@nestjs/testing';
 import { RankingService } from './ranking.service';
 import { RedisDomainService } from '../common/redis/redis.domain-service';
-import { Test } from '@nestjs/testing';
 import { AssetRepository } from '../asset/asset.repository';
 import { SortType } from './enum/sort-type.enum';
 
@@ -186,9 +186,8 @@ describe('Ranking Service 테스트', () => {
         zrangeSpy.mockImplementation((key) => {
           if (key.includes('profitRate')) {
             return Promise.resolve(mockProfitRateData);
-          } else {
-            return Promise.resolve(mockAssetData);
           }
+          return Promise.resolve(mockAssetData);
         });
         jest.spyOn(redisDomainService, 'zrevrank').mockResolvedValue(0);
         jest.spyOn(redisDomainService, 'zrevrange').mockResolvedValue([
