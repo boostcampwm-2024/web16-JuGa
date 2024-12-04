@@ -73,13 +73,13 @@ export class RedisDomainService {
   }
 
   on(callback: (message: string) => void) {
-    this.redis.on('message', (message) => {
+    this.subscriber.on('message', (message) => {
       callback(message);
     });
   }
 
   async unsubscribe(channel: string) {
-    return this.redis.unsubscribe(channel);
+    return this.subscriber.unsubscribe(channel);
   }
 
   async increment(key: string) {
