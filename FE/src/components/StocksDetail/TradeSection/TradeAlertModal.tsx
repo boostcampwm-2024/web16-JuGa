@@ -36,13 +36,13 @@ export default function TradeAlertModal({
   };
 
   return (
-    <>
+    <div className='z-30'>
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-5 shadow-lg'>
         <div className='self-start text-lg font-bold'>
           {stockName} {type === 'BUY' ? '매수' : '매도'} {count}주
         </div>
-        <div className='my-5 flex flex-col gap-2 text-juga-grayscale-500'>
+        <div className='flex flex-col gap-2 my-5 text-juga-grayscale-500'>
           <div className='flex justify-between'>
             <p>{count}주 희망가격</p>
             <p>{totalPrice.toLocaleString()}원</p>
@@ -59,7 +59,7 @@ export default function TradeAlertModal({
 
         <div className='flex justify-end gap-2'>
           <button
-            className='rounded-xl bg-juga-grayscale-100 px-6 py-2 text-gray-800'
+            className='px-6 py-2 text-gray-800 rounded-xl bg-juga-grayscale-100'
             onClick={toggleModal}
           >
             취소
@@ -72,6 +72,6 @@ export default function TradeAlertModal({
           </button>
         </div>
       </section>
-    </>
+    </div>
   );
 }

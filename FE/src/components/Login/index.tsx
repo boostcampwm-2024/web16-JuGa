@@ -62,7 +62,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <div className='z-30'>
       <Overay onClick={() => toggleModal()} />
       <section className='fixed left-1/2 top-1/2 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-white p-20 shadow-lg'>
         <h2 className='mb-5 text-3xl font-bold'>JuGa</h2>
@@ -98,6 +98,6 @@ export default function Login() {
           <XMarkIcon className='h-7 w-7 text-juga-grayscale-500' />
         </button>
       </section>
-    </>
+    </div>
   );
 }
