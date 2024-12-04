@@ -114,11 +114,10 @@ export default function Chart({ code }: StocksDetailChartProps) {
         ref={containerRef}
         className='mt-2 flex h-[200px] w-full flex-col'
         onMouseMove={getCanvasMousePosition}
-        onWheel={handleWheel}
       >
         {/* Upper 차트 영역 */}
         <div className='flex flex-row'>
-          <canvas ref={upperChartCanvasRef} />
+          <canvas ref={upperChartCanvasRef} onWheel={handleWheel} />
           <canvas ref={upperChartY} />
           <div className='absolute flex w-[520px] flex-col gap-1'>
             <div className={'relative flex flex-row items-center gap-1'}>
@@ -195,7 +194,7 @@ export default function Chart({ code }: StocksDetailChartProps) {
         </div>
         {/* Lower 차트 영역 */}
         <div className='flex flex-row'>
-          <canvas ref={lowerChartCanvasRef} />
+          <canvas ref={lowerChartCanvasRef} onWheel={handleWheel} />
           <canvas ref={lowerChartY} />
         </div>
         {/* X축 영역 */}

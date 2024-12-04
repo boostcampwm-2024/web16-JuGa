@@ -9,7 +9,7 @@ export const useMouseWheel = (data: StockChartUnit[] | undefined) => {
   const minDisplayData = 20;
 
   const handleWheel = useCallback(
-    (e: WheelEvent<HTMLDivElement>) => {
+    (e: WheelEvent<HTMLCanvasElement>) => {
       if (!data) return;
 
       const wheelPower = 0.1;
