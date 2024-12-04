@@ -27,9 +27,9 @@ export class StockPriceSocketService extends BaseStockSocketDomainService {
   async socketOpenHandler(): Promise<void> {
     const orders: Order[] =
       await this.stockExecuteOrderRepository.findAllCodeByStatus();
-    orders.forEach((order) => {
-      this.baseSocketDomainService.registerCode(this.TR_ID, order.stock_code);
-    });
+    await Promise.all(
+      orders.map((order) => this.subscribeByCode(order.stock_code)),
+    );
   }
 
   socketDataHandler(data: string[]) {
