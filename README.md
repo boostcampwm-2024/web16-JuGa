@@ -66,7 +66,7 @@
 ## 🏛️ 소프트웨어 아키텍처
 <img width="2336" alt="소프트웨어 아키텍처 3 0" src="https://github.com/user-attachments/assets/3e4d5e3c-3fc5-44a5-8a8e-77bd704e22f2">
 
-- 한국투자증권 웹소켓은 한 계좌 당 41개의 종목에 대한 구독만을 유지할 수 있기 때문에, 최대한 많은 구독을 가능하게 하기 위한 방법으로 `[Load Balancing](https://github.com/boostcampwm-2024/web16-JuGa/wiki/%5BBE%5D-Nginx-%EB%A1%9C%EB%93%9C%EB%B0%B8%EB%9F%B0%EC%8B%B1%EC%9D%84-%ED%86%B5%ED%95%B4-%ED%95%9C%EA%B5%AD-%ED%88%AC%EC%9E%90-API-%EC%86%8C%EC%BC%93-%EC%A0%9C%ED%95%9C-%EA%B7%B9%EB%B3%B5)`을 선택했습니다.
+- 한국투자증권 웹소켓은 한 계좌 당 41개의 종목에 대한 구독만을 유지할 수 있기 때문에, 최대한 많은 구독을 가능하게 하기 위한 방법으로 [Load Balancing](https://github.com/boostcampwm-2024/web16-JuGa/wiki/%5BBE%5D-Nginx-%EB%A1%9C%EB%93%9C%EB%B0%B8%EB%9F%B0%EC%8B%B1%EC%9D%84-%ED%86%B5%ED%95%B4-%ED%95%9C%EA%B5%AD-%ED%88%AC%EC%9E%90-API-%EC%86%8C%EC%BC%93-%EC%A0%9C%ED%95%9C-%EA%B7%B9%EB%B3%B5)을 선택했습니다.
 - 서버의 각 컨테이너는 모두 다른 계좌로 연결되어 총 `41*3`개의 구독을 유지할 수 있습니다.
 - 추가로, [redis의 pub/sub을 활용](https://github.com/boostcampwm-2024/web16-JuGa/wiki/redis%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%95%9C%EA%B5%AD%ED%88%AC%EC%9E%90-Open-API-%EC%84%B8%EC%85%98-%EA%B4%80%EB%A6%AC)하여 서로 다른 서버로 요청이 들어오더라도 같은 종목에 대한 구독은 하나의 서버에서만 관리하도록 구현해 구독 자원을 최대한 절약하도록 했습니다.
 
