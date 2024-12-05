@@ -42,21 +42,21 @@
 
 
 ### 메인 페이지
-<img src="https://github.com/user-attachments/assets/abb04197-ae88-4877-be53-2ca71ad3e57b" width="800" />
+![main](https://github.com/user-attachments/assets/ce214616-8f2a-4017-b9db-001c818d4cc0)
 
 - 메인 페이지에서 코스피, 코스닥 등 실시간 주가 지수를 확인할 수 있습니다.
 - 상승률/하락률 TOP5 종목을 주가지수 별로 확인할 수 있습니다.
 - 오늘 실시간 주요 뉴스를 확인할 수 있습니다.
 
 ### 주식 상세 페이지
-<img src="https://github.com/user-attachments/assets/14ed36ae-085e-4899-a314-8ece85236a55" width="800" />
+![detail1](https://github.com/user-attachments/assets/629165e7-20c8-4fe4-b1a0-fbbeb134c437)
 
 - 해당 주식에 대한 정보를 차트로 확인할 수 있습니다.
 - 일별, 실시간 시세를 확인할 수 있습니다.
 - 매수, 매도 요청을 할 수 있습니다.
 
 ### 주식 차트 
-<img src="https://github.com/user-attachments/assets/6d36b0d9-2db2-4018-a7f3-2c12fb586fd0" width="800" />
+![chart](https://github.com/user-attachments/assets/02a0aa0e-c58e-4a88-84b7-ca180ce56090)
 
 - 일, 주, 월, 년 단위로 주식 차트를 확인할 수 있습니다.   
 - 이동평균선 정보를 활용해 해당 주식의 추이를 더 자세히 확인할 수 있습니다.   
