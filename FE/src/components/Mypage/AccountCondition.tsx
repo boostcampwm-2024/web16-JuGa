@@ -52,7 +52,7 @@ export default function AccountCondition({ asset }: AccountConditionProps) {
           <p
             className={`${is_positive ? 'text-juga-red-60' : 'text-juga-blue-50'}`}
           >
-            {total_profit_rate}%
+            {(+total_profit_rate > 0 ? '+' : '') + total_profit_rate}%
           </p>
         </div>
       </div>

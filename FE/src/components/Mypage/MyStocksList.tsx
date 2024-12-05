@@ -49,7 +49,7 @@ export default function MyStocksList({ stocks }: MyStocksListProps) {
               <p
                 className={`w-1/6 truncate text-right ${stockYield < 0 ? 'text-juga-blue-50' : 'text-juga-red-60'}`}
               >
-                {stockYield.toFixed(2)}%
+                {(stockYield > 0 ? '+' : '') + stockYield.toFixed(2)}%
               </p>
             </li>
           );
