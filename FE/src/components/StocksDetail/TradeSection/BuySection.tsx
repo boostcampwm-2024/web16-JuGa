@@ -14,6 +14,7 @@ import useAuthStore from 'store/useAuthStore.ts';
 import { useQuery } from '@tanstack/react-query';
 import { getCash } from 'service/assets';
 import TradeAlertModal from './TradeAlertModal';
+import Loading from 'components/Loading';
 
 type BuySectionProps = {
   code: string;
@@ -23,11 +24,9 @@ type BuySectionProps = {
 export default function BuySection({ code, detailInfo }: BuySectionProps) {
   const { stck_prpr, stck_mxpr, stck_llam, hts_kor_isnm } = detailInfo;
 
-  const { data, isLoading, isError } = useQuery(
-    ['detail', 'cash'],
-    () => getCash(),
-    { staleTime: 1000 },
-  );
+  const { data, isLoading } = useQuery(['detail', 'cash'], () => getCash(), {
+    staleTime: 1000,
+  });
 
   const [currPrice, setCurrPrice] = useState<string>(stck_prpr);
   const { isLogin } = useAuthStore();
@@ -57,9 +56,8 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
     setCount(+s);
   }, []);
 
-  if (isLoading) return <div>loading</div>;
+  if (isLoading) return <Loading />;
   if (!data) return <div>No data</div>;
-  if (isError) return <div>error</div>;
 
   const handlePriceInputBlur = (e: FocusEvent<HTMLInputElement>) => {
     const n = +e.target.value.replace(/,/g, '');

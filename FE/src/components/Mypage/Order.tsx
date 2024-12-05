@@ -3,11 +3,17 @@ import useOrderCancelAlertModalStore from 'store/useOrderCancleAlertModalStore';
 import CancelAlertModal from './CancelAlertModal.tsx';
 import { formatTimestamp } from 'utils/format';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getOrders } from 'service/orders.ts';
 
 export default function Order() {
-  const { orderQuery, removeOrder } = useOrders();
+  const { removeOrder } = useOrders();
 
-  const { data } = orderQuery;
+  const { data } = useQuery(['account', 'order'], () => getOrders(), {
+    staleTime: 1000,
+    suspense: true,
+  });
+
   const { isOpen, open } = useOrderCancelAlertModalStore();
 
   const navigation = useNavigate();

@@ -1,19 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Toast from 'components/Toast';
-import {
-  deleteOrder,
-  getOrders,
-  orderBuyStock,
-  orderSellStock,
-} from 'service/orders';
+import { deleteOrder, orderBuyStock, orderSellStock } from 'service/orders';
 
 export default function useOrders() {
   const queryClient = useQueryClient();
-
-  const orderQuery = useQuery(['account', 'order'], () => getOrders(), {
-    staleTime: 1000,
-    suspense: true,
-  });
 
   const removeOrder = useMutation((id: number) => deleteOrder(id), {
     onSuccess: () => queryClient.invalidateQueries(['account', 'order']),
@@ -47,5 +37,5 @@ export default function useOrders() {
     },
   );
 
-  return { orderQuery, removeOrder, orderBuy, orderSell };
+  return { removeOrder, orderBuy, orderSell };
 }
