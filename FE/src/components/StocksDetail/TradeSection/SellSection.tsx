@@ -134,7 +134,15 @@ export default function SellSection({ code, detailInfo }: SellSectionProps) {
 
   return (
     <>
-      <form className='flex flex-col' onSubmit={handleSell}>
+      <form
+        className='flex flex-col'
+        onSubmit={handleSell}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+        }}
+      >
         <div className='my-4'>
           <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'>매도 가격</p>

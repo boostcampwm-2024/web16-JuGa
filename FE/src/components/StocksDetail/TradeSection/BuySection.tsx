@@ -106,7 +106,15 @@ export default function BuySection({ code, detailInfo }: BuySectionProps) {
 
   return (
     <>
-      <form className='flex flex-col' onSubmit={handleBuy}>
+      <form
+        className='flex flex-col'
+        onSubmit={handleBuy}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+        }}
+      >
         <div className='my-4'>
           <div className='flex items-center justify-between h-12'>
             <p className='mr-3 w-14'>매수 가격</p>
