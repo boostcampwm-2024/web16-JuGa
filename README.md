@@ -49,14 +49,14 @@
 - 오늘 실시간 주요 뉴스를 확인할 수 있습니다.
 
 ### 주식 상세 페이지
-![detail1](https://github.com/user-attachments/assets/629165e7-20c8-4fe4-b1a0-fbbeb134c437)
+![detail11111](https://github.com/user-attachments/assets/d8bdb9b5-050b-4521-93d2-289391a45ff9)
 
 - 해당 주식에 대한 정보를 차트로 확인할 수 있습니다.
 - 일별, 실시간 시세를 확인할 수 있습니다.
 - 매수, 매도 요청을 할 수 있습니다.
 
 ### 주식 차트 
-![chart](https://github.com/user-attachments/assets/02a0aa0e-c58e-4a88-84b7-ca180ce56090)
+![chart111](https://github.com/user-attachments/assets/58447d3f-598e-4216-935e-223165a567a5)
 
 - 일, 주, 월, 년 단위로 주식 차트를 확인할 수 있습니다.   
 - 이동평균선 정보를 활용해 해당 주식의 추이를 더 자세히 확인할 수 있습니다.   
