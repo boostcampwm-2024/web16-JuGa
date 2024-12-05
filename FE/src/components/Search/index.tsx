@@ -27,42 +27,29 @@ export default function SearchModal() {
     shouldSearch ? searchInput : '',
     500,
   );
-
-  const {
-    data: originalData,
-    isLoading: isOriginalLoading,
-    isFetching: isOriginalFetching,
-  } = useQuery({
-    queryKey: ['search', debounceValue],
-    queryFn: () => getSearchResults(formatNoSpecialChar(debounceValue)),
-    enabled: !!debounceValue && !isDebouncing,
-    staleTime: 10000,
-    cacheTime: 1000 * 60,
-  });
   const convertedSearch = debounceValue
     ? Hangul.assemble(converter.convert(debounceValue))
     : '';
 
-  const {
-    data: convertedData,
-    isLoading: isConvertedLoading,
-    isFetching: isConvertedFetching,
-  } = useQuery({
-    queryKey: ['search', convertedSearch],
-    queryFn: () => getSearchResults(formatNoSpecialChar(convertedSearch)),
-    enabled:
-      !isOriginalLoading &&
-      !isOriginalFetching &&
-      !!convertedSearch &&
-      originalData !== undefined &&
-      originalData.length === 0,
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ['search', debounceValue],
+    queryFn: async () => {
+      // 먼저 원본 검색어로 검색
+      const originalResults = await getSearchResults(
+        formatNoSpecialChar(debounceValue),
+      );
+
+      // 결과가 없으면 변환된 검색어로 검색
+      if (originalResults.length === 0 && convertedSearch) {
+        return getSearchResults(formatNoSpecialChar(convertedSearch));
+      }
+
+      return originalResults;
+    },
+    enabled: !!debounceValue && !isDebouncing,
     staleTime: 10000,
     cacheTime: 1000 * 60,
   });
-
-  const data = originalData?.length ? originalData : convertedData || [];
-  const isLoading = isOriginalLoading || isConvertedLoading;
-  const isFetching = isOriginalFetching || isConvertedFetching;
 
   useEffect(() => {
     if (data && data.length > 0 && debounceValue && !isLoading) {
