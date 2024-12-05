@@ -41,7 +41,7 @@ export default function SearchModal() {
 
       // 결과가 없으면 변환된 검색어로 검색
       if (originalResults.length === 0 && convertedSearch) {
-        return getSearchResults(formatNoSpecialChar(convertedSearch));
+        return await getSearchResults(formatNoSpecialChar(convertedSearch));
       }
 
       return originalResults;
@@ -60,7 +60,6 @@ export default function SearchModal() {
   if (!isOpen) return null;
 
   const isSearching = isLoading || isFetching || isDebouncing;
-  const showSearchResults = searchInput && !isSearching && data;
 
   return (
     <div className='z-30'>
@@ -102,7 +101,7 @@ export default function SearchModal() {
                     </p>
                   </div>
                 ) : (
-                  showSearchResults && <SearchList searchData={data} />
+                  <SearchList searchData={data} />
                 )}
               </div>
             </div>
