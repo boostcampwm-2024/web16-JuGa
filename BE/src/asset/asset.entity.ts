@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 const INIT_ASSET = 10000000;
 
 @Entity('assets')
+@Unique(['user_id'])
 export class Asset {
   @PrimaryGeneratedColumn()
   id: number;

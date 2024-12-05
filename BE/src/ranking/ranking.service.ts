@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RedisDomainService } from 'src/common/redis/redis.domain-service';
-import { AssetRepository } from 'src/asset/asset.repository';
 import { Cron } from '@nestjs/schedule';
+import { RedisDomainService } from '../common/redis/redis.domain-service';
+import { AssetRepository } from '../asset/asset.repository';
 import { SortType } from './enum/sort-type.enum';
 import { Ranking } from './interface/ranking.interface';
 import { RankingResponseDto } from './dto/ranking-response.dto';

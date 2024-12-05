@@ -2,19 +2,23 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TradeType } from './enum/trade-type';
 import { StatusType } from './enum/status-type';
 
 @Entity('orders')
+@Index(['user_id', 'stock_code'])
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index()
   @Column({ nullable: false })
   user_id: number;
 
+  @Index()
   @Column({ nullable: false })
   stock_code: string;
 
